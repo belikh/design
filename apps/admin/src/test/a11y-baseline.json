@@ -1,0 +1,128 @@
+{
+ "/analytics": [
+  "aria-required-children"
+ ],
+ "/charts": [
+  "aria-required-children"
+ ],
+ "/charts/timelines": [
+  "nested-interactive"
+ ],
+ "/chrome/entities": [
+  "link-name"
+ ],
+ "/chrome/help": [
+  "button-name"
+ ],
+ "/chrome/notifications": [
+  "aria-prohibited-attr"
+ ],
+ "/chrome/selection": [
+  "empty-table-header"
+ ],
+ "/chrome/tabs": [
+  "aria-required-children"
+ ],
+ "/chrome/timeline": [
+  "heading-order"
+ ],
+ "/components": [
+  "landmark-unique"
+ ],
+ "/domain/agent-runs": [
+  "aria-allowed-role",
+  "list"
+ ],
+ "/domain/billing": [
+  "aria-allowed-role",
+  "list"
+ ],
+ "/domain/ci-deploys": [
+  "aria-allowed-role",
+  "list"
+ ],
+ "/domain/hosts-storage": [
+  "empty-table-header"
+ ],
+ "/ha": [
+  "aria-prohibited-attr"
+ ],
+ "/inbox": [
+  "aria-allowed-role",
+  "heading-order",
+  "list"
+ ],
+ "/inputs/dates": [
+  "aria-required-children",
+  "aria-required-parent"
+ ],
+ "/inputs/editors": [
+  "aria-allowed-role"
+ ],
+ "/inputs/pickers": [
+  "nested-interactive"
+ ],
+ "/inputs/text": [
+  "aria-allowed-role"
+ ],
+ "/overview": [
+  "aria-required-children"
+ ],
+ "/records/backup": [
+  "listitem"
+ ],
+ "/records/billing": [
+  "empty-table-header"
+ ],
+ "/records/schema": [
+  "nested-interactive"
+ ],
+ "/records/split": [
+  "heading-order"
+ ],
+ "/tables/live": [
+  "landmark-unique"
+ ],
+ "/tables/nested": [
+  "landmark-unique"
+ ],
+ "/tables/reorder": [
+  "landmark-unique"
+ ],
+ "/tools/data-quality": [
+  "empty-table-header",
+  "label"
+ ],
+ "/tools/docs": [
+  "landmark-unique"
+ ],
+ "/tools/schedules": [
+  "empty-table-header"
+ ],
+ "/tools/topology": [
+  "aria-prohibited-attr"
+ ],
+ "/views/files": [
+  "landmark-unique"
+ ],
+ "/views/report": [
+  "aria-required-children",
+  "landmark-main-is-top-level",
+  "landmark-no-duplicate-main",
+  "landmark-unique"
+ ],
+ "/views/security": [
+  "empty-table-header"
+ ],
+ "/views/taxonomy": [
+  "aria-allowed-attr",
+  "aria-required-children",
+  "listitem"
+ ],
+ "/views/tickets": [
+  "empty-table-header"
+ ],
+ "/views/trash": [
+  "empty-table-header"
+ ]
+}

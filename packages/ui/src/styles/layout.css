@@ -1,0 +1,19 @@
+/* ---------- page header / layout ---------- */
+.adm-pagehead { display: grid; gap: var(--jp-space-2); padding-bottom: var(--jp-space-6); margin-bottom: var(--jp-space-6); border-bottom: 1px solid var(--jp-border); }
+.adm-pagehead__row { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--jp-space-4); flex-wrap: wrap; }
+.adm-pagehead h1 { display: flex; align-items: center; gap: var(--jp-space-3); } .adm-pagehead p { margin-top: 2px; }
+.adm-pagehead .jp-prose { max-width: 72ch; }
+.adm-crumbs { font-family: var(--jp-font-mono); font-size: var(--jp-fs-xs); text-transform: uppercase; letter-spacing: 0.06em; color: var(--jp-text-muted); } .adm-crumbs a { color: var(--jp-text-muted); }
+.adm-grid { display: grid; gap: var(--jp-space-4); } .adm-grid--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); } .adm-grid--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); } .adm-grid--4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.adm-grid--21 { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); } .adm-grid--12 { grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); }
+@media (max-width: 1100px) { .adm-grid--4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } .adm-grid--3 { grid-template-columns: repeat(2, minmax(0, 1fr)); } .adm-grid--21, .adm-grid--12 { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 640px) { .adm-grid--2, .adm-grid--3, .adm-grid--4 { grid-template-columns: minmax(0, 1fr); } }
+.adm-stack { display: flex; flex-direction: column; gap: var(--jp-space-4); }
+.adm-block + .adm-block { margin-top: var(--jp-space-7); } .adm-block__head { display: grid; gap: 4px; margin-bottom: var(--jp-space-4); }
+.adm-facts { display: grid; grid-template-columns: max-content 1fr; gap: 4px var(--jp-space-4); font-size: var(--jp-fs-xs); font-family: var(--jp-font-mono); margin: 0; } .adm-facts dt { color: var(--jp-text-muted); } .adm-facts dd { margin: 0; }
+.adm-section { margin-top: var(--jp-space-6); } .adm-section > h2 { margin-bottom: var(--jp-space-3); display: flex; align-items: baseline; gap: var(--jp-space-3); }
+.adm-section > h2 small { font: 14px var(--jp-font-mono); color: var(--jp-text-muted); font-weight: 400; }
+.jp-panel { background: var(--jp-surface-raised); } .jp-panel__bar { display: flex; justify-content: space-between; align-items: center; }
+
+/* Panel titles are h2 for a correct heading outline; keep the previous (h3) size */
+h2.jp-panel__title { font-size: var(--jp-fs-md); }

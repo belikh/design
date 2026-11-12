@@ -1,0 +1,7 @@
+fonts/
+build/
+*.aux
+*.log
+*.out
+*.toc
+*.xdv

@@ -1,0 +1,35 @@
+.adm-editable { display: inline-flex; align-items: center; gap: 6px; max-width: 100%; }
+.adm-editable__value { display: inline-flex; align-items: center; gap: 6px; padding: 1px 6px; margin: -1px -6px; border-radius: var(--jp-radius-sm); cursor: text; border: 1px solid transparent; min-height: 1.6em; }
+.adm-editable__value:hover { border-color: var(--jp-border); background: var(--jp-surface); }
+.adm-editable__value:focus-visible { outline: 2px solid var(--jp-accent); outline-offset: 1px; }
+.adm-editable__pencil { opacity: 0; color: var(--jp-text-muted); transition: opacity var(--jp-dur-fast); flex: none; }
+.adm-editable__value:hover .adm-editable__pencil, .adm-editable__value:focus-visible .adm-editable__pencil { opacity: 1; }
+@media (hover: none) { .adm-editable__pencil { opacity: .55; } }
+.adm-editable.is-disabled .adm-editable__value { cursor: default; } .adm-editable.is-error .adm-editable__value { border-color: var(--jp-danger); }
+.adm-editable__status { display: inline-flex; align-items: center; min-width: 14px; } .adm-editable__ok { color: var(--jp-ok); }
+.adm-editor-wrap { display: flex; flex-direction: column; gap: 4px; min-width: 120px; } .adm-editor-wrap.is-compact .adm-editor { min-height: 26px; }
+.adm-editor { width: 100%; } .adm-editor.is-invalid { border-color: var(--jp-danger); outline: 1px solid var(--jp-danger); }
+.adm-editor__btn { width: 28px; height: 28px; display: inline-grid; place-items: center; border-radius: var(--jp-radius-sm); border: 1px solid var(--jp-border); background: var(--jp-surface-raised); color: var(--jp-text); cursor: pointer; flex: none; }
+.adm-editor__btn.is-save { background: var(--jp-accent); border-color: var(--jp-accent); color: var(--jp-on-accent); } .adm-editor__btn:disabled { opacity: .4; cursor: not-allowed; }
+.adm-editable-switch { display: inline-flex; align-items: center; gap: 8px; border: 0; background: none; color: var(--jp-text); cursor: pointer; padding: 2px 4px; font: inherit; border-radius: var(--jp-radius-sm); }
+.adm-editable-switch i { width: 30px; height: 16px; border-radius: 8px; background: var(--jp-border); position: relative; transition: background var(--jp-dur-fast); flex: none; }
+.adm-editable-switch i::after { content: ""; position: absolute; top: 2px; inset-inline-start: 2px; width: 12px; height: 12px; border-radius: 50%; background: var(--jp-surface-raised); transition: transform var(--jp-dur-fast); }
+.adm-editable-switch.is-on i { background: var(--jp-accent); } .adm-editable-switch.is-on i::after { transform: translateX(14px); } .adm-editable-switch:focus-visible { outline: 2px solid var(--jp-accent); }
+[dir="rtl"] .adm-editable-switch.is-on i::after { transform: translateX(-14px); }
+@media (prefers-reduced-motion: reduce) { .adm-editable__pencil, .adm-editable-switch i, .adm-editable-switch i::after { transition: none; } }
+
+/* Bulk edit panel */
+.adm-bulkedit { display: flex; flex-direction: column; gap: var(--jp-space-2); padding: var(--jp-space-3); border: 1px solid var(--jp-border); border-radius: var(--jp-radius-md); background: var(--jp-surface-raised); margin-block-end: var(--jp-space-2); }
+.adm-bulkedit__row { display: flex; flex-wrap: wrap; gap: var(--jp-space-3); align-items: flex-end; }
+.adm-bulkedit__f { display: flex; flex-direction: column; gap: 4px; min-width: 150px; }
+.adm-bulkedit__val { flex: 1; min-width: 220px; }
+.adm-bulkedit__foot { display: flex; flex-wrap: wrap; gap: var(--jp-space-2); align-items: center; }
+.adm-bulkedit__list { margin: 0; padding-inline-start: 18px; font-size: var(--jp-fs-sm); }
+.adm-bulkedit__bad { color: var(--jp-danger); }
+.adm-bulkedit progress { inline-size: 160px; }
+.adm-editable__lock { margin-inline-start: 6px; opacity: .6; }
+.adm-editable__empty { font-style: normal; }
+.adm-editable__empty::before { content: "+ "; }
+.adm-editor__chips { display: flex; gap: var(--jp-space-3); font-size: var(--jp-fs-xs); margin-block-start: 2px; }
+.adm-hist { display: inline-block; position: relative; margin-inline-start: 4px; } .adm-hist > summary { cursor: pointer; list-style: none; color: var(--jp-text-muted); } .adm-hist > summary::-webkit-details-marker { display: none; }
+.adm-hist__list { position: absolute; z-index: var(--jp-z-sticky); inset-inline-start: 0; margin: 4px 0 0; padding: var(--jp-space-2) var(--jp-space-3); list-style: none; min-width: 220px; background: var(--jp-surface-raised); border: 1px solid var(--jp-border); border-radius: var(--jp-radius-md); box-shadow: 0 12px 32px -8px rgba(0,0,0,.35); font-size: var(--jp-fs-xs); display: flex; flex-direction: column; gap: var(--jp-space-2); }

@@ -1,0 +1,44 @@
+/*
+ * Modern platform features, each guarded so older browsers fall back to the plain behaviour.
+ * Tokens-only: no colours or font sizes here (see AGENTS.md).
+ */
+
+/* 78: balanced headings */
+h1, h2, h3, .adm-empty h3 { text-wrap: balance; }
+
+/* 84: contain scrolling inside panels; reserve the scrollbar gutter so content doesn't jump */
+.adm-modal__body, .adm-dt__wrap, .adm-combo__list, .adm-tray { overscroll-behavior: contain; }
+.adm-modal__body, .adm-dt__wrap { scrollbar-gutter: stable; }
+
+/* 83: kiosks and phones: dynamic viewport units (done in the component styles) and safe-area insets */
+.adm-kiosk, .adm-wh, .adm-lobby { padding-inline: max(var(--jp-space-4), env(safe-area-inset-left), env(safe-area-inset-right)); padding-block-end: max(var(--jp-space-4), env(safe-area-inset-bottom)); }
+
+/* 82 + 73: validation styling only after the user has interacted; style the field wrapper from its state */
+.jp-input:user-invalid, .jp-select:user-invalid, textarea.jp-input:user-invalid { border-color: var(--jp-danger); }
+.adm-field:has(:user-invalid) > .jp-label, .adm-field:has([aria-invalid="true"]) > .jp-label { color: var(--jp-danger); }
+.adm-row:has(> .adm-editable.is-error) { outline: 1px solid var(--jp-danger); outline-offset: 2px; border-radius: var(--jp-radius-sm); }
+
+/* 81: skip rendering off-screen panels on long pages */
+.adm-main > .adm-stack > .jp-panel:nth-child(n + 5), .adm-cv { content-visibility: auto; contain-intrinsic-size: auto 280px; }
+
+/* 72: container queries: cards adapt to the space they are given, not the viewport */
+.adm-stat { container: stat / inline-size; }
+@container stat (max-width: 220px) { .adm-stat__meta { flex-direction: column; align-items: flex-start; gap: var(--jp-space-1); } }
+.adm-cq { container-type: inline-size; }
+
+/* 86: aligned rows across sibling cards or form groups: put .adm-subgrid on each child of a grid that sets grid-template-rows */
+@supports (grid-template-rows: subgrid) { .adm-subgrid { display: grid; grid-row: span var(--rows, 3); grid-template-rows: subgrid; } }
+
+/* 79: enter animation for dialogs, drawers, menus and toasts */
+@media (prefers-reduced-motion: no-preference) {
+  dialog.adm-modal[open], dialog.adm-drawer[open], .adm-menu__list.is-popover:popover-open, .adm-toast { transition: opacity .16s ease, transform .16s ease, overlay .16s allow-discrete, display .16s allow-discrete; opacity: 1; transform: none; }
+  @starting-style { dialog.adm-modal[open], .adm-menu__list.is-popover:popover-open, .adm-toast { opacity: 0; transform: translateY(6px); } dialog.adm-drawer--right[open] { transform: translateX(24px); opacity: 0; } dialog.adm-drawer--left[open] { transform: translateX(-24px); opacity: 0; } }
+  dialog.adm-modal::backdrop, dialog.adm-drawer::backdrop { transition: opacity .16s ease; } @starting-style { dialog[open]::backdrop { opacity: 0; } }
+}
+
+/* 74: view transitions between routes (opt-in per navigation, see SideNav) */
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(root) { animation: adm-vt-out .12s ease both; } ::view-transition-new(root) { animation: adm-vt-in .16s ease both; }
+  @keyframes adm-vt-out { to { opacity: 0; } } @keyframes adm-vt-in { from { opacity: 0; } }
+}
+@media (prefers-reduced-motion: reduce) { ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; } }

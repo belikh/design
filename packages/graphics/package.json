@@ -1,0 +1,42 @@
+{
+  "name": "@belikh/jupiter-graphics",
+  "version": "1.1.0",
+  "description": "Jupiter line graphics: every icon, illustration and ornament is one continuous stroke, generated from waypoints.",
+  "type": "module",
+  "license": "UNLICENSED",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./css": "./dist/jupiter-graphics.css",
+    "./jupiter-graphics.css": "./dist/jupiter-graphics.css",
+    "./sprite.svg": "./dist/jupiter-graphics.svg",
+    "./manifest.json": "./dist/manifest.json",
+    "./svg/*": "./dist/svg/*",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "rm -rf dist && node scripts/build.ts",
+    "typecheck": "tsc -p . --noEmit",
+    "sheet": "node scripts/sheet.ts"
+  },
+  "devDependencies": {
+    "@types/node": "24.13.3",
+    "typescript": "7.0.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/belikh/design.git",
+    "directory": "packages/graphics"
+  }
+}

@@ -1,0 +1,45 @@
+import { useMemo, useState } from "react";
+import "./domain.css";
+import { PageHeader, Panel, Badge, Btn, Tabs, Alert, Menu, Modal } from "@belikh/jupiter-ui/kit.tsx";
+import { StatTile, Donut, ProgressBar } from "@belikh/jupiter-ui/Charts.tsx";
+import { Field, TextInput, NumberStepper } from "@belikh/jupiter-ui/inputs.tsx";
+import { usePrefs } from "@belikh/jupiter-ui/store.tsx";
+import { fmtDate } from "./lib.ts";
+import { INVOICES, METERS, totals, money, effectiveStatus, outstanding, nextNumber, validateInvoice, meterCost, monthBill, GST, type Invoice, type Item } from "./billing.data.ts";
+
+const tone = (s: string) => (s === "paid" ? "ok" : s === "overdue" ? "danger" : s === "sent" ? "info" : s === "void" ? undefined : "warn");
+function InvoicePreview({ inv }: { inv: Invoice }) {
+  const t = totals(inv.items);
+  return (
+    <div className="dm-invoice" id="invoice-print"><div className="dm-row dm-between" style={{ alignItems: "flex-start" }}><div><h2>INVOICE</h2><span className="dm-num" style={{ color: "var(--jp-accent)" }}>{inv.number}</span> <Badge s={tone(effectiveStatus(inv))}>{effectiveStatus(inv)}</Badge></div><div style={{ textAlign: "end" }}><div className="jp-muted">ISSUED <b className="dm-num">{fmtDate(inv.issued)}</b></div><div className="jp-muted">DUE <b className="dm-num">{fmtDate(inv.due)}</b></div></div></div><hr />
+      <div className="adm-grid adm-grid--2"><div><div className="jp-label">From</div>Alex Example<br />12 Example Street<br />Brisbane QLD 4000<br />ABN 00 000 000 000</div><div><div className="jp-label">Bill to</div>{inv.client || "—"}</div></div>
+      <table className="jp-table" style={{ marginTop: 16 }}><thead><tr><th>Description</th><th className="jp-num">Qty</th><th className="jp-num">Unit</th><th className="jp-num">Amount</th></tr></thead><tbody>{inv.items.map((i, k) => <tr key={k}><td>{i.desc || <span className="jp-muted">—</span>}</td><td className="jp-num">{i.qty}</td><td className="jp-num">{money(i.unit)}</td><td className="jp-num">{money(i.qty * i.unit)}</td></tr>)}</tbody></table>
+      <dl className="dm-kv" style={{ marginInlineStart: "auto", width: 260, marginTop: 12 }}><dt>Subtotal</dt><dd className="dm-num" style={{ textAlign: "end" }}>{money(t.subtotal)}</dd><dt>GST ({GST * 100}%)</dt><dd className="dm-num" style={{ textAlign: "end" }}>{money(t.tax)}</dd><dt><b>Total due</b></dt><dd className="dm-num" style={{ textAlign: "end", color: "var(--jp-accent)" }}><b>{money(t.total)}</b></dd></dl>
+      <div className="jp-label" style={{ marginTop: 16 }}>Payment details</div><p>Account: Alex Example · BSB 000-000 · Account 00000000 · Ref {inv.number}</p>{inv.notes && <p className="jp-muted">{inv.notes}</p>}</div>
+  );
+}
+export function Billing() {
+  const { toast } = usePrefs(); const [tab, setTab] = useState("invoices"); const [invs, setInvs] = useState<Invoice[]>(INVOICES); const [sel, setSel] = useState<string>("INV-0042"); const [draft, setDraft] = useState<Invoice | null>(null);
+  const inv = invs.find((i) => i.number === sel) ?? invs[0]; const out = outstanding(invs); const overdue = invs.filter((i) => effectiveStatus(i) === "overdue"); const bill = monthBill(METERS);
+  const errs = draft ? validateInvoice(draft) : []; const setItem = (k: number, p: Partial<Item>) => setDraft(draft && { ...draft, items: draft.items.map((it, j) => (j === k ? { ...it, ...p } : it)) });
+  const setStatus = (n: string, status: Invoice["status"]) => { const old = invs; setInvs(invs.map((i) => (i.number === n ? { ...i, status } : i))); toast({ kind: status === "void" ? "warn" : "ok", title: `${n} marked ${status}`, undo: () => setInvs(old) }); };
+  const stats = useMemo(() => ({ paid: invs.filter((i) => i.status === "paid").length }), [invs]);
+  return (
+    <>
+      <PageHeader title="Billing" crumbs={["Domain", "Billing"]} desc="Invoices that match the LaTeX invoice (totals computed in whole cents, GST on the subtotal), status flow, and tiered usage metering."
+        status={overdue.length ? <Badge s="danger">{overdue.length} overdue</Badge> : <Badge s="ok">no overdue</Badge>} actions={<Btn variant="primary" icon="plus" onClick={() => setDraft({ number: nextNumber(invs), client: "", issued: "2026-11-12", due: "2026-11-26", status: "draft", items: [{ desc: "", qty: 1, unit: 0 }] })}>New invoice</Btn>}
+        tabs={<Tabs value={tab} onChange={setTab} tabs={[{ id: "invoices", label: "Invoices", count: invs.length }, { id: "usage", label: "Usage metering" }]} />} />
+      {tab === "invoices" && <><div className="adm-grid adm-grid--4"><StatTile label="Outstanding" value={money(out)} /><StatTile label="Overdue" value={String(overdue.length)} invert /><StatTile label="Paid" value={String(stats.paid)} /><StatTile label="Drafts" value={String(invs.filter((i) => i.status === "draft").length)} /></div>
+        <div className="dm-split adm-section"><Panel title="Invoices" flush><ul className="adm-list">{invs.map((i) => <li key={i.number} className={`dm-click ${sel === i.number ? "is-sel" : ""}`} role="button" tabIndex={0} onClick={() => setSel(i.number)} onKeyDown={(e) => e.key === "Enter" && setSel(i.number)}><b className="dm-num" style={{ width: 80 }}>{i.number}</b><div className="adm-list__main"><span>{i.client}</span><span className="jp-muted">due {fmtDate(i.due)}</span></div><b className="dm-num">{money(totals(i.items).total)}</b><Badge s={tone(effectiveStatus(i))}>{effectiveStatus(i)}</Badge></li>)}</ul></Panel>
+          <div className="adm-stack"><div className="dm-row"><Menu label="Change status" items={[{ label: "Mark sent", onSelect: () => setStatus(inv.number, "sent") }, { label: "Mark paid", onSelect: () => setStatus(inv.number, "paid") }, "sep", { label: "Void", danger: true, onSelect: () => setStatus(inv.number, "void") }]} /><Btn onClick={() => window.print()}>Print / PDF</Btn></div><InvoicePreview inv={inv} /></div></div></>}
+      {tab === "usage" && <div className="adm-stack"><div className="adm-grid adm-grid--3">{METERS.map((m) => <Panel key={m.id} title={m.name}><div className="adm-stack"><div className="dm-row dm-between"><b className="dm-num">{m.used.toLocaleString()} {m.unit}</b><span className="jp-muted">{m.included.toLocaleString()} included</span></div><ProgressBar value={Math.min(m.used, m.included * 3)} max={m.included * 3} s={m.used > m.included * 2 ? "warn" : undefined} label={`${m.name} usage`} /><b>{money(meterCost(m))}</b><span className="jp-muted">overage this month</span></div></Panel>)}</div>
+        <div className="dm-split"><Panel title="This month"><dl className="dm-kv"><dt>Base plan</dt><dd className="dm-num">{money(49)}</dd>{METERS.map((m) => <><dt key={`${m.id}t`}>{m.name}</dt><dd key={m.id} className="dm-num">{money(meterCost(m))}</dd></>)}<dt><b>Estimated</b></dt><dd className="dm-num"><b>{money(bill)}</b></dd></dl></Panel><Panel title="Cost mix"><div className="dm-row" style={{ justifyContent: "center" }}><Donut size={150} thickness={20} parts={[{ label: "Base", value: 49 }, ...METERS.map((m) => ({ label: m.name, value: meterCost(m) }))]} center={<><b>{money(bill)}</b><span>est.</span></>} /></div></Panel></div></div>}
+      <Modal open={!!draft} onClose={() => setDraft(null)} size="lg" title={`New invoice ${draft?.number ?? ""}`} footer={<><Btn onClick={() => setDraft(null)}>Cancel</Btn><Btn variant="primary" disabled={errs.length > 0} onClick={() => { setInvs([draft!, ...invs]); setSel(draft!.number); setDraft(null); toast({ kind: "ok", title: "Draft saved" }); }}>Save draft</Btn></>}>
+        {draft && <div className="adm-stack"><div className="adm-grid adm-grid--3"><Field label="Client" required>{(id) => <TextInput id={id} value={draft.client} onChange={(v) => setDraft({ ...draft, client: v })} />}</Field><Field label="Issued">{(id) => <TextInput id={id} type="date" value={draft.issued} onChange={(v) => setDraft({ ...draft, issued: v })} />}</Field><Field label="Due">{(id) => <TextInput id={id} type="date" value={draft.due} onChange={(v) => setDraft({ ...draft, due: v })} />}</Field></div>
+          {draft.items.map((it, k) => <div key={k} className="dm-row" style={{ flexWrap: "nowrap" }}><div style={{ flex: 1 }}><TextInput value={it.desc} onChange={(v) => setItem(k, { desc: v })} placeholder="Description" aria-label={`Line ${k + 1} description`} /></div><NumberStepper value={it.qty} onChange={(v) => setItem(k, { qty: v })} min={0} max={9999} /><div style={{ width: 110 }}><TextInput value={String(it.unit)} onChange={(v) => setItem(k, { unit: Number(v) || 0 })} aria-label={`Line ${k + 1} unit price`} prefix="$" /></div><button className="adm-x" aria-label={`Remove line ${k + 1}`} onClick={() => setDraft({ ...draft, items: draft.items.filter((_, j) => j !== k) })}>×</button></div>)}
+          <div className="dm-row dm-between"><Btn sm onClick={() => setDraft({ ...draft, items: [...draft.items, { desc: "", qty: 1, unit: 0 }] })}>+ Add line</Btn><b className="dm-num">Total {money(totals(draft.items).total)} <span className="jp-muted">(incl. GST)</span></b></div>
+          {errs.length > 0 && <Alert s="danger" title="Fix before saving">{errs.join(" · ")}</Alert>}</div>}
+      </Modal>
+    </>
+  );
+}

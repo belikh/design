@@ -1,0 +1,528 @@
+{
+  "_doc": "Machine-readable index of shared components. Agents: look here before writing UI. `when` says the need it answers; `props` lists the ones that matter. A test checks every entry still exists.",
+  "components": [
+    {
+      "name": "DataTable",
+      "file": "DataTable.tsx",
+      "when": "Show, sort, filter, group, page and edit many records; bulk edit; export",
+      "props": [
+        "rows",
+        "cols (editor, validate, agg, cf)",
+        "onCommit",
+        "facet",
+        "bulk",
+        "rangeSelect",
+        "groupBy",
+        "server",
+        "virtual",
+        "urlKey",
+        "exports"
+      ]
+    },
+    {
+      "name": "Editable",
+      "file": "editable.tsx",
+      "when": "Edit one value in place (detail fields, titles, cards)",
+      "props": [
+        "value",
+        "editor",
+        "label",
+        "onSave",
+        "validate",
+        "commit",
+        "display",
+        "disabled"
+      ]
+    },
+    {
+      "name": "FieldEditor",
+      "file": "editable.tsx",
+      "when": "Just the editor control (inside custom panels); prefer Editable",
+      "props": [
+        "spec",
+        "value",
+        "mode",
+        "onCommit",
+        "onCancel"
+      ]
+    },
+    {
+      "name": "BulkEditPanel",
+      "file": "BulkEditPanel.tsx",
+      "when": "Bulk edit outside DataTable (DataTable already includes it)",
+      "props": [
+        "rows",
+        "fields",
+        "commit",
+        "onClose"
+      ]
+    },
+    {
+      "name": "PageHeader",
+      "file": "kit.tsx",
+      "when": "Top of every page: title (can be Editable), description, crumbs, actions",
+      "props": [
+        "title",
+        "desc",
+        "crumbs",
+        "actions",
+        "status"
+      ]
+    },
+    {
+      "name": "Panel",
+      "file": "kit.tsx",
+      "when": "A titled card/section",
+      "props": [
+        "title",
+        "actions",
+        "flush"
+      ]
+    },
+    {
+      "name": "Btn",
+      "file": "kit.tsx",
+      "when": "Any button",
+      "props": [
+        "variant",
+        "sm",
+        "icon",
+        "disabled"
+      ]
+    },
+    {
+      "name": "Badge",
+      "file": "kit.tsx",
+      "when": "Status chip",
+      "props": [
+        "s: ok|warn|danger|info"
+      ]
+    },
+    {
+      "name": "Modal",
+      "file": "kit.tsx",
+      "when": "Blocking dialog with a form or detail",
+      "props": [
+        "open",
+        "onClose",
+        "title",
+        "size"
+      ]
+    },
+    {
+      "name": "Drawer",
+      "file": "kit.tsx",
+      "when": "Side panel for a record or filters",
+      "props": [
+        "open",
+        "onClose",
+        "title"
+      ]
+    },
+    {
+      "name": "ConfirmDelete",
+      "file": "kit.tsx",
+      "when": "Irreversible actions only (reversible ones get an undo toast)",
+      "props": [
+        "open",
+        "onConfirm",
+        "onClose"
+      ]
+    },
+    {
+      "name": "Menu",
+      "file": "kit.tsx",
+      "when": "Overflow and action menus",
+      "props": [
+        "label",
+        "items"
+      ]
+    },
+    {
+      "name": "Tabs",
+      "file": "kit.tsx",
+      "when": "Switch between views of one page",
+      "props": [
+        "tabs",
+        "value",
+        "onChange",
+        "variant"
+      ]
+    },
+    {
+      "name": "EmptyState",
+      "file": "kit.tsx",
+      "when": "No data yet or no results: one primary action",
+      "props": [
+        "spot",
+        "title",
+        "action"
+      ]
+    },
+    {
+      "name": "Skeleton",
+      "file": "kit.tsx",
+      "when": "Loading placeholder (not a spinner)",
+      "props": [
+        "w"
+      ]
+    },
+    {
+      "name": "Alert",
+      "file": "kit.tsx",
+      "when": "Inline notice or error",
+      "props": [
+        "s",
+        "title",
+        "onClose"
+      ]
+    },
+    {
+      "name": "Pagination",
+      "file": "kit.tsx",
+      "when": "Paged lists outside DataTable",
+      "props": [
+        "page",
+        "pages",
+        "onChange"
+      ]
+    },
+    {
+      "name": "Field",
+      "file": "inputs.tsx",
+      "when": "Label + hint + error wrapper for any input",
+      "props": [
+        "label",
+        "hint",
+        "error",
+        "children(id)"
+      ]
+    },
+    {
+      "name": "TextInput",
+      "file": "inputs.tsx",
+      "when": "Single-line text",
+      "props": [
+        "value",
+        "onChange",
+        "placeholder"
+      ]
+    },
+    {
+      "name": "TextArea",
+      "file": "inputs.tsx",
+      "when": "Multi-line text",
+      "props": [
+        "value",
+        "onChange"
+      ]
+    },
+    {
+      "name": "Select",
+      "file": "inputs.tsx",
+      "when": "Pick one from a short list",
+      "props": [
+        "value",
+        "onChange",
+        "options"
+      ]
+    },
+    {
+      "name": "Combobox",
+      "file": "inputs.tsx",
+      "when": "Pick from a long list, or tags",
+      "props": [
+        "options",
+        "value",
+        "onChange"
+      ]
+    },
+    {
+      "name": "Segmented",
+      "file": "inputs.tsx",
+      "when": "Pick one of 2-4 options",
+      "props": [
+        "value",
+        "onChange",
+        "options",
+        "label"
+      ]
+    },
+    {
+      "name": "Switch",
+      "file": "inputs.tsx",
+      "when": "Boolean setting",
+      "props": [
+        "checked",
+        "onChange"
+      ]
+    },
+    {
+      "name": "Checkbox",
+      "file": "inputs.tsx",
+      "when": "Boolean in a list or form",
+      "props": [
+        "checked",
+        "onChange",
+        "label"
+      ]
+    },
+    {
+      "name": "Icon",
+      "file": "Icon.tsx",
+      "when": "Line icons from @belikh/jupiter-graphics",
+      "props": [
+        "name",
+        "size"
+      ]
+    },
+    {
+      "name": "Spot",
+      "file": "Icon.tsx",
+      "when": "Spot illustration for empty and error states",
+      "props": [
+        "name",
+        "size"
+      ]
+    },
+    {
+      "name": "createCollection",
+      "file": "mock.ts",
+      "when": "The mock data source for a page (async, latency, injectable failure)",
+      "props": [
+        "seed",
+        "opts.failWhen"
+      ]
+    },
+    {
+      "name": "useCollection",
+      "file": "mock.ts",
+      "when": "Live rows + loading state + a save that fits DataTable onCommit",
+      "props": [
+        "collection"
+      ]
+    },
+    {
+      "name": "usePrefs",
+      "file": "store.tsx",
+      "when": "Theme, density, language, editCommit, toast (with undo)",
+      "props": []
+    },
+    {
+      "name": "useDraft",
+      "file": "forms.tsx",
+      "when": "Keep form state across reloads, with a restored notice and discard",
+      "props": [
+        "key",
+        "initial"
+      ]
+    },
+    {
+      "name": "useAutosave",
+      "file": "forms.tsx",
+      "when": "Save a form shortly after edits stop (no Save button); returns status, error, retry",
+      "props": [
+        "value",
+        "save",
+        "delay"
+      ]
+    },
+    {
+      "name": "SaveStatusText",
+      "file": "forms.tsx",
+      "when": "The Saving / Saved / error + Retry text for autosave",
+      "props": [
+        "status",
+        "error",
+        "onRetry"
+      ]
+    },
+    {
+      "name": "useUnsavedGuard",
+      "file": "forms.tsx",
+      "when": "Warn before leaving a page with unsaved changes (route links and reload)",
+      "props": [
+        "dirty"
+      ]
+    },
+    {
+      "name": "usePublishSelection",
+      "file": "selection.ts",
+      "when": "Publish checked-row actions so the command palette lists them (DataTable does this already)",
+      "props": [
+        "source",
+        "count",
+        "actions"
+      ]
+    },
+    {
+      "name": "parseDateShortcut",
+      "file": "forms.tsx",
+      "when": "Turn 'tomorrow', '+3d', 'next mon' into an ISO date (date editors already accept these)",
+      "props": [
+        "text",
+        "now"
+      ]
+    },
+    {
+      "name": "usePasteFill",
+      "file": "forms.tsx",
+      "when": "Let any form accept pasted 'Label: value' lines or a tab-separated row",
+      "props": [
+        "ref",
+        "onFilled"
+      ]
+    },
+    {
+      "name": "useFieldErrors",
+      "file": "forms.tsx",
+      "when": "Validate on blur and summarise on submit, with FormSummary",
+      "props": [
+        "values",
+        "rules"
+      ]
+    },
+    {
+      "name": "FormSummary",
+      "file": "forms.tsx",
+      "when": "The error list shown after a failed submit, with jump links",
+      "props": [
+        "items",
+        "onJump"
+      ]
+    },
+    {
+      "name": "SameAsAbove",
+      "file": "forms.tsx",
+      "when": "A 'same as above' checkbox for repeated address-style blocks",
+      "props": [
+        "checked",
+        "onChange"
+      ]
+    },
+    {
+      "name": "Disclosure",
+      "file": "kit.tsx",
+      "when": "Hide advanced fields behind a toggle (progressive disclosure)",
+      "props": [
+        "label",
+        "defaultOpen"
+      ]
+    },
+    {
+      "name": "SyncStatus",
+      "file": "sync.tsx",
+      "when": "Offline, 'N changes pending' and stale-data indicator for a useCollection",
+      "props": [
+        "online",
+        "pending",
+        "stale",
+        "updatedAt",
+        "onRefresh"
+      ]
+    },
+    {
+      "name": "ConflictPrompt",
+      "file": "sync.tsx",
+      "when": "Keep mine / take theirs when a row changed under you (useCollection.conflict)",
+      "props": [
+        "conflict",
+        "field",
+        "onResolve"
+      ]
+    },
+    {
+      "name": "PageSkeleton",
+      "file": "kit.tsx",
+      "when": "Suspense fallback for a page: header, tiles and a table, no layout shift",
+      "props": []
+    },
+    {
+      "name": "pushUndo",
+      "file": "undo.ts",
+      "when": "Register a reversible edit so Ctrl/Cmd+Z and the palette can undo and redo it (Editable and bulk edit already do)",
+      "props": [
+        "label",
+        "undo",
+        "redo"
+      ]
+    },
+    {
+      "name": "Section",
+      "file": "kit.tsx",
+      "when": "A titled block on a page: mono kicker over an h2, then content (the documentation look)",
+      "props": [
+        "title",
+        "kicker",
+        "id"
+      ]
+    },
+    {
+      "name": "Callout",
+      "file": "kit.tsx",
+      "when": "A short info, warn or danger note with a text prefix (the generated .jp-callout markup)",
+      "props": [
+        "variant",
+        "title"
+      ]
+    },
+    {
+      "name": "KeyValue",
+      "file": "kit.tsx",
+      "when": "A mono key / value list for a few facts",
+      "props": [
+        "items"
+      ]
+    },
+    {
+      "name": "SimpleTable",
+      "file": "simpletable.tsx",
+      "when": "A small static sortable table in plain .jp-table markup; use DataTable for editable or large data",
+      "props": [
+        "columns",
+        "rows",
+        "maxHeight"
+      ]
+    },
+    {
+      "name": "StatTile",
+      "file": "Charts.tsx",
+      "when": "A KPI tile: label, big value, delta and a sparkline. Use instead of hand-written stat markup",
+      "props": [
+        "label",
+        "value",
+        "delta",
+        "spark",
+        "sub"
+      ]
+    },
+    {
+      "name": "LineChart",
+      "file": "Charts.tsx",
+      "when": "Time series line or area chart with tooltips and a data-table toggle",
+      "props": [
+        "series",
+        "labels",
+        "area",
+        "smooth",
+        "height"
+      ]
+    },
+    {
+      "name": "BarChart",
+      "file": "Charts.tsx",
+      "when": "Categorical bars (horizontal or vertical)",
+      "props": [
+        "data"
+      ]
+    },
+    {
+      "name": "Donut",
+      "file": "Charts.tsx",
+      "when": "Part-to-whole ring with a centre label",
+      "props": [
+        "data"
+      ]
+    }
+  ]
+}

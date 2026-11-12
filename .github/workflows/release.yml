@@ -1,0 +1,84 @@
+name: release
+# On every push to main: if the token version is new, publish an immutable vX.Y.Z release whose assets have
+# UNVERSIONED names, so consumers can target ".../releases/latest/download/<file>" ("current").
+# Optionally also deploy the app (design-system docs + admin template, built from apps/admin) at / plus /current/ and /vX.Y.Z/ to Cloudflare Pages (set the repo variable CLOUDFLARE_PAGES_PROJECT
+# and secrets CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID).
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: write
+  packages: write
+concurrency:
+  group: release
+  cancel-in-progress: false
+env:
+  GH_TOKEN: ${{ github.token }}
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run build
+      - name: Decide version
+        id: v
+        run: |
+          version="$(node -p "require('./packages/tokens/package.json').version")"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          if gh release view "v$version" >/dev/null 2>&1; then echo "exists=true" >> "$GITHUB_OUTPUT"; else echo "exists=false" >> "$GITHUB_OUTPUT"; fi
+      - name: Breaking-change gate (removed --jp-* variables or .jp-* classes need a major bump)
+        if: steps.v.outputs.exists == 'false'
+        run: |
+          if gh release download --pattern names.json --dir /tmp/prev 2>/dev/null; then
+            ( cd packages/tokens && node scripts/names.ts /tmp/prev/names.json )
+          else
+            echo "no previous release; skipping"
+          fi
+      - name: Build release assets
+        if: steps.v.outputs.exists == 'false'
+        run: scripts/release-assets.sh
+      - name: Publish release
+        if: steps.v.outputs.exists == 'false'
+        run: |
+          v="${{ steps.v.outputs.version }}"
+          gh release create "v$v" release/* --target "$GITHUB_SHA" --title "Jupiter design system v$v" \
+            --notes "Generated from jupiter.tokens.json at $GITHUB_SHA. Use unversioned URLs under .../releases/latest/download/ to track current." --latest
+      - name: Publish the npm packages to GitHub Packages (projects depend on these; skips versions already published)
+        run: node scripts/publish-packages.mjs --registry https://npm.pkg.github.com
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Assemble Pages site (current + every released version)
+        if: steps.v.outputs.exists == 'false' && vars.CLOUDFLARE_PAGES_PROJECT != ''
+        run: |
+          v="${{ steps.v.outputs.version }}"
+          mkdir -p site/current "site/v$v"
+          # the merged app (design-system docs + admin template, one SPA) at the site root; real files win over the fallback below
+          cp -R apps/admin/dist/. site/
+          printf '/* /index.html 200\n' > site/_redirects
+          cp release/* site/current/; cp release/* "site/v$v/"
+          for tag in $(gh release list --limit 100 --json tagName -q '.[].tagName'); do
+            [ "$tag" = "v$v" ] && continue
+            mkdir -p "site/$tag" && gh release download "$tag" --dir "site/$tag" --pattern '*.css' --pattern '*.html' --pattern '*.json' --pattern '*.sh' --pattern '*.sty' --pattern '*.Xresources' || true
+          done
+          cat > site/_headers <<'HDR'
+          /*
+            Access-Control-Allow-Origin: *
+          /current/*
+            Cache-Control: public, max-age=300
+          /v*
+            Cache-Control: public, max-age=31536000, immutable
+          HDR
+      - name: Deploy to Cloudflare Pages
+        if: steps.v.outputs.exists == 'false' && vars.CLOUDFLARE_PAGES_PROJECT != ''
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy site --project-name=${{ vars.CLOUDFLARE_PAGES_PROJECT }} --branch=main

@@ -1,0 +1,44 @@
+{
+  "name": "@belikh/jupiter-admin",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "typecheck": "tsc -b --noEmit",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "check:palette": "node scripts-palette.mjs",
+    "lint:style": "node scripts/lint-style.mjs",
+    "new:page": "node scripts/new-page.mjs",
+    "visual": "node scripts/visual.mjs",
+    "e2e": "node scripts/e2e.mjs",
+    "e2e:media": "node scripts/e2e-media.mjs"
+  },
+  "dependencies": {
+    "@belikh/jupiter-esphome": "*",
+    "@belikh/jupiter-graphics": "*",
+    "@belikh/jupiter-tokens": "*",
+    "@belikh/jupiter-ui": "*",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "react-router-dom": "7.18.4"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.10",
+    "@types/node": "24.13.3",
+    "@types/react": "19.2.17",
+    "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "6.0.4",
+    "axe-core": "^4.10.2",
+    "jsdom": "^31.0.0",
+    "playwright-core": "^1.55.0",
+    "typescript": "7.0.2",
+    "vite": "8.1.5",
+    "vitest": "^5.1.0"
+  }
+}

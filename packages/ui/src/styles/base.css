@@ -1,0 +1,28 @@
+/* Base: categorical palette, layout variables and small utilities */
+/* Admin template styles. Everything reads the --jp-* tokens; nothing is hard-coded except layout metrics. */
+:root {
+  /* Categorical series colours. Checked for colour-vision safety (npm run check:palette): the first six stay
+     distinguishable under protan/deutan/tritan simulation (min dE >= 14) and meet 3:1 on the panel background in both
+     schemes. Red and green are reserved for status, so charts never imply "bad"/"good" by accident. 7 and 8 are neutral
+     fallbacks: past six series, add labels or patterns. */
+  --adm-c1: var(--jp-accent); --adm-c2: var(--jp-warn); --adm-c3: var(--jp-info);
+  --adm-c4: color-mix(in oklab, var(--jp-warn) 65%, black); --adm-c5: color-mix(in oklab, var(--jp-info) 65%, black); --adm-c6: color-mix(in oklab, var(--jp-accent) 65%, white);
+  --adm-c7: var(--jp-text-muted); --adm-c8: color-mix(in oklab, var(--jp-text-muted) 55%, var(--jp-accent));
+  --adm-side: var(--jp-size-sidebar); --adm-top: var(--jp-size-topbar); --adm-pad: var(--jp-space-5);
+}
+[data-density="compact"] { --adm-cellpy: 4px; --adm-pad: var(--jp-space-4); }
+:root { --adm-cellpy: 10px; }
+html, body, #root { height: 100%; }
+.adm-row { display: flex; align-items: center; gap: var(--jp-space-2); flex-wrap: wrap; }
+.adm-spacer { flex: 1; }
+.adm-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.adm-x { background: none; border: 0; color: var(--jp-text-muted); cursor: pointer; padding: 2px 6px; border-radius: var(--jp-radius-sm); font: inherit; line-height: 1; }
+.adm-x:hover:not(:disabled) { color: var(--jp-text); background: var(--jp-surface); } .adm-x:disabled { opacity: .3; cursor: default; }
+.adm-link { background: none; border: 0; color: var(--jp-accent); cursor: pointer; font: inherit; text-decoration: underline; text-underline-offset: 2px; padding: 0; }
+.adm-pre { margin: 0; padding: var(--jp-space-3) var(--jp-space-4); overflow: auto; font-size: var(--jp-fs-xs); }
+.adm-danger { background: var(--jp-danger) !important; border-color: var(--jp-danger) !important; color: var(--jp-surface-raised) !important; }
+.adm-rule { color: var(--jp-border); display: block; height: 22px; width: 100%; }
+.adm-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--jp-text-muted); flex: none; }
+.adm-dot--ok { background: var(--jp-ok); } .adm-dot--warn { background: var(--jp-warn); } .adm-dot--danger { background: var(--jp-danger); } .adm-dot--info { background: var(--jp-info); }
+.adm-kbd { font-family: var(--jp-font-mono); font-size: var(--jp-fs-xs); padding: 1px 5px; border: 1px solid var(--jp-border); border-bottom-width: 2px; border-radius: var(--jp-radius-sm); background: var(--jp-surface); color: var(--jp-text-muted); }
+

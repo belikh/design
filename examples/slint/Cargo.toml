@@ -1,0 +1,12 @@
+[package]
+name = "jupiter-slint-demo"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+image = { version = "0.25.10", default-features = false, features = ["png"] }
+slint = "1.18"
+
+[build-dependencies]
+slint-build = "1.18"

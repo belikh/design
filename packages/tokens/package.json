@@ -1,0 +1,56 @@
+{
+  "name": "@belikh/jupiter-tokens",
+  "version": "1.1.0",
+  "description": "Jupiter design tokens: one JSON source, generated CSS, email, terminal, kiosk and mobile outputs.",
+  "type": "module",
+  "license": "UNLICENSED",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "main": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "default": "./dist/src/index.js"
+    },
+    "./css": "./dist/jupiter.css",
+    "./jupiter.css": "./dist/jupiter.css",
+    "./kiosk.css": "./dist/jupiter-kiosk.css",
+    "./email.html": "./dist/jupiter-email.html",
+    "./terminal.sh": "./dist/jupiter-terminal.sh",
+    "./Xresources": "./dist/jupiter.Xresources",
+    "./mobile.json": "./dist/jupiter.mobile.json",
+    "./tokens.sty": "./dist/jupiter-tokens.sty",
+    "./tokens.json": "./jupiter.tokens.json",
+    "./package.json": "./package.json",
+    "./tokens.css": "./dist/jupiter-tokens.css",
+    "./components.css": "./dist/jupiter-components.css",
+    "./fonts.css": "./dist/jupiter-fonts.css",
+    "./tailwind.css": "./dist/jupiter-tailwind.css",
+    "./theme.go": "./dist/jupiter_theme.go",
+    "./gtk-widgets.css": "./dist/jupiter-gtk-widgets.css",
+    "./esphome.yaml": "./dist/jupiter-esphome.yaml"
+  },
+  "files": [
+    "dist",
+    "jupiter.tokens.json",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "rm -rf dist && tsc -p . && node scripts/validate.ts && node scripts/build-outputs.ts && node scripts/names.ts",
+    "typecheck": "tsc -p . --noEmit",
+    "prepare": "npm run build",
+    "validate": "node scripts/validate.ts",
+    "names": "node scripts/names.ts"
+  },
+  "devDependencies": {
+    "@types/node": "24.13.3",
+    "typescript": "7.0.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/belikh/design.git",
+    "directory": "packages/tokens"
+  }
+}

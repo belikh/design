@@ -1,0 +1,33 @@
+\documentclass{jupiter-report}
+\title{Quarterly infrastructure review}
+\subtitle{Capacity, reliability and the road ahead}
+\author{Alex Example}
+\reportdate{12 November 2026}
+\reportversion{v0.3}
+\reportstatus{Draft}
+\begin{document}
+\maketitle
+\tableofcontents
+\clearpage
+\section{Summary}
+Reliability held steady this quarter. Two incidents affected the media archive and both were resolved inside the agreed window.
+\begin{jpcallout}[ok]{Outcome}All services met their availability targets.\end{jpcallout}
+\section{Findings}
+\subsection{Capacity}
+Storage growth is linear at about 40 GB per month.
+\begin{table}[h]\centering
+\begin{tabular}{@{}lrr@{}}\toprule
+Service & Uptime & Incidents\\\midrule
+API & 99.98\% & 1\\
+Media archive & 99.71\% & 2\\\bottomrule
+\end{tabular}
+\caption{Availability by service.}
+\end{table}
+\subsection{Risks}
+\begin{jpcallout}[warn]{Risk}The single iSCSI target is a single point of failure.\end{jpcallout}
+\begin{jpcode}
+zpool status -x
+\end{jpcode}
+\section{Next steps}
+Add a second target and automate the failover test.
+\end{document}

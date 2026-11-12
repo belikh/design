@@ -1,0 +1,21 @@
+# P3 status: p3b (builders, data, operations)
+
+Code: `apps/admin/src/p2/p3b/`. All data is in-memory sample data; nothing talks to a real system.
+
+| ID | Route | Status | Note |
+|---|---|---|---|
+| A104 | `/p3/workflow-builder` | Done | SVG canvas: drag steps, drag from a port to connect, arrow keys move, Delete removes (undo). Inspector connect, validation (loops, missing branches, unreachable) and dry run. No pan/zoom. |
+| A110 | `/p3/notebook` | Done | Text (markdown subset), query and chart cells; reorder, delete with undo, run all. Queries use the shared SQL subset (SELECT only, no joins). |
+| A112 | `/p3/webhook-log` | Done | DataTable log with request/response drawer, single and bulk replay (replays fail against an endpoint marked unhealthy). Uses `useCollection`. |
+| A114 | `/p3/database-browser` | Done | Tables, structure + DDL, ER diagram, FK links, in-place edit with type/FK/unique validation and undo. No insert or delete of rows. |
+| A115 | `/p3/object-storage` | Done | Buckets, prefix navigation, search, upload (simulated), delete with undo, storage class edit, object drawer. No real file bytes or rename/move. |
+| A116 | `/p3/network-flows` | Done | Sankey of source to destination by bytes, protocol/action/volume filters, focus a node, flow table. Static snapshot: no time axis or live capture. |
+| A117 | `/p3/remote-shell` | Done | Terminal over a `ShellTransport` (connect/send/onData/onClose/close). Simulated shell on three fake hosts (cd ls cat grep head tail wc echo pwd env export history clear help uname ps df uptime, quoting, `$VAR`/`$?`, pipelines, exit codes, a small virtual filesystem), Tab completion, Up/Down history, Ctrl+C/L/U/D. WebSocket transport to a URL the user types (never opens a socket until Connect; credentials in the URL refused; nothing stored). Recordings are asciicast v2 (`.cast`): download, import, replay with speed (1-8x) and scrubbing, size/time summary. Limits: the simulated shell has no Left/Right cursor editing, redirection or globbing; the terminal emulator handles text, CR/LF/BS, erase and cursor-move escapes but not colour, alternate screen or resize; the WebSocket protocol is raw text frames with no resize or auth message (see page and `lib/transport.ts`); recordings live in memory for the tab. |
+| A118 | `/p3/firmware-rollout` | Done | Four rings, simulated batches, per-ring failure limit (editable) that auto-halts, pause/resume/retry/roll back, bad-build simulation. |
+| A119 | `/p3/image-annotation` | Done | Open an image from disk, drop it on the canvas or paste it (object URL, never uploaded) plus the sample image. Boxes, points, polygons and polylines drawn with the pointer or added with buttons; vertex editing by drag, keyboard (Enter on a shape, arrows, Insert, Delete, Tab) and a numeric vertex list; double-click an edge to add a vertex. Class list (add, remove unused), in-place edit of class and note, undo/redo through `pushUndo` (a drag or run of arrow keys is one entry), Tab between shapes, arrow nudging (Shift 1 px, Ctrl 20 px), Delete. Export COCO-style JSON and CSV, import both (replaces annotations, undoable). Zoom (buttons, slider, Ctrl+wheel, +/-/0 keys) and pan (Pan tool, drag when zoomed, Space-drag, arrow keys on the canvas). Limits: drawing a NEW shape needs the pointer (the Add buttons and vertex editing are the keyboard route); no rotation, no multi-select, one image at a time (loading an image clears annotations, Undo restores); polylines/points use COCO `attributes`/`keypoints`, so strict COCO consumers see them as unlabelled geometry or ignore them. |
+
+Tests: `apps/admin/src/p2/p3b/p3b.test.tsx` (pages) and `apps/admin/src/p2/p3b/lib/*.test.ts` (tokenizer, vfs, commands, terminal emulator, asciicast, transports, geometry, COCO/CSV).
+
+Layout of the two finished entries: `lib/tokenize.ts`, `vfs.ts`, `shell.ts`, `simshell.ts`, `term.ts`, `asciicast.ts`, `transport.ts`, `keys.ts`, `sessions.ts` (A117); `lib/geometry.ts`, `annotate.ts` (A119); UI in `RemoteShell.tsx`, `ShellTerminal.tsx`, `ShellPlayer.tsx`, `ImageAnnotator.tsx`, `AnnotCanvas.tsx`.
+
+Verified in a real Chromium against the dev server (pointer drawing, vertex drag, upload/drop/paste, Ctrl+wheel zoom, pan, downloads, and a live WebSocket against a local echo bridge); keyboard-only drawing of a brand-new shape is not covered, see the A119 limit.

@@ -1,0 +1,17 @@
+[package]
+name = "jupiter-theme"
+version = "1.1.0"
+edition = "2021"
+description = "Jupiter design tokens for Rust: palettes, type, spacing and adapters for ratatui, egui and iced."
+license = "LicenseRef-Proprietary"
+publish = false
+
+[dependencies]
+egui = { version = "0.37.0", default-features = false, optional = true }
+iced_core = { version = "0.14", optional = true }
+ratatui = { version = "0.30.2", default-features = false, optional = true }
+
+[features]
+ratatui = ["dep:ratatui"]
+egui = ["dep:egui"]
+iced = ["dep:iced_core"]

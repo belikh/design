@@ -1,0 +1,58 @@
+// Pure network helpers: IPv4/IPv6/CIDR/MAC/port/hostname validation, subnet maths, VLAN rules, and rule-set analysis
+// (firewall shadowing, port-forward conflicts, DNS record validation).
+
+/* ---------- IPv4 / IPv6 ---------- */
+export const ipv4ToInt = (s: string): number | null => { const m = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/.exec(s.trim()); if (!m) return null; const o = m.slice(1).map(Number); if (o.some((x) => x > 255 || String(x) !== m[1 + o.indexOf(x)].replace(/^0+(?=\d)/, "") && false)) return null; if (m.slice(1).some((x) => x.length > 1 && x.startsWith("0"))) return null; return ((o[0] << 24) | (o[1] << 16) | (o[2] << 8) | o[3]) >>> 0; };
+export const intToIpv4 = (n: number) => [n >>> 24, (n >>> 16) & 255, (n >>> 8) & 255, n & 255].join(".");
+export function ipv6Valid(s: string): boolean { const t = s.trim(); if (!/^[0-9a-fA-F:.]+$/.test(t) || (t.match(/::/g) ?? []).length > 1 || /:::/.test(t)) return false; let parts = t.split(":"); if (t.includes(".")) { const last = parts.pop()!; if (ipv4ToInt(last) === null) return false; parts.push("0", "0"); } if (t.includes("::")) { const n = parts.filter(Boolean).length; return n <= 7 && parts.every((p) => p === "" || /^[0-9a-fA-F]{1,4}$/.test(p)); } return parts.length === 8 && parts.every((p) => /^[0-9a-fA-F]{1,4}$/.test(p)); }
+export type IpKind = "private" | "loopback" | "link-local" | "cgnat" | "multicast" | "public" | "reserved";
+export function classifyIpv4(n: number): IpKind { const a = n >>> 24, b = (n >>> 16) & 255; if (a === 127) return "loopback"; if (a === 10 || (a === 172 && b >= 16 && b <= 31) || (a === 192 && b === 168)) return "private"; if (a === 169 && b === 254) return "link-local"; if (a === 100 && b >= 64 && b <= 127) return "cgnat"; if (a >= 224 && a <= 239) return "multicast"; if (a === 0 || a >= 240) return "reserved"; return "public"; }
+
+/* ---------- CIDR ---------- */
+export type Cidr = { ip: number; prefix: number; network: number; broadcast: number; mask: number; wildcard: number; first: number; last: number; hosts: number; normalised: string; hostBitsSet: boolean };
+export function parseCidr(s: string): Cidr | { error: string } {
+  const m = /^\s*([\d.]+)\s*\/\s*(\d{1,2})\s*$/.exec(s); if (!m) return { error: "Use the form 10.0.0.0/24" }; const ip = ipv4ToInt(m[1]); if (ip === null) return { error: "Not a valid IPv4 address" }; const prefix = Number(m[2]); if (prefix > 32) return { error: "Prefix must be 0–32" };
+  const mask = prefix === 0 ? 0 : (0xffffffff << (32 - prefix)) >>> 0; const network = (ip & mask) >>> 0; const broadcast = (network | (~mask >>> 0)) >>> 0; const hosts = prefix >= 31 ? (prefix === 32 ? 1 : 2) : 2 ** (32 - prefix) - 2;
+  return { ip, prefix, network, broadcast, mask, wildcard: (~mask) >>> 0, first: prefix >= 31 ? network : network + 1, last: prefix >= 31 ? broadcast : broadcast - 1, hosts, normalised: `${intToIpv4(network)}/${prefix}`, hostBitsSet: ip !== network };
+}
+export const isCidr = (r: Cidr | { error: string }): r is Cidr => !("error" in r);
+export const cidrContains = (c: Cidr, ip: number) => ip >= c.network && ip <= c.broadcast;
+export function splitSubnet(c: Cidr, newPrefix: number, limit = 64): string[] { if (newPrefix <= c.prefix || newPrefix > 30) return []; const n = 2 ** (newPrefix - c.prefix); const size = 2 ** (32 - newPrefix); return Array.from({ length: Math.min(n, limit) }, (_, i) => `${intToIpv4((c.network + i * size) >>> 0)}/${newPrefix}`); }
+/** Smallest prefix that fits N hosts. */
+export const prefixForHosts = (hosts: number) => { for (let p = 30; p >= 0; p--) if (2 ** (32 - p) - 2 >= hosts) return p; return 0; };
+/** VLSM: allocate subnets for host counts (largest first) inside a parent block. */
+export function vlsm(parent: Cidr, needs: { name: string; hosts: number }[]): { name: string; hosts: number; cidr: string; usable: number }[] | { error: string } {
+  let cursor = parent.network; const out: { name: string; hosts: number; cidr: string; usable: number }[] = [];
+  for (const n of [...needs].sort((a, b) => b.hosts - a.hosts)) { const p = prefixForHosts(n.hosts); const size = 2 ** (32 - p); cursor = Math.ceil(cursor / size) * size; if (cursor + size - 1 > parent.broadcast) return { error: `${n.name} (${n.hosts} hosts) does not fit in ${parent.normalised}` }; out.push({ name: n.name, hosts: n.hosts, cidr: `${intToIpv4(cursor >>> 0)}/${p}`, usable: size - 2 }); cursor += size; }
+  return out;
+}
+
+/* ---------- MAC / ports / hostname / VLAN ---------- */
+export function normaliseMac(s: string): { ok: boolean; mac: string; kind?: string } { const h = s.replace(/[^0-9a-fA-F]/g, "").toLowerCase(); if (h.length !== 12 || /[^0-9a-f]/.test(s.replace(/[0-9a-fA-F:.\-\s]/g, "x") === s ? "" : s.replace(/[0-9a-fA-F:.\-\s]/g, ""))) return { ok: false, mac: s }; const mac = (h.match(/.{2}/g) as string[]).join(":"); const first = parseInt(h.slice(0, 2), 16); return { ok: true, mac, kind: `${first & 1 ? "multicast" : "unicast"}, ${first & 2 ? "locally administered" : "universally administered"}` }; }
+export function parsePorts(s: string, max = 100): { ranges: [number, number][]; count: number; error?: string } {
+  const ranges: [number, number][] = []; for (const part of s.split(",").map((x) => x.trim()).filter(Boolean)) { const m = /^(\d{1,5})(?:\s*-\s*(\d{1,5}))?$/.exec(part); if (!m) return { ranges: [], count: 0, error: `“${part}” is not a port or range` }; const a = Number(m[1]), b = m[2] ? Number(m[2]) : a; if (a < 1 || b > 65535) return { ranges: [], count: 0, error: `Ports must be 1–65535 (${part})` }; if (b < a) return { ranges: [], count: 0, error: `Range ${part} is backwards` }; ranges.push([a, b]); }
+  if (!ranges.length) return { ranges, count: 0, error: "Enter a port, a list or a range" }; const sorted = [...ranges].sort((x, y) => x[0] - y[0]); const merged: [number, number][] = []; for (const r of sorted) { const l = merged[merged.length - 1]; if (l && r[0] <= l[1] + 1) l[1] = Math.max(l[1], r[1]); else merged.push([...r]); }
+  return { ranges: merged, count: merged.reduce((a, r) => a + (r[1] - r[0] + 1), 0), error: merged.reduce((a, r) => a + (r[1] - r[0] + 1), 0) > max ? `That is more than ${max} ports` : undefined };
+}
+export const formatPorts = (r: [number, number][]) => r.map(([a, b]) => (a === b ? String(a) : `${a}-${b}`)).join(", ");
+export const portsOverlap = (a: [number, number][], b: [number, number][]) => a.some(([a0, a1]) => b.some(([b0, b1]) => a0 <= b1 && b0 <= a1));
+export function hostnameIssue(h: string): string | null { const s = h.trim(); if (!s) return "Required"; if (s.length > 253) return "Longer than 253 characters"; if (/^\d+(\.\d+){3}$/.test(s)) return "That is an IP address, not a hostname"; const labels = s.replace(/\.$/, "").split("."); for (const l of labels) { if (!l) return "Empty label (two dots in a row)"; if (l.length > 63) return `“${l.slice(0, 12)}…” is longer than 63 characters`; if (!/^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?$/.test(l)) return `“${l}” may only contain letters, digits and hyphens, and cannot start or end with a hyphen`; } return null; }
+export function vlanIssue(v: number | string): { level: "error" | "warn" | "ok"; msg: string } { const n = Number(v); if (!Number.isInteger(n)) return { level: "error", msg: "VLAN ID must be a whole number" }; if (n < 1 || n > 4094) return { level: "error", msg: "VLAN ID must be 1–4094 (0 and 4095 are reserved)" }; if (n === 1) return { level: "warn", msg: "VLAN 1 is the default/native VLAN; avoid it for user traffic" }; if (n >= 1002 && n <= 1005) return { level: "warn", msg: "1002–1005 are reserved for FDDI/Token Ring on Cisco gear" }; return { level: "ok", msg: "Valid" }; }
+
+/* ---------- firewall rules ---------- */
+export type FwRule = { id: string; action: "allow" | "deny"; proto: "tcp" | "udp" | "icmp" | "any"; src: string; dst: string; ports: string; comment: string };
+export function fwRuleIssues(r: FwRule): string[] { const out: string[] = []; for (const [k, v] of [["Source", r.src], ["Destination", r.dst]] as const) { if (v === "any") continue; const c = parseCidr(v.includes("/") ? v : `${v}/32`); if (!isCidr(c)) out.push(`${k}: ${c.error}`); } if (r.proto === "tcp" || r.proto === "udp") { const p = r.ports.trim() === "any" || r.ports.trim() === "" ? null : parsePorts(r.ports); if (p?.error) out.push(`Ports: ${p.error}`); } return out; }
+const covers = (a: string, b: string) => { if (a === "any") return true; if (b === "any") return false; const ca = parseCidr(a.includes("/") ? a : `${a}/32`), cb = parseCidr(b.includes("/") ? b : `${b}/32`); return isCidr(ca) && isCidr(cb) && ca.network <= cb.network && ca.broadcast >= cb.broadcast; };
+const portsCover = (a: string, b: string) => { const A = a.trim() === "" || a.trim() === "any" ? null : parsePorts(a).ranges, B = b.trim() === "" || b.trim() === "any" ? null : parsePorts(b).ranges; if (!A) return true; if (!B) return false; return B.every(([b0, b1]) => A.some(([a0, a1]) => a0 <= b0 && a1 >= b1)); };
+/** A rule is shadowed if an earlier rule matches at least everything it matches. Returns id -> shadowing rule id. */
+export function shadowed(rules: FwRule[]): Record<string, string> { const out: Record<string, string> = {}; rules.forEach((r, i) => { for (let j = 0; j < i; j++) { const e = rules[j]; if ((e.proto === "any" || e.proto === r.proto) && covers(e.src, r.src) && covers(e.dst, r.dst) && portsCover(e.ports, r.ports)) { out[r.id] = e.id; break; } } }); return out; }
+
+/* ---------- port forwards, DNS ---------- */
+export type PfRule = { id: string; proto: "tcp" | "udp"; extPort: string; ip: string; intPort: string; note: string };
+export function pfIssues(rules: PfRule[]): Record<string, string[]> { const out: Record<string, string[]> = {}; rules.forEach((r, i) => { const m: string[] = []; const e = parsePorts(r.extPort); if (e.error) m.push(`External port: ${e.error}`); const ip = ipv4ToInt(r.ip); if (ip === null) m.push("Internal IP is not valid"); else if (classifyIpv4(ip) !== "private") m.push("Internal IP should be a private address"); const ip2 = parsePorts(r.intPort || r.extPort); if (r.intPort && ip2.error) m.push(`Internal port: ${ip2.error}`); if (!e.error && !ip2.error && e.count !== ip2.count && r.intPort) m.push("Internal and external ranges must be the same size"); if (!e.error) rules.slice(0, i).forEach((o) => { if (o.proto === r.proto && !parsePorts(o.extPort).error && portsOverlap(e.ranges, parsePorts(o.extPort).ranges)) m.push(`External port overlaps rule ${o.id}`); }); if (m.length) out[r.id] = m; }); return out; }
+export type DnsType = "A" | "AAAA" | "CNAME" | "TXT" | "MX" | "SRV";
+export function dnsIssue(type: DnsType, name: string, value: string): string | null {
+  const nm = name === "@" ? null : hostnameIssue(name.replace(/^\*\./, "")); if (nm) return `Name: ${nm}`; const v = value.trim(); if (!v) return "Value is required";
+  if (type === "A") return ipv4ToInt(v) === null ? "A records need an IPv4 address" : null; if (type === "AAAA") return ipv6Valid(v) ? null : "AAAA records need an IPv6 address"; if (type === "CNAME") return name === "@" ? "CNAME cannot be set at the zone apex" : hostnameIssue(v) ? `Target: ${hostnameIssue(v)}` : null;
+  if (type === "MX") { const m = /^(\d+)\s+(\S+)$/.exec(v); return m ? (hostnameIssue(m[2]) ? `Mail host: ${hostnameIssue(m[2])}` : null) : "MX format: <priority> <mailhost>, e.g. 10 mail.example.com"; } if (type === "SRV") return /^\d+\s+\d+\s+\d+\s+\S+$/.test(v) ? null : "SRV format: <priority> <weight> <port> <target>"; if (type === "TXT") return v.length > 255 ? "TXT strings over 255 characters must be split" : null; return null;
+}

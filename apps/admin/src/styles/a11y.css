@@ -1,0 +1,15 @@
+/* ---------- high contrast, RTL, print ---------- */
+[data-contrast="high"] .jp-panel, [data-contrast="high"] .adm-card, [data-contrast="high"] .jp-input, [data-contrast="high"] .jp-select, [data-contrast="high"] .jp-btn { border-width: 2px; } [data-contrast="high"] :focus-visible { outline: 3px solid var(--jp-accent); outline-offset: 2px; } [data-contrast="high"] a { text-decoration: underline; } [data-contrast="high"] .adm-gl { stroke: var(--jp-text-muted); }
+/* Layout mirrors through logical properties (margin-inline, inset-inline, text-align: start); only direction-sensitive visuals need an override. */ [dir="rtl"] .adm-chart svg, [dir="rtl"] .adm-heat, [dir="rtl"] .adm-uptime { direction: ltr; }
+@media print {
+  .adm-side, .adm-top, .adm-toasts, .adm-savebar, .adm-banner, .adm-ctools, .adm-bulk, .adm-dt__bar, .adm-dt__foot, .jp-btn, .adm-scrim { display: none !important; }
+  .adm-shell { display: block; height: auto; } .adm-main { overflow: visible; padding: 0; } html, body, #root { height: auto; background: #fff; }
+  .jp-panel, .adm-card, .adm-stat, .adm-chart, tr { break-inside: avoid; } .jp-panel { border-color: #999; box-shadow: none; } a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; }
+}
+.adm-help { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: var(--jp-space-6); align-items: start; } @media (max-width: 800px) { .adm-help { grid-template-columns: minmax(0, 1fr); } .adm-anchor { position: static; flex-direction: row; flex-wrap: wrap; border: 0; } }
+@media (max-width: 640px) {
+  .adm-table--cards thead { display: none; } .adm-table--cards, .adm-table--cards tbody, .adm-table--cards tr, .adm-table--cards td { display: block; width: 100%; } .adm-table--cards tr { border: 1px solid var(--jp-border); border-radius: var(--jp-radius-md); margin: 8px 0; padding: 4px 0; } .adm-table--cards td { border: 0 !important; display: flex !important; justify-content: space-between; gap: 12px; text-align: end !important; position: static !important; padding: 6px 12px; } .adm-table--cards td::before { content: attr(data-label); color: var(--jp-text-muted); font: 13px var(--jp-font-mono); text-transform: uppercase; text-align: start; }
+}
+
+.adm-top .adm-menu .jp-btn { white-space: nowrap; } .adm-top { min-width: 0; } @media (max-width: 1500px) { .adm-top .adm-seg button { padding: 0 8px; } }
+

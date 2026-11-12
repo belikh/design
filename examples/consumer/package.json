@@ -1,0 +1,25 @@
+{
+  "name": "@belikh/jupiter-example-consumer",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "The smallest possible project built on the design system. It depends on @belikh/jupiter-tokens and @belikh/jupiter-ui and contains NO design decisions of its own. scripts/consumer-check.mjs changes one token and proves this project's build changes with it.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "@belikh/jupiter-tokens": "*",
+    "@belikh/jupiter-ui": "*",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "react-router-dom": "7.18.4"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "6.0.4",
+    "typescript": "7.0.2",
+    "vite": "8.1.5",
+    "@types/react": "19.2.17",
+    "@types/react-dom": "19.2.3"
+  }
+}

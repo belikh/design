@@ -1,0 +1,20 @@
+\documentclass{jupiter-invoice}
+\invoicefrom{Alex Example \\ 12 Example Street \\ Brisbane QLD 4000 \\ ABN 00 000 000 000}
+\invoiceto{Example Pty Ltd \\ 1 Sample Road \\ Sydney NSW 2000}
+\invoicenumber{INV-0001}
+\invoicedate{12 Nov 2026}
+\invoiceduedate{26 Nov 2026}
+\invoicestatus{Unpaid}
+\taxrate{10}
+\paymentdetails{Account name: Alex Example \\ BSB 000-000 \\ Account 00000000 \\ Reference: INV-0001}
+\invoicenotes{Payment is due within 14 days. Thank you for your business.}
+\begin{document}
+\maketitle
+\begin{invoiceitems}
+  \invoiceitem{Network design and configuration}{12}{95}
+  \invoiceitem{On-site installation (access points)}{3}{140}
+  \invoiceitem{Cabling and materials}{1}{1250.50}
+\end{invoiceitems}
+\invoicetotals
+\invoicefooter
+\end{document}

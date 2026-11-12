@@ -1,0 +1,138 @@
+%% jupiter.sty: shared base for every Jupiter LaTeX class.
+%% Colours come from jupiter-tokens.sty (generated from jupiter.tokens.json).
+%% Engine: XeLaTeX or LuaLaTeX.
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{jupiter}[2026/01/01 Jupiter design system base]
+
+\DeclareOption*{\PassOptionsToPackage{\CurrentOption}{jupiter-tokens}}
+\ProcessOptions\relax
+
+\RequirePackage{jupiter-tokens}
+\RequirePackage{fontspec}
+\RequirePackage[english]{babel}
+\RequirePackage{microtype}
+\RequirePackage{enumitem}
+\RequirePackage{etoolbox}
+\RequirePackage{ragged2e}
+\RequirePackage[most]{tcolorbox}
+\RequirePackage{hyperref}
+
+%% Lower-case status aliases (jpok, jpokBg, jpwarn, ...) so \jpcallout[ok] can build colour names.
+\newcommand{\jp@aliases}{%
+  \colorlet{jpok}{jpOk}\colorlet{jpokBg}{jpOkBg}%
+  \colorlet{jpwarn}{jpWarn}\colorlet{jpwarnBg}{jpWarnBg}%
+  \colorlet{jpdanger}{jpDanger}\colorlet{jpdangerBg}{jpDangerBg}%
+  \colorlet{jpinfo}{jpInfo}\colorlet{jpinfoBg}{jpInfoBg}}
+\let\jp@origscheme\jpscheme
+\renewcommand{\jpscheme}[1]{\jp@origscheme{#1}\jp@aliases}
+\jp@aliases
+
+%% ---------- Fonts -------------------------------------------------------
+%% Resolution order for each role:
+%%   1. the bundled files in \jpfontdir (pass -d "\def\jpfontdir{/path/to/fonts/}" or set it in the doc)
+%%   2. the family installed on the system
+%%   3. a free fallback, so a clean checkout still compiles
+\providecommand{\jpfontdir}{}
+\defaultfontfeatures{Ligatures=TeX}
+
+\IfFileExists{\jpfontdir sgi-text-400.otf}{%
+  \newfontfamily\jpsans{sgi-text-400.otf}[Path=\jpfontdir,%
+    ItalicFont=sgi-text-400-italic.otf,BoldFont=sgi-text-700.otf,BoldItalicFont=sgi-text-700-italic.otf]%
+  \newfontfamily\jpdisplay{sgi-alt-700.otf}[Path=\jpfontdir,%
+    ItalicFont=sgi-alt-700-italic.otf,BoldFont=sgi-alt-800.otf,BoldItalicFont=sgi-alt-800-italic.otf]%
+}{%
+  \IfFontExistsTF{\jpSansName}{%
+    \newfontfamily\jpsans{\jpSansName}%
+    \newfontfamily\jpdisplay{\jpSansName}%
+  }{%
+    % Free fallback, found by FILE NAME through TeX Live (no system font install needed): Fira Sans, else Latin Modern Sans.
+    \IfFileExists{FiraSans-Regular.otf}{%
+      \newfontfamily\jpsans{FiraSans-Regular.otf}[ItalicFont=FiraSans-Italic.otf,BoldFont=FiraSans-Bold.otf,BoldItalicFont=FiraSans-BoldItalic.otf]%
+      \newfontfamily\jpdisplay{FiraSans-Regular.otf}[ItalicFont=FiraSans-Italic.otf,BoldFont=FiraSans-Bold.otf,BoldItalicFont=FiraSans-BoldItalic.otf]%
+    }{%
+      \newfontfamily\jpsans{lmsans10-regular.otf}[ItalicFont=lmsans10-oblique.otf,BoldFont=lmsans10-bold.otf,BoldItalicFont=lmsans10-boldoblique.otf]%
+      \newfontfamily\jpdisplay{lmsans10-regular.otf}[ItalicFont=lmsans10-oblique.otf,BoldFont=lmsans10-bold.otf,BoldItalicFont=lmsans10-boldoblique.otf]%
+    }%
+  }%
+}
+
+\IfFileExists{\jpfontdir jetbrains-mono-400.ttf}{%
+  \newfontfamily\jpmono{jetbrains-mono-400.ttf}[Path=\jpfontdir,Scale=0.9,%
+    ItalicFont=jetbrains-mono-italic-400.ttf,BoldFont=jetbrains-mono-700.ttf,BoldItalicFont=jetbrains-mono-italic-700.ttf]%
+}{%
+  \IfFontExistsTF{\jpMonoName}{%
+    \newfontfamily\jpmono{\jpMonoName}[Scale=0.9]%
+  }{%
+    \newfontfamily\jpmono{DejaVu Sans Mono}[Scale=0.82]%
+  }%
+}
+
+\IfFontExistsTF{texgyrepagella-regular.otf}{%
+  \newfontfamily\jpserif{texgyrepagella-regular.otf}[ItalicFont=texgyrepagella-italic.otf,%
+    BoldFont=texgyrepagella-bold.otf,BoldItalicFont=texgyrepagella-bolditalic.otf]%
+}{%
+  \newfontfamily\jpserif{DejaVu Serif}[Scale=0.9]%
+}
+\setmainfont{lmroman10-regular.otf}[ItalicFont=lmroman10-italic.otf,BoldFont=lmroman10-bold.otf,BoldItalicFont=lmroman10-bolditalic.otf]% placeholder, each class sets its own body font
+\let\ttfamily\jpmono
+
+%% ---------- Type helpers ------------------------------------------------
+%% \jplabel{text}: small uppercase mono label, the "eyebrow" of the web design system.
+\newcommand{\jplabel}[1]{{\jpmono\scshape\addfontfeatures{LetterSpace=6}\small\MakeUppercase{#1}}}
+%% \jpmuted{text}
+\newcommand{\jpmuted}[1]{{\color{jpTextMuted}#1}}
+%% \jpinline{text}
+\newcommand{\jpinline}[1]{{\jpmono\small #1}}
+
+%% ---------- Links -------------------------------------------------------
+\hypersetup{colorlinks=true,linkcolor=jpAccent,urlcolor=jpAccent,citecolor=jpAccent,%
+  pdfcreator={Jupiter design system}}
+
+%% ---------- Lists -------------------------------------------------------
+\setlist{nosep,leftmargin=1.1em,itemsep=1pt,parsep=0pt,topsep=2pt}
+\setlist[itemize]{label={\color{jpAccent}\raisebox{0.05ex}{\rule{0.38em}{0.38em}}}}
+
+%% ---------- Callouts (mirror .jp-callout) --------------------------------
+%% \begin{jpcallout}[ok|warn|danger|info]{Title} ... \end{jpcallout}
+\newtcolorbox{jpcallout}[2][info]{%
+  enhanced,breakable,boxrule=0pt,frame hidden,sharp corners,
+  left=8pt,right=8pt,top=6pt,bottom=6pt,
+  colback=jp#1Bg,
+  borderline west={2.5pt}{0pt}{jp#1},
+  coltext=jpText,
+  fonttitle=\bfseries\color{jp#1},
+  title={#2},
+  attach boxed title to top left={xshift=0pt,yshift=-\tcboxedtitleheight/2-2pt},
+  boxed title style={colback=jp#1Bg,boxrule=0pt,left=0pt,top=0pt,bottom=0pt,
+    frame hidden},
+}
+%% Simpler variant without title: \begin{jpnote}[warn] ... \end{jpnote}
+\newtcolorbox{jpnote}[1][info]{%
+  enhanced,breakable,boxrule=0pt,frame hidden,sharp corners,
+  left=8pt,right=8pt,top=5pt,bottom=5pt,
+  colback=jp#1Bg,borderline west={2.5pt}{0pt}{jp#1},coltext=jpText}
+
+%% ---------- Code blocks (mirror .jp-code) --------------------------------
+\RequirePackage{listings}
+\lstdefinestyle{jupiter}{%
+  basicstyle=\jpmono\footnotesize,columns=fullflexible,keepspaces=true,
+  breaklines=true,showstringspaces=false,
+  commentstyle=\color{jpTextMuted}\itshape,
+  keywordstyle=\color{jpAccent}\bfseries,
+  stringstyle=\color{jpOk}}
+\lstset{style=jupiter}
+\tcbuselibrary{listings}
+\newtcblisting{jpcode}[1][]{%
+  enhanced,breakable,sharp corners,boxrule=0.5pt,colframe=jpBorder,colback=jpSurface,
+  left=6pt,right=6pt,top=4pt,bottom=4pt,
+  listing only,listing options={style=jupiter,#1}}
+
+%% ---------- Rules / dividers -------------------------------------------
+\newcommand{\jprule}{\par\vspace{2pt}{\color{jpBorder}\hrule height 0.5pt}\vspace{4pt}}
+\newcommand{\jpaccentrule}[1][1.2pt]{{\color{jpAccent}\hrule height #1}}
+
+%% ---------- Status badge (mirror .jp-badge) -------------------------------
+\newcommand{\jpbadge}[2][info]{\tcbox[on line,boxrule=0pt,arc=2pt,left=3pt,right=3pt,top=0pt,bottom=0pt,%
+  colback=jp#1Bg,coltext=jp#1]{\jpmono\scriptsize\MakeUppercase{#2}}}
+
+\endinput

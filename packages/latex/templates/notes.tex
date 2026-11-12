@@ -1,0 +1,22 @@
+\documentclass{jupiter-notes}
+\title{Network migration notes}
+\notemeta{2026-11-12}{infra, unifi}
+\begin{document}
+\maketitle
+\section{Plan}
+Move the camera VLAN behind its own firewall zone before touching the IoT network.\jpmargin{Check the UDM Pro firmware first.}
+
+\begin{jptodo}
+  \todo{Create the camera zone and block inter-VLAN traffic}
+  \todo{Re-adopt the three access points}
+  \done{Back up the controller}
+\end{jptodo}
+
+\section{Findings}
+\subsection{Switch ports}
+Port profiles are inherited from the VLAN, so overrides need to be cleared first.\jpmargin{Profiles live under Settings $\rightarrow$ Profiles.}
+\begin{jpnote}[warn]Do not change the native VLAN while connected over it.\end{jpnote}
+\begin{jpcode}
+ssh admin@udm "info" # confirm firmware before changes
+\end{jpcode}
+\end{document}

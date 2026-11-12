@@ -1,0 +1,26 @@
+{
+  "name": "jupiter-design-system",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*",
+    "examples/consumer"
+  ],
+  "scripts": {
+    "build": "npm run build:packages && npm run build -w @belikh/jupiter-admin",
+    "build:tokens": "npm run build -w @belikh/jupiter-tokens",
+    "build:graphics": "npm run build -w @belikh/jupiter-graphics",
+    "dev": "npm run build:packages && npm run dev -w @belikh/jupiter-admin",
+    "typecheck": "npm run build:packages && npm run typecheck -w @belikh/jupiter-tokens && npm run typecheck -w @belikh/jupiter-ui && npm run typecheck -w @belikh/jupiter-admin",
+    "dev:admin": "npm run dev",
+    "lint": "node scripts/check-divergence.mjs && npm run lint:style -w @belikh/jupiter-admin && node scripts/check-skill.mjs",
+    "test": "npm run build:packages && npm test -w @belikh/jupiter-ui && npm test -w @belikh/jupiter-admin && npm test -w @belikh/jupiter-esphome",
+    "build:packages": "npm run build -w @belikh/jupiter-tokens && npm run build -w @belikh/jupiter-graphics && npm run build -w @belikh/jupiter-esphome",
+    "check:versions": "node scripts/check-versions.mjs",
+    "check:consumer": "node scripts/consumer-check.mjs",
+    "check:skill": "node scripts/check-skill.mjs"
+  },
+  "devDependencies": {
+    "vitest": "^5.1.0"
+  }
+}

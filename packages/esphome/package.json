@@ -1,0 +1,35 @@
+{
+  "name": "@belikh/jupiter-esphome",
+  "version": "1.1.0",
+  "description": "Jupiter instrument widgets for ESPHome displays: dials, bars, tiles and more, with SVG preview, display-lambda and LVGL output.",
+  "type": "module",
+  "license": "UNLICENSED",
+  "sideEffects": false,
+  "main": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "default": "./dist/src/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "rm -rf dist && tsc -p .",
+    "typecheck": "tsc -p . --noEmit",
+    "test": "node --test \"test/*.test.ts\""
+  },
+  "devDependencies": {
+    "@types/node": "24.13.3",
+    "typescript": "7.0.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/belikh/design.git",
+    "directory": "packages/esphome"
+  }
+}

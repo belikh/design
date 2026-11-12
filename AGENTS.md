@@ -1,0 +1,70 @@
+# AGENTS.md: building with the Jupiter design system
+
+This repo is the design system. Projects DEPEND on `@belikh/jupiter-*` (see docs/consuming.md) and never copy it, so that **everything we make looks and feels the same**.
+Follow the patterns here instead of inventing new ones. If a need isn't covered, extend the shared component, don't fork it in a page.
+
+## Ground rules
+1. **Tokens only.** Colours are `var(--jp-*)` (status) or `var(--adm-c1..c8)` (categorical chart series). Font sizes are `var(--jp-fs-xs|sm|md|lg|xl|2xl)`. Spacing is `var(--jp-space-*)`. Never a hex colour or a pixel font size. `npm run lint:style -w apps/admin` fails on regressions.
+2. **Red and green mean status only** (danger/ok). Never use them as plain series colours: the palette is colour-vision-safe and checked by `npm run check:palette`.
+3. **No real backend.** `useCollection` gives every page optimistic saves, an offline queue, conflict handling and stale-data refresh; show them with `SyncStatus` and `ConflictPrompt`. Pages talk to async functions that simulate latency and can fail. Saves return `null` on success or an error string; the UI rolls back and shows the message. Never call `fetch` to a made-up API.
+4. **Editing is in place.** No separate "edit mode" pages, no `window.confirm`. Reversible edits get an **Undo toast**; only irreversible ones get a `ConfirmDelete`/`Modal`.
+5. **Commit mode is a user preference** (Settings → Appearance: on blur, or Save/Cancel). Don't pass `commit` to `Editable` unless a field genuinely needs one mode.
+6. **Accessible by default.** Every control has a visible label or `aria-label`; everything works from the keyboard; respect `prefers-reduced-motion`; use logical CSS properties (`margin-inline-start`) so RTL works.
+7. **Every page has a test** (`*.test.tsx`, Vitest + Testing Library). `npm test` must stay green; `npm run typecheck` must be clean.
+
+## Which component for which need
+| I need to… | Use | Notes |
+| --- | --- | --- |
+| Show many records, sortable/filterable | `DataTable` (`@belikh/jupiter-ui/DataTable.tsx`) | Columns declare `editor` to be editable. `rangeSelect`, `groupBy`, `server`, `virtual` are opt-in props |
+| Edit one value in place | `Editable` (`@belikh/jupiter-ui/editable.tsx`) | Types: text, textarea, number, select, date, tags, boolean |
+| Edit one column across many rows | `DataTable` + `onCommit` | Check rows → **Edit fields**. Mixed placeholder, live preview, undo, retry come free |
+| Fill a value down | `Ctrl/Cmd+D` in a `DataTable` | Range or checked rows |
+| Collect a multi-field form | `Field` + inputs from `@belikh/jupiter-ui/inputs.tsx` | Validate on blur, summarise on submit |
+| Pick from a long list | `Combobox` | More than ~7 options |
+| Pick from a short list | `Segmented` (≤4), `Select`, `RadioCards` | |
+| Confirm something destructive | `ConfirmDelete` | Not for reversible edits: use the Undo toast |
+| Side panel / modal | `Drawer` / `Modal` | |
+| Status | `Badge s="ok|warn|danger|info"`, `Dot` | |
+| Empty / error / loading | `EmptyState`, `Alert`, `Skeleton` | One primary action; no bare spinners for page loads |
+| Charts | `@belikh/jupiter-ui/Charts.tsx` (hand-rolled SVG, no library) | 1 viewBox unit = 1 CSS px (`useWidth`) |
+| Notify | `usePrefs().toast({kind,title,body,undo?})` | Errors persist; give `undo` for reversible actions |
+
+## Where things live
+- `packages/tokens`: source of truth (`jupiter.tokens.json`) and generators. **Change a token here; every output regenerates.**
+- `packages/graphics`: SVG icons, spot illustrations. `packages/esphome`: ESPHome instrument widgets. `packages/latex`, `packages/rust`: other outputs.
+- `packages/ui` (`@belikh/jupiter-ui`): shared components (kit, inputs, DataTable, Editable, Charts), preferences (`store.tsx`), the mock data layer and undo. Import as `@belikh/jupiter-ui/kit.tsx`.
+- `apps/admin`: the ONE app, dev server on :3000 (`npm run dev`). It is both the design-system site (`/` overview, `/tokens`, `/fonts`, `/layout`, `/graphics`, `/components/html`, `/dashboard`, `/targets`, `/editor`; code in `src/docs`, routes in `p2/docs`) and the admin template (the admin dashboard is `/overview`; the React component gallery is `/components`).
+- `apps/admin/src/p2/<area>/index.tsx`: every page, first-wave included (`p2/core`), is registered by its area's exported `routes` and picked up automatically (`import.meta.glob`). `routePath` is the router pattern when it differs from the nav `path`; `nav: false` hides a route from nav and the palette.
+- `packages/ui/src/store.tsx`: preferences (theme, density, contrast, language, `editCommit`) and `toast`.
+- `docs/`: specs and status (`modernisation.md` is the backlog).
+
+## Recipes
+See `docs/recipes.md` for the five page shapes (list, detail, form, dashboard, kiosk) and the scaffold that generates each. Short version:
+**List page**: `PageHeader` → `Panel` → `DataTable` with `cols` (give editable columns an `editor`), `onCommit`, `facet`, `exports`. Copy `p2/tables/EditLab.tsx`.
+**Detail page**: a column of `Editable` fields in a `Panel`; no Edit button. Titles are `Editable` too.
+**Form page**: `Field` + inputs, validation on blur, autosave for settings pages; an unsaved-changes guard for long forms.
+**Dashboard**: stat tiles + `Charts`; tokens for colour; every chart has a text alternative.
+**Kiosk**: large targets, no hover-only affordances, `dvh` units, offline-tolerant (see `pages/WhKiosk.tsx`).
+
+## Adding a page
+Fastest: `npm run new:page -w apps/admin -- <area> <PageName> "<Label>" list|detail|form` creates the component, a test and the route. Components are indexed in `packages/ui/src/components.manifest.json` (check it before writing UI; a test keeps it honest). Data comes from `@belikh/jupiter-ui/mock.ts` (`createCollection`, `useCollection`).
+
+By hand:
+1. Create `src/p2/<area>/<Page>.tsx` (or add to an area folder) and add `{ path, label, icon, group, keywords, element }` to that area's `routes` in `index.tsx`. Lazy-load with `React.lazy`.
+2. Write `<Page>.test.tsx`. If you add a route, update any route-count assertions.
+3. Run `npm run typecheck`, `npm test`, `npm run lint:style -w apps/admin`.
+
+## Divergence rules
+The design system once lived in two apps with two class vocabularies and two component libraries, and drifted. `scripts/check-divergence.mjs` (run by `npm run lint` and CI) now fails when any of these come back:
+1. **One app.** Exactly one `apps/*` package serves UI (`apps/admin`). Add pages, not apps.
+2. **One component library.** No Tailwind, shadcn, `@base-ui`, sonner, lucide, recharts, class-variance-authority, clsx or tailwind-merge in any `package.json`. Everything renders through `@belikh/jupiter-ui` and the tokens CSS. If a page needs a primitive that `@belikh/jupiter-ui` lacks, add it to `packages/ui` (and `components.manifest.json`) instead of building it locally.
+3. **One token source.** `--jp-*` custom properties are defined only by `packages/tokens` output (and the live token editor's generated `<style id="jupiter-live">`). Need a new value, a density or contrast variant? Add a token. No app stylesheet hard-codes a colour, font size or shadow.
+4. **One class vocabulary.** The old docs `.site-*` classes are gone. Use the shared `adm-*` / `jp-*` classes from `packages/ui/src/styles` and the tokens CSS; restyle a shared class there (so every page follows) rather than overriding it in a page.
+5. **Stylesheets are wired.** Global CSS lives in `apps/admin/src/styles/` and is listed in `src/styles/entry.ts`; an area's own CSS is imported by its components. An orphan CSS file fails the check.
+Agents: extend `@belikh/jupiter-ui` rather than restyling locally. The theme (auto/light/dark) is one preference in `PrefsProvider`; never keep a second copy.
+
+## Don't
+- Hand-roll an edit mode, a modal, a table, a toast, or a select. Use the shared one.
+- Add a charting or table library.
+- Raise `scripts/lint-baseline.json`. It only ever goes down.
+- Commit the proprietary SGI fonts (`apps/admin/public/fonts/sgi-*` is gitignored).

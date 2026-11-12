@@ -1,0 +1,110 @@
+name: ci
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run lint   # one app, one component library, one token source, one class vocabulary (scripts/check-divergence.mjs) + style lint + the agent skill matches the repo (scripts/check-skill.mjs)
+      - run: npm run typecheck
+      - run: npm run check:versions   # every package and the Rust crate share the token version
+      - run: npm run build   # tokens: validate (schema, version sync, WCAG AA) + generate; app: tsc + vite build
+      - run: npm test   # @belikh/jupiter-ui + admin (Vitest, incl. per-route accessibility) + ESPHome widget tests
+      - run: npm run check:palette -w @belikh/jupiter-admin   # chart colours stay colour-vision safe
+      - name: Real-browser interaction tests (focus, paste, drag, popovers, undo)
+        run: npm run e2e -w @belikh/jupiter-admin
+        env:
+          CHROMIUM: google-chrome
+      - name: One design change must reach a consumer project (builds examples/consumer, changes constants, verifies, restores)
+        run: npm run check:consumer
+      - name: Generated Rust core must be committed and current
+        run: git diff --exit-code -- packages/rust/src/generated.rs
+      - run: scripts/release-assets.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-assets
+          path: release/
+  latex:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run build:tokens
+      - name: Install TeX Live and fallback fonts
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends texlive-xetex texlive-latex-recommended texlive-latex-extra \
+            texlive-fonts-recommended texlive-fonts-extra texlive-science latexmk fonts-dejavu-core fonts-firacode
+          # Fira Sans is the free fallback for the SGI fonts: install it if packaged, then make fontconfig see TeX Live's own copy too.
+          sudo apt-get install -y --no-install-recommends fonts-fira-sans || true
+          sudo fc-cache -f
+          fc-list | grep -i "fira sans" | head -3 || echo "WARNING: Fira Sans not visible to fontconfig"
+      - name: Compile every template (free fonts only; the proprietary SGI fonts are not in git)
+        run: packages/latex/scripts/build.sh packages/latex/templates/*.tex
+      - uses: actions/upload-artifact@v4
+        with:
+          name: latex-samples
+          path: packages/latex/build/*.pdf
+  rust:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: packages/rust
+      - name: fmt, clippy, tests (every adapter)
+        working-directory: packages/rust
+        run: |
+          cargo fmt --check
+          cargo clippy --all-features -- -D warnings
+          cargo test --all-features
+  linux-gui:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run build:tokens
+      - name: Validate GTK, QML and KDE outputs
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends python3-gi gir1.2-gtk-4.0 qml6-module-qtquick qt6-declarative-dev-tools
+          python3 - <<'PY'
+          import gi
+          gi.require_version("Gtk", "4.0")
+          from gi.repository import Gtk
+          for f in ("jupiter-gtk-light.css", "jupiter-gtk-dark.css", "jupiter-gtk-widgets.css"):
+              errs = []
+              p = Gtk.CssProvider()
+              p.connect("parsing-error", lambda prov, sec, err: errs.append(err.message))
+              p.load_from_path("packages/tokens/dist/" + f)
+              assert not errs, (f, errs)
+          print("gtk css ok")
+          PY
+          /usr/lib/qt6/bin/qmllint packages/tokens/dist/Jupiter.qml || qmllint-qt6 packages/tokens/dist/Jupiter.qml

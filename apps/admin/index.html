@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jupiter design system</title>
+    <meta name="description" content="Jupiter's design system: tokens, components, generated files for web, email, terminal, kiosk and mobile, and the admin template built from them." />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="preload" href="/fonts/sgi-text-400.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/jetbrains-mono.woff2" as="font" type="font/woff2" crossorigin />
+    <script>
+      (function () {
+        try {
+          var q = new URLSearchParams(location.search).get("theme"); var m = q || localStorage.getItem("jp-theme"), d = localStorage.getItem("jp-density");
+          if (m === "light" || m === "dark") document.documentElement.setAttribute("data-theme", m);
+          if (d === "compact") document.documentElement.setAttribute("data-density", "compact");
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

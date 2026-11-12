@@ -1,0 +1,115 @@
+import { Jupiter } from "jupiter.slint";
+import { FontsLoaded } from "fonts.slint";
+import { JIcon, JButton, JBadge, JToggle, StatTile, NavItem } from "components.slint";
+export { Jupiter }
+
+struct Service { name: string, region: string, status: string, latency: string }
+
+export component App inherits Window {
+    title: "Jupiter design system: Slint demo";
+    preferred-width: 1040px;
+    preferred-height: 720px;
+    min-width: 780px;
+    background: Jupiter.bg;
+    default-font-family: Jupiter.font-sans;
+    default-font-size: Jupiter.font-sm;
+
+    in property <[Service]> services: [
+        { name: "jupiter-api", region: "ap-southeast-2", status: "ok", latency: "42 ms" },
+        { name: "media-archive", region: "brisbane", status: "warn", latency: "180 ms" },
+        { name: "ha-bridge", region: "home", status: "ok", latency: "9 ms" },
+        { name: "pxe-boot", region: "home", status: "danger", latency: "timeout" },
+    ];
+    in-out property <int> page: 0;
+
+    HorizontalLayout {
+        // ---- sidebar
+        Rectangle {
+            width: 220px;
+            background: Jupiter.surface;
+            Rectangle { x: parent.width - 1px; width: 1px; background: Jupiter.border; }
+            VerticalLayout {
+                padding: Jupiter.space-4;
+                spacing: Jupiter.space-1;
+                HorizontalLayout {
+                    spacing: Jupiter.space-2;
+                    padding-bottom: Jupiter.space-4;
+                    JIcon { source: @image-url("assets/icon/sparkle.svg"); size: 22px; tint: Jupiter.accent; }
+                    Text { text: "jupiter /ds"; font-family: Jupiter.font-mono; font-size: Jupiter.font-md; font-weight: 700; color: Jupiter.text; vertical-alignment: center; }
+                }
+                NavItem { icon: @image-url("assets/icon/home.svg"); label: "Overview"; active: root.page == 0; clicked => { root.page = 0; } }
+                NavItem { icon: @image-url("assets/icon/chart.svg"); label: "Metrics"; active: root.page == 1; clicked => { root.page = 1; } }
+                NavItem { icon: @image-url("assets/icon/bell.svg"); label: "Alerts"; active: root.page == 2; clicked => { root.page = 2; } }
+                NavItem { icon: @image-url("assets/icon/settings.svg"); label: "Settings"; active: root.page == 3; clicked => { root.page = 3; } }
+                Rectangle { }
+                HorizontalLayout {
+                    spacing: Jupiter.space-2;
+                    JIcon { source: Jupiter.dark ? @image-url("assets/icon/moon.svg") : @image-url("assets/icon/sun.svg"); size: 18px; tint: Jupiter.text-muted; }
+                    Text { text: Jupiter.dark ? "Dark" : "Light"; color: Jupiter.text-muted; font-family: Jupiter.font-mono; font-size: Jupiter.font-xs; vertical-alignment: center; horizontal-stretch: 1; }
+                    JToggle { checked: Jupiter.dark; toggled(c) => { Jupiter.dark = c; } }
+                }
+            }
+        }
+
+        // ---- main
+        VerticalLayout {
+            padding: Jupiter.space-6;
+            spacing: Jupiter.space-4;
+
+            HorizontalLayout {
+                spacing: Jupiter.space-3;
+                VerticalLayout {
+                    horizontal-stretch: 1;
+                    Text { text: "OVERVIEW"; font-family: Jupiter.font-mono; font-size: Jupiter.font-xs; color: Jupiter.accent; }
+                    Text { text: "Service status"; font-family: Jupiter.font-sans; font-size: Jupiter.font-xl; font-weight: 800; color: Jupiter.text; }
+                }
+                JButton { text: "Refresh"; icon: @image-url("assets/icon/refresh.svg"); }
+                JButton { text: "New check"; primary: true; icon: @image-url("assets/icon/plus.svg"); }
+            }
+
+            HorizontalLayout {
+                spacing: Jupiter.space-3;
+                StatTile { label: "Uptime"; value: "99.98%"; delta: "+0.02 vs last week"; }
+                StatTile { label: "Latency p95"; value: "182 ms"; delta: "+14 ms"; good: false; }
+                StatTile { label: "Requests"; value: "4.2M"; delta: "+8.1%"; }
+            }
+
+            Image { source: @image-url("assets/rule/wave.svg"); colorize: Jupiter.border; height: 24px; image-fit: contain; }
+
+            Rectangle {
+                background: Jupiter.surface-raised;
+                border-width: 1px;
+                border-color: Jupiter.border;
+                border-radius: Jupiter.radius-md;
+                VerticalLayout {
+                    for s[i] in root.services : Rectangle {
+                        height: 44px;
+                        Rectangle { y: 0px; height: 1px; background: i == 0 ? transparent : Jupiter.border; }
+                        HorizontalLayout {
+                            padding-left: Jupiter.space-4;
+                            padding-right: Jupiter.space-4;
+                            spacing: Jupiter.space-3;
+                            Text { text: s.name; font-family: Jupiter.font-mono; font-size: Jupiter.font-sm; color: Jupiter.text; vertical-alignment: center; width: 190px; }
+                            Text { text: s.region; color: Jupiter.text-muted; vertical-alignment: center; horizontal-alignment: left; horizontal-stretch: 1; }
+                            Text { text: s.latency; font-family: Jupiter.font-mono; font-size: Jupiter.font-sm; color: Jupiter.text; vertical-alignment: center; horizontal-alignment: right; width: 90px; }
+                            VerticalLayout { alignment: center; JBadge { text: s.status == "ok" ? "healthy" : s.status == "warn" ? "degraded" : "down"; kind: s.status; } }
+                        }
+                    }
+                }
+            }
+
+            HorizontalLayout {
+                spacing: Jupiter.space-4;
+                alignment: start;
+                JIcon { source: @image-url("assets/spot/koala.svg"); size: 120px; tint: Jupiter.text-muted; }
+                VerticalLayout {
+                    alignment: center;
+                    spacing: Jupiter.space-2;
+                    Text { text: "No alerts in the last 24 hours"; font-family: Jupiter.font-sans; font-size: Jupiter.font-lg; font-weight: 700; color: Jupiter.text; }
+                    Text { text: "Spot illustrations use the same stroke, so they follow the theme too."; color: Jupiter.text-muted; wrap: word-wrap; }
+                    HorizontalLayout { alignment: start; JButton { text: "Create alert"; icon: @image-url("assets/icon/bell.svg"); } }
+                }
+            }
+        }
+    }
+}

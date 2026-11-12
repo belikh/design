@@ -1,0 +1,12 @@
+// Context-sensitive help: the most specific matching path prefix wins. Markdown (safe subset) rendered by ui/extra Markdown. (E027)
+export type Doc = { match: string; title: string; md: string; tags: string };
+export const DOCS: Doc[] = [
+  { match: "/orders", title: "Orders table", tags: "table sort filter export", md: "## Orders table\n\n- **Sort** by clicking a header; hold `Shift` for a secondary sort.\n- **Double-click** a cell (or press `Enter`) to edit it.\n- Use the facet chips to filter by status; **Export CSV** downloads the filtered rows.\n\nTip: `Space` selects the focused row, then use the bulk bar." },
+  { match: "/wh", title: "Warehouse timeslot system", tags: "warehouse dock priority kiosk lobby", md: "## Warehouse timeslot system\n\nTrucks are ranked by **priority score**: time waited, slot adherence, load class, carrier tier, urgent flag and SLA breach. Open `/wh/kiosk` and `/wh/lobby` in other tabs; they sync with the dock board.\n\n> The state lives in your browser. There is no server." },
+  { match: "/charts", title: "Charts", tags: "chart zoom export anomaly", md: "## Charts\n\nDrag across a line chart to **zoom**. Use the toolbar to **export** SVG, PNG or CSV, or switch to the accessible data table." },
+  { match: "/settings", title: "Settings", tags: "settings appearance language contrast", md: "## Settings\n\nOpen **Appearance** to change theme, density, contrast and language. Arabic switches the layout to right-to-left." },
+  { match: "/chrome", title: "System pages", tags: "system banners status tasks", md: "## System pages\n\nThese pages demonstrate the application chrome: banners, the status bar, trays, panes, tabs and guided flows. Most controls here change **real app state** (try *Maintenance banner* and watch the top of the page)." },
+  { match: "/", title: "Getting started", tags: "start overview shortcuts", md: "## Getting started\n\nPress `Cmd/Ctrl+K` for the command palette, `?` for shortcuts and `F1` for this help panel. Append `?theme=dark` to any URL to force a colour scheme." },
+];
+export const docsFor = (pathname: string): Doc => [...DOCS].sort((a, b) => b.match.length - a.match.length).find((d) => pathname === d.match || pathname.startsWith(d.match + "/") || (d.match !== "/" && pathname.startsWith(d.match))) ?? DOCS[DOCS.length - 1];
+export const searchDocs = (q: string): Doc[] => { const s = q.trim().toLowerCase(); return s ? DOCS.filter((d) => (d.title + d.tags + d.md).toLowerCase().includes(s)) : DOCS; };

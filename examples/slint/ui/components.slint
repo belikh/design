@@ -1,0 +1,133 @@
+// Themed building blocks. Everything reads the generated `Jupiter` global; nothing is hard-coded.
+import { Jupiter } from "jupiter.slint";
+
+// Graphics are single strokes in currentColor, so `colorize` tints them from the theme.
+export component JIcon inherits Image {
+    in property <length> size: 20px;
+    in property <color> tint: Jupiter.text;
+    width: size;
+    height: size;
+    colorize: tint;
+    image-fit: contain;
+}
+
+export component JButton inherits Rectangle {
+    in property <string> text;
+    in property <bool> primary: false;
+    in property <image> icon;
+    callback clicked();
+    height: Jupiter.control-height;
+    border-radius: Jupiter.radius-md;
+    border-width: primary ? 0px : 1px;
+    border-color: Jupiter.border;
+    background: primary
+        ? (ta.pressed ? Jupiter.accent.darker(0.2) : ta.has-hover ? Jupiter.accent.brighter(0.1) : Jupiter.accent)
+        : (ta.has-hover ? Jupiter.surface-raised : Jupiter.surface);
+    animate background { duration: Jupiter.dur-fast; }
+    HorizontalLayout {
+        padding-left: Jupiter.space-3;
+        padding-right: Jupiter.space-3;
+        spacing: Jupiter.space-2;
+        alignment: center;
+        VerticalLayout {
+            alignment: center;
+            JIcon { source: root.icon; size: 16px; tint: root.primary ? Jupiter.on-accent : Jupiter.text; }
+        }
+        Text {
+            text: root.text;
+            color: root.primary ? Jupiter.on-accent : Jupiter.text;
+            font-family: Jupiter.font-sans;
+            font-size: Jupiter.font-sm;
+            font-weight: 700;
+            vertical-alignment: center;
+        }
+    }
+    ta := TouchArea { clicked => { root.clicked(); } }
+}
+
+export component JBadge inherits Rectangle {
+    in property <string> text;
+    in property <string> kind: "info";
+    height: 20px;
+    border-radius: Jupiter.radius-sm;
+    background: kind == "ok" ? Jupiter.ok-bg : kind == "warn" ? Jupiter.warn-bg : kind == "danger" ? Jupiter.danger-bg : Jupiter.info-bg;
+    HorizontalLayout {
+        padding-left: 6px;
+        padding-right: 6px;
+        Text {
+            text: root.text.to-uppercase();
+            color: root.kind == "ok" ? Jupiter.ok : root.kind == "warn" ? Jupiter.warn : root.kind == "danger" ? Jupiter.danger : Jupiter.info;
+            font-family: Jupiter.font-mono;
+            font-size: 13px;
+            vertical-alignment: center;
+        }
+    }
+}
+
+export component JToggle inherits Rectangle {
+    in-out property <bool> checked;
+    callback toggled(bool);
+    width: 36px;
+    height: 20px;
+    border-radius: 10px;
+    background: checked ? Jupiter.accent : Jupiter.border;
+    animate background { duration: Jupiter.dur-fast; }
+    Rectangle {
+        x: root.checked ? parent.width - self.width - 2px : 2px;
+        y: 2px;
+        width: 16px;
+        height: 16px;
+        border-radius: 8px;
+        background: Jupiter.surface-raised;
+        animate x { duration: Jupiter.dur-fast; easing: ease-out; }
+    }
+    TouchArea { clicked => { root.checked = !root.checked; root.toggled(root.checked); } }
+}
+
+export component StatTile inherits Rectangle {
+    in property <string> label;
+    in property <string> value;
+    in property <string> delta;
+    in property <bool> good: true;
+    height: 104px;
+    background: Jupiter.surface-raised;
+    border-width: 1px;
+    border-color: Jupiter.border;
+    border-radius: Jupiter.radius-md;
+    VerticalLayout {
+        padding: Jupiter.space-4;
+        spacing: Jupiter.space-1;
+        Text { text: root.label.to-uppercase(); font-family: Jupiter.font-mono; font-size: Jupiter.font-xs; color: Jupiter.text-muted; }
+        Text { text: root.value; font-family: Jupiter.font-sans; font-size: Jupiter.font-2xl; font-weight: 800; color: Jupiter.text; }
+        Text { text: root.delta; font-family: Jupiter.font-mono; font-size: Jupiter.font-xs; color: root.good ? Jupiter.ok : Jupiter.danger; }
+    }
+}
+
+export component NavItem inherits Rectangle {
+    in property <image> icon;
+    in property <string> label;
+    in property <bool> active;
+    callback clicked();
+    height: 36px;
+    border-radius: Jupiter.radius-md;
+    background: active ? Jupiter.accent : (ta.has-hover ? Jupiter.surface-raised : transparent);
+    animate background { duration: Jupiter.dur-fast; }
+    HorizontalLayout {
+        padding-left: 10px;
+        spacing: 10px;
+        alignment: start;
+        VerticalLayout {
+            alignment: center;
+            JIcon { source: root.icon; size: 18px; tint: root.active ? Jupiter.on-accent : Jupiter.text; }
+        }
+        Text {
+            text: root.label;
+            color: root.active ? Jupiter.on-accent : Jupiter.text;
+            font-family: Jupiter.font-sans;
+            font-size: Jupiter.font-sm;
+            font-weight: root.active ? 700 : 400;
+            vertical-alignment: center;
+        }
+    }
+    ta := TouchArea { clicked => { root.clicked(); } }
+}

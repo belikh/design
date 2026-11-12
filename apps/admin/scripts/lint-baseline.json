@@ -1,0 +1,83 @@
+{
+ "src/p2/chrome/PagesScale.tsx": {
+  "hex-colour": 1
+ },
+ "src/p2/chrome/chrome.css": {
+  "hex-colour": 1,
+  "literal-constant": 7
+ },
+ "src/p2/chrome/media.tsx": {
+  "hex-colour": 1
+ },
+ "src/p2/domain/design-system.data.ts": {
+  "hex-colour": 2
+ },
+ "src/p2/inputs/editors.tsx": {
+  "hex-colour": 1
+ },
+ "src/p2/inputs/files.tsx": {
+  "hex-colour": 6
+ },
+ "src/p2/inputs/in2.css": {
+  "literal-constant": 1
+ },
+ "src/p2/inputs/structured.tsx": {
+  "bespoke-editor": 1
+ },
+ "src/p2/inputs/text-fields.tsx": {
+  "bespoke-editor": 1
+ },
+ "src/p2/records/design.tsx": {
+  "hex-colour": 1
+ },
+ "src/p2/tools/pages/DiffPage.tsx": {
+  "hex-colour": 2
+ },
+ "src/p2/tools/pages/PrintPreview.tsx": {
+  "hex-colour": 1
+ },
+ "src/p2/tools/tools.css": {
+  "hex-colour": 6,
+  "literal-constant": 1
+ },
+ "src/p2/views/Records.tsx": {
+  "hex-colour": 1
+ },
+ "src/p2/views/views.css": {
+  "literal-constant": 1
+ },
+ "src/pages/Activity.tsx": {
+  "hex-colour": 1
+ },
+ "src/pages/Components.tsx": {
+  "hex-colour": 2
+ },
+ "src/pages/WhKiosk.tsx": {
+  "px-font-size": 1
+ },
+ "src/styles/a11y.css": {
+  "hex-colour": 2
+ },
+ "src/warehouse/wh.css": {
+  "px-font-size": 5,
+  "physical-property": 5
+ },
+ "../../packages/ui/src/dataTable.css": {
+  "literal-constant": 2
+ },
+ "../../packages/ui/src/editable.css": {
+  "literal-constant": 1
+ },
+ "../../packages/ui/src/styles/charts.css": {
+  "literal-constant": 1
+ },
+ "../../packages/ui/src/styles/extra.css": {
+  "literal-constant": 2
+ },
+ "../../packages/ui/src/styles/inputs.css": {
+  "literal-constant": 1
+ },
+ "../../packages/ui/src/styles/overlays.css": {
+  "literal-constant": 3
+ }
+}
