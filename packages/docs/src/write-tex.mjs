@@ -54,7 +54,7 @@ export function texWriter({ pages, config }) {
       case "table": {
         const cols = n.align.map((a) => ({ left: "l", right: "r", center: "c" }[a] ?? "l")).join("");
         const row = (cells, th) => cells.map((c) => (th ? `\\jpth{${inl(c, page)}}` : inl(c, page))).join(" & ") + " \\\\";
-        return `\\begin{jptable}{${cols}}\n\\jphead\n${row(n.head, true)}\n\\jpbody\n${n.rows.map((r) => row(r)).join("\n")}\n\\jpfoot\n\\end{jptable}`;
+        return `\\begin{jptable}{${cols}}\n\\jphead\n${row(n.head, true)}\n\\jptablebody\n${n.rows.map((r) => row(r)).join("\n")}\n\\jpfoot\n\\end{jptable}`;
       }
       case "callout": { const c = CALLOUTS[n.kind]; return `\\begin{jpcallout}[${c.tex}]{${texEscape(n.title || c.label)}}\n${blk(n.children, page)}\n\\end{jpcallout}`; }
       case "seealso": return `\\jpseealso{}\n${blk(n.children, page)}`;

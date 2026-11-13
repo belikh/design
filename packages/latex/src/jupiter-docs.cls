@@ -2,7 +2,7 @@
 %% ALL visual decisions live here. The writer (packages/docs/src/write-tex.mjs) emits only the macros listed below:
 %%   \title \subtitle \author \jpversion \jpdate \jprepo  \maketitle \tableofcontents
 %%   \jpdocsection{title}{summary}  \jpintro{title}  \jppage{label}{title}{summary}  \subsection ... \paragraph
-%%   jpcallout[info|ok|warn|danger]{Title}  jpdocscode (+ \jpcodetitle)  jptable{aligns} (\jphead \jpth \jpbody \jpfoot)
+%%   jpcallout[info|ok|warn|danger]{Title}  jpdocscode (+ \jpcodetitle)  jptable{aligns} (\jphead \jpth \jptablebody \jpfoot)
 %%   jpquote  \jpc{inline code}  \jpdel  \jpterm  \jpanchor{label}  \jpseealso  \jpgraphic{tier}{name}{alt}  \jpimage{path}{alt}
 %%   jpglossary + \jpgloss{term}{definition}  \jpdivider
 %% Optional files found on TEXINPUTS (the build writes them): jp-logo-light.pdf, jpg-<tier>-<name>.pdf, jpg-cover.pdf. Without them the class still compiles.
@@ -145,7 +145,7 @@
   \edef\jp@begin{\noexpand\longtable{@{}\jp@spec @{}}}\jp@begin}{\endlongtable\endgroup\par\vspace{2pt}}
 \newcommand{\jphead}{\toprule}
 \newcommand{\jpth}[1]{{\jpmono\scriptsize\color{jpTextMuted}\MakeUppercase{#1}}}
-\newcommand{\jpbody}{\midrule\endhead}
+\newcommand{\jptablebody}{\midrule\endhead}
 \newcommand{\jpfoot}{\bottomrule}
 
 %% ---------- glossary ----------
