@@ -51,7 +51,11 @@ jobs:
           # Draft first, upload in chunks (hundreds of small assets stalled a single create), check every file arrived, then publish.
           gh release create "v$v" --draft --target "$GITHUB_SHA" --title "Jupiter design system v$v" \
             --notes "Generated from jupiter.tokens.json at $GITHUB_SHA. Use unversioned URLs under .../releases/latest/download/ to track current."
-          ( cd release && ls | xargs -n 50 sh -c 'for i in 1 2 3; do gh release upload "v'"$v"'" "$@" --clobber && break || sleep 5; done' _ )
+          # SVGs go up through the API with an explicit image/svg+xml type. `gh release upload` falls back to application/octet-stream on the runner,
+          # and browsers (and GitHub's image proxy) refuse an octet-stream SVG in <img>, so the README logo and graphics would not render.
+          id="$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/v$v" -q .id 2>/dev/null || gh api "repos/$GITHUB_REPOSITORY/releases" -q "[.[]|select(.tag_name==\"v$v\")][0].id")"
+          ( cd release && ls | grep -v '\.svg$' | xargs -n 50 sh -c 'for i in 1 2 3; do gh release upload "v'"$v"'" "$@" --clobber && break || sleep 5; done' _ )
+          ( cd release && ls | grep '\.svg$' | xargs -P 8 -I{} sh -c 'for i in 1 2 3; do curl -fsS -o /dev/null -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Content-Type: image/svg+xml" --data-binary @"{}" "https://uploads.github.com/repos/'"$GITHUB_REPOSITORY"'/releases/'"$id"'/assets?name={}" && exit 0; sleep 3; done; echo "failed: {}"; exit 1' )
           want="$(ls release | wc -l)"; have="$(gh release view "v$v" --json assets -q '.assets|length')"
           if [ "$want" != "$have" ]; then echo "uploaded $have of $want assets"; exit 1; fi
           gh release edit "v$v" --draft=false --latest
