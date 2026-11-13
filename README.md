@@ -1,7 +1,7 @@
-<p align="center">
+<p align="right">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/banner-dark.svg">
-    <img alt="Jupiter design system: one JSON file, every surface" src=".github/assets/banner-light.svg" width="100%">
+    <source media="(prefers-color-scheme: dark)" srcset="packages/graphics/logo/jupiter-logo-dark.svg">
+    <img alt="jupiter.au" src="packages/graphics/logo/jupiter-logo-light.svg" width="260">
   </picture>
 </p>
 
@@ -16,7 +16,7 @@ packages/rust/     jupiter-theme crate (palettes + ratatui/egui/iced adapters)
 packages/latex/    LaTeX classes + templates (resume x3, letter, cover letter, notes, report, invoice)
 apps/admin/        THE app: the design-system site (overview, tokens, type, layout, graphics, targets, live token editor) and the admin template, warehouse kiosk system, Home Assistant and ESPHome panels, as one site
 packages/esphome/  @belikh/jupiter-esphome: instrument widgets that emit ESPHome lambda / LVGL snippets
-packages/github/   @belikh/jupiter-github: README / profile banners, tiles, badges, social preview (SVG, light + dark) and templates
+packages/github/   @belikh/jupiter-github: README logo header, tiles, badges, social preview (SVG, light + dark) and templates
 ```
 
 ## Changing a token

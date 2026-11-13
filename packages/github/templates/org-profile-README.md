@@ -1,10 +1,12 @@
 <!-- Organisation profile: .github/profile/README.md in the org's public `.github` repository (shown on github.com/<org>).
      Relative image paths are unreliable there, so use absolute raw URLs. Replace <org> and the branch if it is not main.
      Keep the SVGs in profile/assets/ of the same repo. -->
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/<org>/.github/main/profile/assets/banner-dark.svg">
-  <img alt="Organisation name: what we do" src="https://raw.githubusercontent.com/<org>/.github/main/profile/assets/banner-light.svg" width="100%">
-</picture>
+<p align="right">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/belikh/design/main/packages/graphics/logo/jupiter-logo-dark.svg">
+    <img alt="jupiter.au" src="https://raw.githubusercontent.com/belikh/design/main/packages/graphics/logo/jupiter-logo-light.svg" width="260">
+  </picture>
+</p>
 
 ## What we do
 

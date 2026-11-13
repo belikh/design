@@ -1,8 +1,10 @@
 <!-- Personal profile: the README.md of the repo named exactly <your-username>/<your-username>. Keep the SVGs in that repo (assets/). -->
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/banner-dark.svg">
-  <img alt="Your name: what you build" src="assets/banner-light.svg" width="100%">
-</picture>
+<p align="right">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/belikh/design/main/packages/graphics/logo/jupiter-logo-dark.svg">
+    <img alt="jupiter.au" src="https://raw.githubusercontent.com/belikh/design/main/packages/graphics/logo/jupiter-logo-light.svg" width="260">
+  </picture>
+</p>
 
 ### Hi, I am Your Name
 
@@ -26,6 +28,6 @@ I build things with care. Currently working on **Project**; ask me about X, Y an
 | Shipping the thing | Learning the other thing |
 
 > [!TIP]
-> Pin your best six repositories; the banner and tiles frame them.
+> Pin your best six repositories; the tiles frame them.
 
 [Website](https://example.com) · [Writing](https://example.com/blog) · [Contact](mailto:you@example.com)

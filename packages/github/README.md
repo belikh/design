@@ -16,12 +16,18 @@ node src/make.mjs --palette        # Markdown table with `#hex` chips
 Files come in `-light` / `-dark` pairs (`banner`, `divider`, `social-preview`, `tile-<label>`, `badge-<label>`). Statuses: `ok warn danger info accent neutral`
 (badge value text uses the token's status colour on its `*Bg`, which the tokens build already checks for WCAG AA). Reference them with `<picture>`:
 
+The default README header is just the logo, right-aligned, no per-repo banner:
+
 ```html
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset=".github/assets/banner-dark.svg">
-  <img alt="Project: tagline" src=".github/assets/banner-light.svg" width="100%">
-</picture>
+<p align="right">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/belikh/design/main/packages/graphics/logo/jupiter-logo-dark.svg">
+    <img alt="jupiter.au" src="https://raw.githubusercontent.com/belikh/design/main/packages/graphics/logo/jupiter-logo-light.svg" width="260">
+  </picture>
+</p>
 ```
+
+(Banners and the social preview can still be generated with the commands above when wanted; the templates do not use them.)
 
 `templates/README.md`, `profile-README.md` and `org-profile-README.md` use `<picture>`, alerts (`> [!NOTE]`), tables, badges, Mermaid and hex chips.
 The org template uses absolute `raw.githubusercontent.com` URLs because relative paths are unreliable on the org page.

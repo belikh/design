@@ -1,8 +1,8 @@
 <!-- Copy this file to README.md and the SVGs you use to .github/assets/ (make them with: node make.mjs --title "..." --subtitle "..." --out .github/assets). -->
-<p align="center">
+<p align="right">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/banner-dark.svg">
-    <img alt="Project name: one line about what it does" src=".github/assets/banner-light.svg" width="100%">
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/belikh/design/main/packages/graphics/logo/jupiter-logo-dark.svg">
+    <img alt="jupiter.au" src="https://raw.githubusercontent.com/belikh/design/main/packages/graphics/logo/jupiter-logo-light.svg" width="260">
   </picture>
 </p>
 
