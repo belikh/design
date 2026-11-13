@@ -13,6 +13,7 @@
       "types": "./src/render.d.mts",
       "default": "./src/render.mjs"
     },
+    "./logo": "./src/logo.mjs",
     "./theme.json": "./src/theme.json",
     "./assets/*": "./assets/*",
     "./templates/*": "./templates/*",

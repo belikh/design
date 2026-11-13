@@ -13,7 +13,7 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const args = process.argv.slice(2); const flag = (n, d) => { const i = args.indexOf(n); return i >= 0 ? args[i + 1] : d; };
 const registry = flag("--registry", "https://npm.pkg.github.com"); const scope = flag("--scope", process.env.JUPITER_SCOPE || "belikh");
 const dry = args.includes("--dry"); const only = flag("--only", "")?.split(",").filter(Boolean);
-const names = ["tokens", "graphics", "ui", "esphome", ...(args.includes("--include-fonts") ? ["fonts"] : [])].filter((n) => !only.length || only.includes(n));
+const names = ["tokens", "graphics", "ui", "esphome", "github", "docs", ...(args.includes("--include-fonts") ? ["fonts"] : [])].filter((n) => !only.length || only.includes(n));
 const version = JSON.parse(readFileSync(join(root, "packages/tokens/jupiter.tokens.json"), "utf8")).version;
 const published = (n) => `@${scope}/jupiter-${n}`; // equals the workspace name when scope is the repo owner
 const npmrc = join(mkdtempSync(join(tmpdir(), "jp-npmrc-")), ".npmrc");

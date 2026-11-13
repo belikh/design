@@ -253,6 +253,8 @@ body {
 .jp-callout--warn .jp-callout__title::before { content: "[!] "; }
 .jp-callout--danger { background: var(--jp-danger-bg); color: var(--jp-danger); }
 .jp-callout--danger .jp-callout__title::before { content: "[x] "; }
+.jp-callout--ok { background: var(--jp-ok-bg); color: var(--jp-ok); }
+.jp-callout--ok .jp-callout__title::before { content: "[+] "; }
 
 /* ---------- layout ---------- */
 .jp-container { width: 100%; max-width: var(--jp-container-max); margin-inline: auto; padding-inline: var(--jp-gutter); }

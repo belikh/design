@@ -1,0 +1,34 @@
+---
+title: Page recipes
+summary: The five page shapes (list, detail, form, dashboard, kiosk) and the scaffold that generates each.
+section: build
+order: 10
+icon: app
+audience: developers
+status: stable
+---
+
+Five page shapes cover almost everything. Generate one, then change the content, not the structure:
+
+```bash
+npm run new:page -w apps/admin -- <area> <PageName> "<Label>" list|detail|form|dashboard|kiosk
+```
+
+It creates the component, a test and the route. Run `npm test` and `npm run lint:style -w apps/admin` after.
+
+| Recipe | Use it for | Built from | Rules that matter |
+| --- | --- | --- | --- |
+| **list** | Many records: browse, filter, edit, bulk edit | `PageHeader` → `Panel` → `DataTable` with `cols` (editable columns get an `editor`), `onCommit` from `useCollection` | Edit in place, never a separate edit page. Let `DataTable` do bulk edit, paste, fill down, peek, compare |
+| **detail** | One record | A column of `Editable` fields in a `Panel`; the title is an `Editable` too | No Edit button. Add `showHistory` where "who changed this" matters |
+| **form** | Creating or configuring something | `Field` + inputs, `useFieldErrors` (validate on blur, summary on submit), `useDraft`, `useUnsavedGuard` | Settings pages autosave (`useAutosave`). Long forms keep a draft. Advanced fields go in a `Disclosure` |
+| **dashboard** | The numbers that matter | `StatTile` row, then `LineChart` and friends in `Panel`s | Colours come from `--adm-c1..c8` (colour-vision safe); red and green mean status only; every chart has a text alternative |
+| **kiosk** | Wall displays and touch terminals | A `bare: true` route, big targets (72px+), `100dvh`, no hover-only controls | Works offline; large type from `--jp-fs-xl`/`2xl`; test with the touch-mode toggle |
+
+## Data
+Every page reads from a `createCollection` (`@belikh/jupiter-ui/mock.ts`) through `useCollection`, so saves are optimistic, work offline, detect
+conflicts and go stale with a Refresh. Show that state with `SyncStatus` and `ConflictPrompt`. There is no real backend: replace
+`mock.ts` when there is one, and the pages do not change.
+
+## Look and feel
+Tokens only (`var(--jp-*)`), type from `--jp-fs-*`, logical CSS properties, `Modal`/`Drawer` for overlays (native `<dialog>`),
+`Menu` for action lists (popover), an Undo toast for reversible actions. See `AGENTS.md` for the full rules and the component table.
