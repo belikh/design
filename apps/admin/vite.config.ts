@@ -12,14 +12,14 @@ const fonts = () => ({ name: "jupiter-fonts", transformIndexHtml: () => [{ tag: 
 
 /**
  * Cascade layers: design-system CSS (tokens, @belikh/jupiter-ui components) goes in `jp`, the app's own CSS in `app`, and `app` wins by layer order
- * rather than by selector specificity or import order. Page styles can no longer fight component styles. The files are wrapped
+ * rather than by selector specificity or import order. The shell and docs-look stylesheets are shipped in @belikh/jupiter-ui so sites can use the same chrome; they stay in `app` here, as they always were. Page styles can no longer fight component styles. The files are wrapped
  * at build time so the sources stay plain CSS that other projects can copy.
  */
 const layers = () => ({
   name: "jupiter-layers", enforce: "pre" as const,
   transform(code: string, id: string) {
     const f = id.split("?")[0]; if (!f.endsWith(".css") || f.includes("/node_modules/") || /^\s*@(import|charset)/m.test(code)) return null;
-    const layer = f.includes("/packages/tokens/") || f.includes("/packages/ui/") ? "jp" : f.includes("/apps/admin/src/") ? "app" : null; return layer ? { code: `@layer ${layer} {\n${code}\n}`, map: null } : null;
+    const layer = /\/packages\/ui\/src\/styles\/(shell|docs)\.css$/.test(f) ? "app" : f.includes("/packages/tokens/") || f.includes("/packages/ui/") ? "jp" : f.includes("/apps/admin/src/") ? "app" : null; return layer ? { code: `@layer ${layer} {\n${code}\n}`, map: null } : null;
   },
   transformIndexHtml: () => [{ tag: "style", attrs: { "data-jupiter": "layers" }, children: "@layer jp, app;", injectTo: "head-prepend" as const }],
 });

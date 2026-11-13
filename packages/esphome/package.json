@@ -1,6 +1,6 @@
 {
   "name": "@belikh/jupiter-esphome",
-  "version": "1.2.4",
+  "version": "1.3.0",
   "description": "Jupiter instrument widgets for ESPHome displays: dials, bars, tiles and more, with SVG preview, display-lambda and LVGL output.",
   "type": "module",
   "license": "UNLICENSED",
