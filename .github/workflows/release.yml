@@ -77,7 +77,7 @@ jobs:
           want="$(ls release | wc -l)"; have="$(gh release view "v$v" --json assets -q '.assets|length')"
           if [ "$want" != "$have" ]; then echo "uploaded $have of $want assets"; exit 1; fi
           gh release edit "v$v" --draft=false --latest
-      - name: Move the latest tag to this release (READMEs link raw files at the latest tag: a release asset is served as octet-stream and cannot be drawn in an img)
+      - name: Move the latest tag to this release (READMEs link raw files at that tag, because a release asset is served as octet-stream and an img cannot draw it)
         if: steps.v.outputs.exists == 'false'
         run: |
           gh api -X PATCH "repos/$GITHUB_REPOSITORY/git/refs/tags/latest" -f sha="$GITHUB_SHA" -F force=true >/dev/null 2>&1 \
