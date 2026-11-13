@@ -19,11 +19,13 @@
     "./sprite.svg": "./dist/jupiter-graphics.svg",
     "./manifest.json": "./dist/manifest.json",
     "./svg/*": "./dist/svg/*",
+    "./logo/*": "./logo/*",
     "./package.json": "./package.json"
   },
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "logo"
   ],
   "scripts": {
     "build": "rm -rf dist && node scripts/build.ts",
