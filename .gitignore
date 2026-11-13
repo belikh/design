@@ -13,9 +13,7 @@ examples/slint/ui/fonts.slint
 examples/gtk/assets/svg
 examples/gtk/assets/jupiter-gtk-*.css
 
-# Proprietary Bitstream SGI Text / SGI Alt fonts: not redistributed in git until rights are confirmed.
-# Place the .woff2 files in apps/admin/public/fonts (and the converted .otf files in packages/latex/fonts) locally.
-apps/admin/public/fonts/sgi-*
+# The SGI Text / SGI Alt .woff2 files (apps/admin/public/fonts) and the converted .otf files (packages/latex/fonts) are committed on purpose.
 apps/admin/public/fonts/bundle.zip
 
 # proprietary typefaces: staged locally, published privately, never committed

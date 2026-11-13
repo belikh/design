@@ -1,0 +1,52 @@
+# Publishes the documentation site (docs-src, built by packages/docs) to GitHub Pages at https://docs.jupiter.au.
+# Runs when the docs, the design they use or this workflow change on main, and can be run by hand.
+name: docs-site
+on:
+  push:
+    branches: [main]
+    paths:
+      - docs-src/**
+      - docs.config.json
+      - packages/docs/**
+      - packages/tokens/**
+      - packages/ui/src/styles/**
+      - packages/graphics/**
+      - apps/admin/public/fonts/**
+      - .github/workflows/docs-site.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: docs-site
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run build:packages
+      - run: node scripts/stage-fonts.mjs   # the SGI and JetBrains Mono files, so the site does not fall back to system fonts
+      - run: node packages/docs/bin/jupiter-docs.mjs check
+      - run: node packages/docs/bin/jupiter-docs.mjs build --site
+      - name: Fail if the SGI fonts were not bundled
+        run: ls dist/site/assets/fonts | grep -qi "sgi-text"
+      - run: touch dist/site/.nojekyll
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist/site
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
