@@ -24,7 +24,7 @@ Use raw HTML for the logo header, the light/dark switch, collapsible sections an
 
 ## Layout
 
-Start with the logo, right-aligned, and nothing else above the title. No banner, no badge row above the logo, no per-repo header image.
+Start the file with the logo, right-aligned, and nothing else before the title. No banner, no badge row above the logo, no per-repo header image.
 
 ```rst
 .. raw:: html
@@ -37,6 +37,8 @@ Start with the logo, right-aligned, and nothing else above the title. No banner,
    </p>
    <br>
 ```
+
+GitHub shows the first heading of an `.rst` file as the page title above everything else, so the logo appears right under the title. Put the logo block first in the file anyway.
 
 Link the logo files; do not copy them into the repo. Keep the width at 260. Inside `belikh/design` itself the paths are relative.
 
