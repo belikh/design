@@ -69,7 +69,7 @@ Rules for the page:
 
 ## Icons and graphics
 
-Use graphics from the design system and nothing else: no emoji, no icon fonts, no third-party icon sets, no clip art. Everything comes from `@belikh/jupiter-graphics`, baked for READMEs into `packages/github/graphics/<tier>/<name>-{light,dark}.svg` and attached to every release as `<tier>-<name>-{light,dark}.svg` (tiers: `icon` 20 to 32px, `spot` 120px and up, `scene` wide hero art, `rule` dividers). `<img>` cannot take the text colour, so always use the baked light/dark pair, never the files in `packages/graphics/dist`. Find names in `packages/graphics/dist/manifest.json` or the Graphics page of the app. If the set has no graphic you need, add one to `packages/graphics` first.
+Use graphics from the design system and nothing else: no emoji, no icon fonts, no third-party icon sets, no clip art. Everything comes from `@belikh/jupiter-graphics`, baked for READMEs into `packages/github/graphics/<tier>/<name>-{light,dark}.svg` and attached to every release as `<tier>-<name>-{light,dark}.svg` (tiers: `icon` 20 to 32px, `spot` 120px and up, `scene` wide hero art, `rule` dividers). `<img>` cannot take the text colour, so always use the baked light/dark pair, never the unbaked build output of the graphics package. Find names on the Graphics page of the app or in the manifest the graphics package builds. If the set has no graphic you need, add one to `packages/graphics` first.
 
 Where they go:
 
