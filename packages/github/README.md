@@ -21,8 +21,8 @@ The default README header is just the logo, right-aligned, no per-repo banner:
 ```html
 <p align="right">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/belikh/design/main/packages/graphics/logo/jupiter-logo-dark.svg">
-    <img alt="jupiter.au" src="https://raw.githubusercontent.com/belikh/design/main/packages/graphics/logo/jupiter-logo-light.svg" width="260">
+    <source media="(prefers-color-scheme: dark)" srcset="https://github.com/belikh/design/releases/latest/download/logo-dark.svg">
+    <img alt="jupiter.au" src="https://github.com/belikh/design/releases/latest/download/logo-light.svg" width="260">
   </picture>
 </p>
 ```
@@ -30,7 +30,7 @@ The default README header is just the logo, right-aligned, no per-repo banner:
 (Banners and the social preview can still be generated with the commands above when wanted; the templates do not use them.)
 
 `templates/README.md`, `profile-README.md` and `org-profile-README.md` use `<picture>`, alerts (`> [!NOTE]`), tables, badges, Mermaid and hex chips.
-The org template uses absolute `raw.githubusercontent.com` URLs because relative paths are unreliable on the org page.
+The org template uses absolute release URLs because relative paths are unreliable on the org page.
 
 ## Design for GitHub's renderer
 
