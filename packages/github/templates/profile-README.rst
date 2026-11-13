@@ -8,10 +8,8 @@
        <img alt="jupiter.au" src="https://raw.githubusercontent.com/belikh/design/main/packages/graphics/logo/jupiter-logo-light.svg" width="260">
      </picture>
    </p>
-   <br>
 
-Hi, I am Your Name
-==================
+   <h1>Hi, I am Your Name</h1>
 
 I build things with care. Currently working on **Project**; ask me about X, Y and Z.
 

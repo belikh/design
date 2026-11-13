@@ -16,11 +16,13 @@ GitHub renders `.rst` with docutils plus an HTML sanitiser. Checked on a live pa
 | Works | Does not |
 | :-- | :-- |
 | headings, paragraphs, lists, `code-block`, `list-table`, `contents` | `[!NOTE]` alerts and Mermaid blocks |
-| `image` with `:align:` and `:width:` | styled admonitions: `note::` and `warning::` render as plain labelled text |
+| `image` with `:align:`, `:width:` and `:target:` (badges are consecutive images) | styled admonitions: `note::` and `warning::` render as plain labelled text, so use the boxed callout below |
 | `.. raw:: html` with `picture`, `details`, `table`, `br`, `p align`, `sub` | `style`, `class`, `script`, `iframe` inside raw HTML |
 | `#gh-dark-mode-only` and `#gh-light-mode-only` on image URLs | |
 
-Use raw HTML for the logo header, the light/dark switch, collapsible sections and spacing. Use `.. note::` and `.. warning::` for callouts and keep them rare.
+Use raw HTML for the logo header, the title, the light/dark switch, collapsible sections and callouts. Vertical space comes from a line containing only `|` (an empty line block), which survives where blank lines do not. Add `.. meta::` with a `:description:` under the header.
+
+This layout follows how the `sphinx-readme` project formats its README (raw `<h1>` and aligned block, boxed callouts, `|` spacing).
 
 ## Layout
 
@@ -35,19 +37,20 @@ Start the file with the logo, right-aligned, and nothing else before the title. 
        <img alt="jupiter.au" src="https://raw.githubusercontent.com/belikh/design/main/packages/graphics/logo/jupiter-logo-light.svg" width="260">
      </picture>
    </p>
-   <br>
+
+   <h1>Project name</h1>
 ```
 
-GitHub shows the first heading of an `.rst` file as the page title above everything else, so the logo appears right under the title. Put the logo block first in the file anyway.
+The title is a raw `<h1>` on purpose. If it were an `.rst` heading, GitHub would hoist it above the logo.
 
 Link the logo files; do not copy them into the repo. Keep the width at 260. Inside `belikh/design` itself the paths are relative.
 
 Then, in this order:
 
-1. The title, as a heading with `=` over nothing and underline (`Project name` then `============`), and one or two plain sentences saying what it is.
+1. The title (the raw `<h1>` in the header block), then one or two plain sentences saying what it is.
 2. A row of links to the main sections, separated by `·`. Leave it out for a short README.
-3. A raw `<br>`, then a `----` transition.
-4. Sections as `----` underlined headings (`Install` then `-------`). Give the page room with a raw `<br>` between the big blocks; GitHub collapses empty lines.
+3. A `|` line, then a `----` transition.
+4. Sections as `----` underlined headings (`Install` then `-------`). Give the page room with a `|` line between the big blocks.
 5. A `list-table` with `:header-rows: 1` and real column names for lists of parts, options or commands that have more than one attribute.
 6. Long reference material inside raw `<details><summary><b>Title</b></summary>` … `</details>`, opened and closed in two raw blocks around the content.
 7. A last raw `<p align="right"><sub>jupiter.au</sub></p>`.
@@ -55,6 +58,7 @@ Then, in this order:
 Rules for the page:
 
 - Images are SVG or PNG with a light and a dark file, chosen with `<picture>` in raw HTML. Every image has an `alt`.
+- Callouts use a one-column raw table, with the title in the `<th>` (`Note`, `Warning`) and the text in the `<td>`; the templates have the exact block. Keep them rare, and no emoji.
 - Code blocks always name the language: `.. code-block:: sh`.
 - Inline code uses double backticks. Links are `` `text <url>`_ ``.
 - Badges only for status that changes (build, version). Make them with `@belikh/jupiter-github` (`node src/make.mjs --badge "build|passing|ok"`) so they use the token colours. One row, below the intro.

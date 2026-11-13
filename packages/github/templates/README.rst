@@ -8,10 +8,8 @@
        <img alt="jupiter.au" src="https://raw.githubusercontent.com/belikh/design/main/packages/graphics/logo/jupiter-logo-light.svg" width="260">
      </picture>
    </p>
-   <br>
 
-Project name
-============
+   <h1>Project name</h1>
 
 One or two plain sentences on what this is and who it is for.
 
@@ -44,7 +42,18 @@ Status
    * - CLI
      - beta
 
-.. warning:: Say anything here that can bite the reader.
+.. raw:: html
+
+   <table>
+     <tr align="left"><th>Warning</th></tr>
+     <tr><td>
+
+Say anything here that can bite the reader.
+
+.. raw:: html
+
+   </td></tr>
+   </table>
 
 Licence
 -------

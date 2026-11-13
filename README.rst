@@ -6,18 +6,17 @@
        <img alt="jupiter.au" src="packages/graphics/logo/jupiter-logo-light.svg" width="260">
      </picture>
    </p>
-   <br>
 
-Jupiter design system
-=====================
+   <h1>Jupiter design system</h1>
+
+.. meta::
+   :description: Colour, type and shape for every jupiter.au surface, generated from one token file.
 
 Colour, type and shape for websites, apps, email, terminals, kiosks, mobile, documents and READMEs, generated from one token file.
 
 `Use it in a project <docs/consuming.md>`_ · `Change a token`_ · `Targets`_ · `Releases`_ · `Develop`_
 
-.. raw:: html
-
-   <br>
+|
 
 ----
 
