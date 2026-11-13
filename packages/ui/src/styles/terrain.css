@@ -1,0 +1,17 @@
+/* Terrain: a contour map of linked items. Tokens only. Contours are the quiet line; every fifth is heavier; the hot trail takes the accent. */
+.adm-terrain-wrap { margin: 0; overflow-x: auto; }
+.adm-terrain { display: block; inline-size: 100%; min-inline-size: 40rem; block-size: auto; }
+.adm-terrain__contours path { fill: none; stroke: var(--jp-text-muted); stroke-width: 1; stroke-linecap: round; opacity: 0.4; vector-effect: non-scaling-stroke; }
+.adm-terrain__contours path.is-index { stroke: var(--jp-text); stroke-width: 1.5; opacity: 0.8; }
+.adm-terrain__trails line { stroke: var(--jp-text-muted); stroke-width: 1; stroke-dasharray: 2 5; stroke-linecap: round; opacity: 0.7; vector-effect: non-scaling-stroke; transition: opacity var(--jp-dur-base) var(--jp-ease); }
+.adm-terrain__trails line.is-dim { opacity: 0.15; }
+.adm-terrain__trails line.is-hot { stroke: var(--jp-accent); stroke-width: 2; opacity: 1; }
+.adm-terrain__node { cursor: pointer; color: var(--jp-text); text-decoration: none; transition: opacity var(--jp-dur-base) var(--jp-ease); }
+.adm-terrain__node.is-dim { opacity: 0.3; }
+.adm-terrain__dot { fill: var(--jp-bg); stroke: var(--jp-text); stroke-width: 1; }
+.adm-terrain__node.is-hot .adm-terrain__dot, .adm-terrain__node:focus-visible .adm-terrain__dot { stroke: var(--jp-accent); stroke-width: 2; }
+.adm-terrain__icon { fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.adm-terrain__node.is-hot .adm-terrain__icon { stroke: var(--jp-accent); }
+.adm-terrain__label { fill: var(--jp-text); font-family: var(--jp-font-mono); paint-order: stroke; stroke: var(--jp-bg); stroke-width: 3px; stroke-linejoin: round; }
+.adm-terrain__node:focus-visible { outline: none; }
+@media (prefers-reduced-motion: reduce) { .adm-terrain__trails line, .adm-terrain__node { transition: none; } }
