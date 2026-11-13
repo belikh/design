@@ -14,7 +14,7 @@ Move the camera VLAN behind its own firewall zone before touching the IoT networ
 
 \section{Findings}
 \subsection{Switch ports}
-Port profiles are inherited from the VLAN, so overrides need to be cleared first.\jpmargin{Profiles live under Settings $\rightarrow$ Profiles.}
+Port profiles are inherited from the VLAN, so overrides need to be cleared first.\jpmargin{Profiles live under Settings, then Profiles.}
 \begin{jpnote}[warn]Do not change the native VLAN while connected over it.\end{jpnote}
 \begin{jpcode}
 ssh admin@udm "info" # confirm firmware before changes

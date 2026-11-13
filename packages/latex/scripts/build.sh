@@ -3,13 +3,15 @@
 #   scripts/build.sh templates/*.tex personal/*.tex
 # Set JUPITER_LATEX_OUT to write PDFs somewhere other than ./build.
 # Finds the classes in src/, the generated jupiter-tokens.sty in ../tokens/dist, and the
-# fonts in fonts/ (optional: without them the documents fall back to free fonts).
+# graphics in graphics/, the fonts in fonts/ (optional: without them the documents fall back to free fonts).
 set -euo pipefail
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 tokens="$here/../tokens/dist"
+[ -f "$tokens/jupiter-tokens.sty" ] || [ ! -f "$here/tex/jupiter-tokens.sty" ] || tokens="$here/tex"   # inside the release bundle the colours sit next to the classes
 [ -f "$tokens/jupiter-tokens.sty" ] || { echo "missing $tokens/jupiter-tokens.sty (run: npm run build -w @belikh/jupiter-tokens)" >&2; exit 1; }
 out="${JUPITER_LATEX_OUT:-$here/build}"; mkdir -p "$out"
-export TEXINPUTS=".:$here/src:$tokens:"
+# graphics/ holds the committed line-graphic PDFs (jupiter.sty places them with \jpart); tex/ is the layout of the release bundle
+export TEXINPUTS=".:$here/src:$here/tex:$tokens:$here/graphics:"
 fonts=""; [ -f "$here/fonts/sgi-text-400.otf" ] && fonts="$here/fonts/"
 status=0
 for f in "$@"; do

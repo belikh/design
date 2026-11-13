@@ -32,6 +32,9 @@
 %%   1. the bundled files in \jpfontdir (pass -d "\def\jpfontdir{/path/to/fonts/}" or set it in the doc)
 %%   2. the family installed on the system
 %%   3. a free fallback, so a clean checkout still compiles
+%% SGI Text is also the document's MAIN font (\rmfamily and \sffamily), so tables, floats, captions and
+%% anything a class forgets to style never fall back to Latin Modern. \jpdisplay (SGI Alt) is for titles,
+%% \jpmono (JetBrains Mono) for labels and figures. \jpserif is kept as an alias of \jpsans: no serif ships.
 \providecommand{\jpfontdir}{}
 \defaultfontfeatures{Ligatures=TeX}
 
@@ -40,18 +43,25 @@
     ItalicFont=sgi-text-400-italic.otf,BoldFont=sgi-text-700.otf,BoldItalicFont=sgi-text-700-italic.otf]%
   \newfontfamily\jpdisplay{sgi-alt-700.otf}[Path=\jpfontdir,%
     ItalicFont=sgi-alt-700-italic.otf,BoldFont=sgi-alt-800.otf,BoldItalicFont=sgi-alt-800-italic.otf]%
+  \setmainfont{sgi-text-400.otf}[Path=\jpfontdir,ItalicFont=sgi-text-400-italic.otf,BoldFont=sgi-text-700.otf,BoldItalicFont=sgi-text-700-italic.otf]%
+  \setsansfont{sgi-text-400.otf}[Path=\jpfontdir,ItalicFont=sgi-text-400-italic.otf,BoldFont=sgi-text-700.otf,BoldItalicFont=sgi-text-700-italic.otf]%
 }{%
   \IfFontExistsTF{\jpSansName}{%
     \newfontfamily\jpsans{\jpSansName}%
     \newfontfamily\jpdisplay{\jpSansName}%
+    \setmainfont{\jpSansName}\setsansfont{\jpSansName}%
   }{%
     % Free fallback, found by FILE NAME through TeX Live (no system font install needed): Fira Sans, else Latin Modern Sans.
     \IfFileExists{FiraSans-Regular.otf}{%
       \newfontfamily\jpsans{FiraSans-Regular.otf}[ItalicFont=FiraSans-Italic.otf,BoldFont=FiraSans-Bold.otf,BoldItalicFont=FiraSans-BoldItalic.otf]%
       \newfontfamily\jpdisplay{FiraSans-Regular.otf}[ItalicFont=FiraSans-Italic.otf,BoldFont=FiraSans-Bold.otf,BoldItalicFont=FiraSans-BoldItalic.otf]%
+      \setmainfont{FiraSans-Regular.otf}[ItalicFont=FiraSans-Italic.otf,BoldFont=FiraSans-Bold.otf,BoldItalicFont=FiraSans-BoldItalic.otf]%
+      \setsansfont{FiraSans-Regular.otf}[ItalicFont=FiraSans-Italic.otf,BoldFont=FiraSans-Bold.otf,BoldItalicFont=FiraSans-BoldItalic.otf]%
     }{%
       \newfontfamily\jpsans{lmsans10-regular.otf}[ItalicFont=lmsans10-oblique.otf,BoldFont=lmsans10-bold.otf,BoldItalicFont=lmsans10-boldoblique.otf]%
       \newfontfamily\jpdisplay{lmsans10-regular.otf}[ItalicFont=lmsans10-oblique.otf,BoldFont=lmsans10-bold.otf,BoldItalicFont=lmsans10-boldoblique.otf]%
+      \setmainfont{lmsans10-regular.otf}[ItalicFont=lmsans10-oblique.otf,BoldFont=lmsans10-bold.otf,BoldItalicFont=lmsans10-boldoblique.otf]%
+      \setsansfont{lmsans10-regular.otf}[ItalicFont=lmsans10-oblique.otf,BoldFont=lmsans10-bold.otf,BoldItalicFont=lmsans10-boldoblique.otf]%
     }%
   }%
 }
@@ -59,22 +69,21 @@
 \IfFileExists{\jpfontdir jetbrains-mono-400.ttf}{%
   \newfontfamily\jpmono{jetbrains-mono-400.ttf}[Path=\jpfontdir,Scale=0.9,%
     ItalicFont=jetbrains-mono-italic-400.ttf,BoldFont=jetbrains-mono-700.ttf,BoldItalicFont=jetbrains-mono-italic-700.ttf]%
+  \setmonofont{jetbrains-mono-400.ttf}[Path=\jpfontdir,Scale=0.9,%
+    ItalicFont=jetbrains-mono-italic-400.ttf,BoldFont=jetbrains-mono-700.ttf,BoldItalicFont=jetbrains-mono-italic-700.ttf]%
 }{%
   \IfFontExistsTF{\jpMonoName}{%
-    \newfontfamily\jpmono{\jpMonoName}[Scale=0.9]%
+    \newfontfamily\jpmono{\jpMonoName}[Scale=0.9]\setmonofont{\jpMonoName}[Scale=0.9]%
   }{%
-    \newfontfamily\jpmono{DejaVu Sans Mono}[Scale=0.82]%
+    \newfontfamily\jpmono{DejaVu Sans Mono}[Scale=0.82]\setmonofont{DejaVu Sans Mono}[Scale=0.82]%
   }%
 }
-
-\IfFontExistsTF{texgyrepagella-regular.otf}{%
-  \newfontfamily\jpserif{texgyrepagella-regular.otf}[ItalicFont=texgyrepagella-italic.otf,%
-    BoldFont=texgyrepagella-bold.otf,BoldItalicFont=texgyrepagella-bolditalic.otf]%
-}{%
-  \newfontfamily\jpserif{DejaVu Serif}[Scale=0.9]%
-}
-\setmainfont{lmroman10-regular.otf}[ItalicFont=lmroman10-italic.otf,BoldFont=lmroman10-bold.otf,BoldItalicFont=lmroman10-bolditalic.otf]% placeholder, each class sets its own body font
+\newcommand{\jpserif}{\jpsans}
 \let\ttfamily\jpmono
+%% Documents set their size with \jpbody{size}{leading} (SGI Text, ink colour) at \begin{document}.
+\newcommand{\jpbody}[2]{\AtBeginDocument{\jpsans\fontsize{#1}{#2}\selectfont\color{jpText}}}
+%% Kept for old code: the main font is already SGI Text.
+\newcommand{\jpbodyfont}{}
 
 %% ---------- Type helpers ------------------------------------------------
 %% \jplabel{text}: small uppercase mono label, the "eyebrow" of the web design system.
@@ -85,7 +94,7 @@
 \newcommand{\jpinline}[1]{{\jpmono\small #1}}
 
 %% ---------- Links -------------------------------------------------------
-\hypersetup{colorlinks=true,linkcolor=jpAccent,urlcolor=jpAccent,citecolor=jpAccent,%
+\hypersetup{colorlinks=true,linkcolor=jpText,urlcolor=jpAccent,citecolor=jpAccent,%
   pdfcreator={Jupiter design system}}
 
 %% ---------- Lists -------------------------------------------------------
@@ -96,15 +105,15 @@
 %% \begin{jpcallout}[ok|warn|danger|info]{Title} ... \end{jpcallout}
 \newtcolorbox{jpcallout}[2][info]{%
   enhanced,breakable,boxrule=0pt,frame hidden,sharp corners,
-  left=8pt,right=8pt,top=6pt,bottom=6pt,
+  left=8pt,right=8pt,top=5pt,bottom=6pt,
   colback=jp#1Bg,
   borderline west={2.5pt}{0pt}{jp#1},
   coltext=jpText,
-  fonttitle=\bfseries\color{jp#1},
-  title={#2},
-  attach boxed title to top left={xshift=0pt,yshift=-\tcboxedtitleheight/2-2pt},
-  boxed title style={colback=jp#1Bg,boxrule=0pt,left=0pt,top=0pt,bottom=0pt,
-    frame hidden},
+  title={\MakeUppercase{#2}},
+  fonttitle=\jpmono\fontsize{7}{9}\selectfont\color{jp#1},
+  colbacktitle=jp#1Bg,coltitle=jp#1,
+  toptitle=5pt,bottomtitle=0pt,lefttitle=8pt,righttitle=8pt,
+  attach title to upper={\par\vspace{2pt}},
 }
 %% Simpler variant without title: \begin{jpnote}[warn] ... \end{jpnote}
 \newtcolorbox{jpnote}[1][info]{%
@@ -115,11 +124,12 @@
 %% ---------- Code blocks (mirror .jp-code) --------------------------------
 \RequirePackage{listings}
 \lstdefinestyle{jupiter}{%
-  basicstyle=\jpmono\footnotesize,columns=fullflexible,keepspaces=true,
+  basicstyle=\jpmono\footnotesize\addfontfeatures{Mapping={}},columns=fullflexible,keepspaces=true,
   breaklines=true,showstringspaces=false,
   commentstyle=\color{jpTextMuted}\itshape,
   keywordstyle=\color{jpAccent}\bfseries,
-  stringstyle=\color{jpOk}}
+  stringstyle=\color{jpOk},
+  literate={"}{{\char`\"}}1 {'}{{\char`\'}}1 {`}{{\char`\`}}1}
 \lstset{style=jupiter}
 \tcbuselibrary{listings}
 \newtcblisting{jpcode}[1][]{%
@@ -134,5 +144,48 @@
 %% ---------- Status badge (mirror .jp-badge) -------------------------------
 \newcommand{\jpbadge}[2][info]{\tcbox[on line,boxrule=0pt,arc=2pt,left=3pt,right=3pt,top=0pt,bottom=0pt,%
   colback=jp#1Bg,coltext=jp#1]{\jpmono\scriptsize\MakeUppercase{#2}}}
+
+
+%% ---------- Graphics and page placement ---------------------------------
+%% The line graphics are PDFs generated from the design-system SVGs (graphics/, scripts/graphics.mjs); an id such
+%% as flow-accent or underline-ink names the graphic and its token colour. Put graphics/ on TEXINPUTS (build.sh does).
+\RequirePackage{graphicx}
+\RequirePackage{tikz}
+\usetikzlibrary{calc}
+%% \jpart[includegraphics options]{id}: inline graphic.
+\newcommand{\jpart}[2][]{\includegraphics[#1]{#2}}
+%% \jpat[anchor]{x}{y}{material}: put material at x,y (lengths) measured from the top-left corner of the page.
+%% Needs two runs (tikz remember picture), which scripts/build.sh does.
+\newcommand{\jpat}[4][north west]{%
+  \begin{tikzpicture}[remember picture,overlay]
+    \node[anchor=#1,inner sep=0pt,outer sep=0pt] at ($(current page.north west)+(#2,-#3)$) {#4};
+  \end{tikzpicture}}
+%% \jprect{x}{y}{w}{h}{colour}: filled rectangle, same coordinates (full-bleed shapes).
+\newcommand{\jprect}[5]{%
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[#5] ($(current page.north west)+(#1,-#2)$) rectangle ++(#3,-#4);
+  \end{tikzpicture}}
+%% \jpdot{x}{y}{diameter}{colour}: filled circle centred at x,y (the red spot).
+\newcommand{\jpdot}[4]{%
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[#4] ($(current page.north west)+(#1,-#2)$) circle (#3/2);
+  \end{tikzpicture}}
+%% \jpcoverlines{y}: the three flowing lines of a cover (accent, ink, muted), 18 mm apart from y downwards, bleeding off both
+%% page edges, with the red spot set in the accent line's curl. Each line is a different hand-drawn path.
+\newcommand{\jpcoverlines}[1]{%
+  \jpat{-10mm}{#1}{\jpart{flow-accent}}%
+  \jpat{-16mm}{\dimexpr#1+19mm\relax}{\jpart{flow-ink}}%
+  \jpat{-4mm}{\dimexpr#1+38mm\relax}{\jpart{flow-muted}}%
+  \jpdot{122.5mm}{\dimexpr#1+10.8mm\relax}{5.6mm}{jpDanger}}
+%% \jpunderline[ink|accent]{width}: the hand-drawn underline, set on its own line under a heading or a name.
+\newcommand{\jpunderline}[2][ink]{\par\nointerlineskip\noindent\jpart[width=#2]{underline-#1}\par}
+
+%% ---------- Grid: a narrow gutter of mono labels beside a wide text column ---
+%% \jpgutterw is the width of the label column to the LEFT of the text (the page's left margin is the gutter plus a margin).
+\newlength{\jpgutterw}\setlength{\jpgutterw}{44mm}
+%% \jpgutter[colour]{text}: a mono label hung in the gutter, aligned with the current line.
+\newcommand{\jpgutter}[2][jpTextMuted]{\llap{\makebox[\jpgutterw][l]{\parbox[t]{\dimexpr\jpgutterw-4mm\relax}{\leavevmode\raggedright\jpmono\fontsize{7}{9}\selectfont\color{#1}\MakeUppercase{#2}}}}}
+%% \jptwodigits{counter}: 01, 02 ... for section numbers.
+\newcommand{\jptwodigits}[1]{\ifnum\value{#1}<10 0\fi\arabic{#1}}
 
 \endinput
