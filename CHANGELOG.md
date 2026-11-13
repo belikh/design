@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+- The github-readme skill moved to belikh/docs (skill-readme/SKILL.md, shipped in @belikh/jupiter-docs); @belikh/jupiter-ui no longer carries skill-readme
 - 1.3.3: the documentation system moved to belikh/docs (docs.jupiter.au); the release carries jupiter-fonts.tgz (SGI Text, SGI Alt and JetBrains Mono woff2 with fonts.css)
 - 1.3.1: the small-screen and high-contrast/print stylesheets ship in @belikh/jupiter-ui (styles/responsive.css, styles/a11y.css); .adm-hide-sm hides in the top bar on phones
 - 1.3.0: the shell and docs-look stylesheets ship in @belikh/jupiter-ui (styles/shell.css, styles/docs.css) so sites can use the same sidebar, top bar and status bar as the demo
