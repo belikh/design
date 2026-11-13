@@ -29,7 +29,8 @@ cp "$tok/jupiter.tokens.json" "$out/jupiter.tokens.json"
 #          belikh/docs builds its site with them. Fails when the tarball has no SGI Text file.
 node "$root/scripts/stage-fonts.mjs"
 ( cd "$root/packages/fonts" && npm pack --pack-destination "$out" >/dev/null 2>&1 )
-tar tzf "$out/belikh-jupiter-fonts-$version.tgz" | grep -q 'files/sgi-text-.*\.woff2' || { echo "belikh-jupiter-fonts-$version.tgz has no SGI Text woff2 file" >&2; exit 1; }
+fonts_list="$(tar tzf "$out/belikh-jupiter-fonts-$version.tgz")"   # a list first: grep -q in a pipe would end tar early and fail under pipefail
+grep -q 'files/sgi-text-.*\.woff2' <<<"$fonts_list" || { echo "belikh-jupiter-fonts-$version.tgz has no SGI Text woff2 file" >&2; exit 1; }
 
 # 2a. line graphics: sprite, stylesheet, manifest, every SVG as one archive, and the npm tarball
 gfx="$root/packages/graphics"
