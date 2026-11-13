@@ -1,0 +1,23 @@
+import { Jupiter } from "../jupiter.slint";
+import { Data } from "../data.slint";
+import { JBadge, JIcon, JButton, PageHead, Card, TRow, TCell } from "../components.slint";
+
+export component AlertsPage inherits VerticalLayout {
+    spacing: Jupiter.space-4;
+    alignment: start;
+    PageHead { eyebrow: "Alerts"; title: "Incidents and rules"; JButton { text: "Create alert"; primary: true; icon: @image-url("../assets/icon/bell.svg"); } }
+    Text { text: Data.show-resolved ? "Showing every incident and rule. Change this in Settings." : "Resolved incidents are hidden (Settings > Show resolved incidents)."; color: Jupiter.text-muted; }
+    Card {
+        TRow { header: true; first: true; TCell { head: true; text: "ID"; width: 70px; } TCell { head: true; text: "TITLE"; horizontal-stretch: 1; } TCell { head: true; text: "SERVICE"; width: 120px; } TCell { head: true; text: "SEV"; width: 50px; } TCell { head: true; text: "STATE"; width: 84px; } TCell { head: true; text: "DURATION"; right: true; width: 130px; } }
+        for a[i] in Data.alerts : TRow {
+            visible: Data.show-resolved || a.state != "resolved";
+            height: self.visible ? 18px + 2 * Jupiter.cell-y : 0px;
+            TCell { mono: true; text: a.id; width: 70px; }
+            TCell { text: a.title; horizontal-stretch: 1; }
+            TCell { text: a.svc; width: 120px; color: Jupiter.text-muted; }
+            TCell { mono: true; text: "SEV" + a.sev; width: 50px; color: a.sev == "1" ? Jupiter.danger : a.sev == "2" ? Jupiter.warn : Jupiter.info; }
+            VerticalLayout { width: 84px; alignment: center; JBadge { text: a.state; kind: a.state == "resolved" || a.state == "ok" ? "ok" : a.state == "disabled" ? "warn" : a.state == "firing" ? "warn" : "danger"; } }
+            TCell { text: a.duration; right: true; width: 130px; color: Jupiter.text-muted; }
+        }
+    }
+}

@@ -85,11 +85,11 @@
   \noindent\begin{minipage}[t]{0.58\linewidth}
     {\jpdisplay\bfseries\fontsize{26}{29}\selectfont INVOICE}\par
     \vspace{3pt}{\jpmono\small\color{jpAccent}\jp@num}\par
-    \ifx\\\jp@stat\\\else\vspace{4pt}\jpbadge[warn]{\jp@stat}\par\fi
+    \ifdefempty{\jp@stat}{}{\vspace{4pt}\jpbadge[warn]{\jp@stat}\par}
   \end{minipage}\hfill
   \begin{minipage}[t]{0.38\linewidth}\raggedleft
     {\jpmono\footnotesize\color{jpTextMuted}ISSUED}\ \ {\jpmono\small\jp@idate}\par
-    \ifx\\\jp@due\\\else{\jpmono\footnotesize\color{jpTextMuted}DUE}\ \ {\jpmono\small\jp@due}\par\fi
+    \ifdefempty{\jp@due}{}{{\jpmono\footnotesize\color{jpTextMuted}DUE}\ \ {\jpmono\small\jp@due}\par}
   \end{minipage}
   \par\vspace{6pt}{\jpaccentrule[1.4pt]}\vspace{10pt}
   \noindent\begin{minipage}[t]{0.48\linewidth}
@@ -101,6 +101,6 @@
   \par\vspace{14pt}}
 
 \newcommand{\invoicefooter}{%
-  \ifx\\\jp@pay\\\else\vspace{16pt}\noindent{\color{jpAccent}\jplabel{Payment details}}\par\vspace{2pt}{\jp@pay}\par\fi
-  \ifx\\\jp@notes\\\else\vspace{10pt}\noindent{\color{jpAccent}\jplabel{Notes}}\par\vspace{2pt}{\small\jp@notes}\par\fi}
+  \ifdefempty{\jp@pay}{}{\vspace{16pt}\noindent{\color{jpAccent}\jplabel{Payment details}}\par\vspace{2pt}{\jp@pay}\par}
+  \ifdefempty{\jp@notes}{}{\vspace{10pt}\noindent{\color{jpAccent}\jplabel{Notes}}\par\vspace{2pt}{\small\jp@notes}\par}}
 \endinput

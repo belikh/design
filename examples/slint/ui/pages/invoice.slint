@@ -1,0 +1,37 @@
+import { Jupiter } from "../jupiter.slint";
+import { Data } from "../data.slint";
+import { JBadge, JButton, PageHead, Card, TRow, TCell } from "../components.slint";
+
+export component InvoicePage inherits VerticalLayout {
+    spacing: Jupiter.space-4;
+    alignment: start;
+    PageHead { eyebrow: "Billing"; title: "Invoice " + Data.invoice.number; JBadge { text: Data.invoice.status; kind: Data.invoice.status == "paid" ? "ok" : "warn"; } }
+    HorizontalLayout {
+        spacing: Jupiter.space-6;
+        VerticalLayout { horizontal-stretch: 1; Text { text: "BILL TO"; font-family: Jupiter.font-mono; font-size: Jupiter.font-xs; color: Jupiter.accent; } Text { text: Data.invoice.client; color: Jupiter.text; font-size: Jupiter.font-md; } }
+        VerticalLayout {
+            Text { text: "ISSUED  " + Data.invoice.issued; font-family: Jupiter.font-mono; font-size: Jupiter.font-sm; color: Jupiter.text; }
+            Text { text: "DUE     " + Data.invoice.due; font-family: Jupiter.font-mono; font-size: Jupiter.font-sm; color: Jupiter.text; }
+        }
+    }
+    Card {
+        TRow { header: true; first: true; TCell { head: true; text: "DESCRIPTION"; horizontal-stretch: 1; } TCell { head: true; text: "QTY"; right: true; width: 60px; } TCell { head: true; text: "UNIT"; right: true; width: 100px; } TCell { head: true; text: "AMOUNT"; right: true; width: 110px; } }
+        for l in Data.lines : TRow {
+            TCell { text: l.desc; horizontal-stretch: 1; }
+            TCell { mono: true; text: l.qty; right: true; width: 60px; }
+            TCell { mono: true; text: l.unit; right: true; width: 100px; }
+            TCell { mono: true; text: l.amount; right: true; width: 110px; }
+        }
+    }
+    HorizontalLayout {
+        alignment: end;
+        VerticalLayout {
+            width: 260px;
+            spacing: Jupiter.space-1;
+            HorizontalLayout { Text { text: "Subtotal"; color: Jupiter.text-muted; horizontal-stretch: 1; } Text { text: Data.invoice.subtotal; font-family: Jupiter.font-mono; color: Jupiter.text; } }
+            HorizontalLayout { Text { text: "GST (10%)"; color: Jupiter.text-muted; horizontal-stretch: 1; } Text { text: Data.invoice.tax; font-family: Jupiter.font-mono; color: Jupiter.text; } }
+            Rectangle { height: 1px; background: Jupiter.border; }
+            HorizontalLayout { Text { text: "Total due"; font-weight: 700; color: Jupiter.text; horizontal-stretch: 1; } Text { text: Data.invoice.total; font-family: Jupiter.font-mono; font-weight: 700; color: Jupiter.accent; } }
+        }
+    }
+}

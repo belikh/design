@@ -1,0 +1,53 @@
+import { Jupiter } from "../jupiter.slint";
+import { Data } from "../data.slint";
+import { JBadge, PageHead, Card, TRow, TCell, SortCell, EditCell } from "../components.slint";
+
+export component TablesPage inherits VerticalLayout {
+    spacing: Jupiter.space-4;
+    alignment: start;
+    in-out property <int> selected: -1;
+    in-out property <int> edit-row: -1;
+    in-out property <int> edit-col: -1;
+    in-out property <string> error;
+    PageHead { eyebrow: "Tables"; title: "Invoices"; }
+    Text { text: root.error != "" ? root.error + " (Enter retries, Escape cancels)" : "Click a column header to sort, a row to select it, or a Client, Status or Total cell to edit it (Enter commits, Escape cancels)."; color: root.error != "" ? Jupiter.danger : Jupiter.text-muted; wrap: word-wrap; }
+    Card {
+        TRow {
+            header: true; first: true;
+            SortCell { text: "Number"; width: 90px; active: Data.sort-col == 0; clicked => { Data.sort(0); } }
+            SortCell { text: "Client"; horizontal-stretch: 1; active: Data.sort-col == 1; clicked => { Data.sort(1); } }
+            TCell { head: true; text: "ISSUED"; width: 100px; }
+            TCell { head: true; text: "DUE"; width: 100px; }
+            SortCell { text: "Status"; width: 84px; active: Data.sort-col == 3; clicked => { Data.sort(3); } }
+            SortCell { text: "Total"; right: true; width: 110px; active: Data.sort-col == 2; clicked => { Data.sort(2); } }
+        }
+        for inv[i] in Data.invoices : TRow {
+            selected: root.selected == i;
+            clicked => { root.selected = i; }
+            TCell { mono: true; text: inv.number; width: 90px; color: root.selected == i ? Jupiter.on-accent : Jupiter.text; }
+            EditCell {
+                mono: false; horizontal-stretch: 1; text: inv.client; tint: root.selected == i ? Jupiter.on-accent : Jupiter.text;
+                editing: root.edit-row == i && root.edit-col == 0;
+                start => { root.selected = i; root.error = ""; root.edit-row = i; root.edit-col = 0; }
+                commit(t) => { root.error = Data.edit-commit(inv.number, 0, t); if (root.error == "") { root.edit-row = -1; } }
+                cancel => { root.edit-row = -1; root.error = ""; }
+            }
+            TCell { mono: true; text: inv.issued; width: 100px; color: root.selected == i ? Jupiter.on-accent : Jupiter.text-muted; }
+            TCell { mono: true; text: inv.due; width: 100px; color: root.selected == i ? Jupiter.on-accent : Jupiter.text-muted; }
+            EditCell {
+                width: 84px; text: inv.status; tint: inv.status == "paid" ? Jupiter.ok : inv.status == "overdue" ? Jupiter.danger : root.selected == i ? Jupiter.on-accent : Jupiter.warn;
+                editing: root.edit-row == i && root.edit-col == 1;
+                start => { root.selected = i; root.error = ""; root.edit-row = i; root.edit-col = 1; }
+                commit(t) => { root.error = Data.edit-commit(inv.number, 1, t); if (root.error == "") { root.edit-row = -1; } }
+                cancel => { root.edit-row = -1; root.error = ""; }
+            }
+            EditCell {
+                right: true; width: 110px; text: inv.total; tint: root.selected == i ? Jupiter.on-accent : Jupiter.text;
+                editing: root.edit-row == i && root.edit-col == 2;
+                start => { root.selected = i; root.error = ""; root.edit-row = i; root.edit-col = 2; }
+                commit(t) => { root.error = Data.edit-commit(inv.number, 2, t); if (root.error == "") { root.edit-row = -1; } }
+                cancel => { root.edit-row = -1; root.error = ""; }
+            }
+        }
+    }
+}

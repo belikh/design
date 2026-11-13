@@ -15,3 +15,12 @@ ratatui = { version = "0.30.2", default-features = false, optional = true }
 ratatui = ["dep:ratatui"]
 egui = ["dep:egui"]
 iced = ["dep:iced_core"]
+
+[dev-dependencies]
+# Terminal backend for examples/tui_dashboard.rs only; the library itself stays backend-free.
+ratatui = { version = "0.30.2", default-features = false, features = ["crossterm"] }
+
+[[example]]
+name = "tui_dashboard"
+required-features = ["ratatui"]
+test = true

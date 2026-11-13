@@ -13,7 +13,7 @@ jupiter-theme = { git = "https://github.com/<owner>/<repo>", tag = "v1.0.0", fea
 
 | Feature | Toolkit | Use |
 | --- | --- | --- |
-| `ratatui` | terminal UIs | `jupiter_theme::tui::Theme::dark().selected()` returns a ready `Style`; `Color::from(rgb)` |
+| `ratatui` | terminal UIs (a runnable six-page dashboard: `cargo run --features ratatui --example tui_dashboard`, or `-- --dump metrics` for one frame as text) | `jupiter_theme::tui::Theme::dark().selected()` returns a ready `Style`; `Color::from(rgb)` |
 | `egui` | egui / eframe | `jupiter_theme::egui_theme::apply(&ctx, Scheme::Dark)` sets visuals, spacing and type sizes |
 | `iced` | iced (via `iced_core`) | `.theme(|_| jupiter_theme::iced_theme::theme(Scheme::Dark))` |
 

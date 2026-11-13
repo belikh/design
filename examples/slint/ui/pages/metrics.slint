@@ -1,0 +1,28 @@
+import { Jupiter } from "../jupiter.slint";
+import { Data } from "../data.slint";
+import { PageHead, Card, TRow, TCell, Spark, Meter } from "../components.slint";
+
+export component MetricsPage inherits VerticalLayout {
+    spacing: Jupiter.space-4;
+    alignment: start;
+    PageHead { eyebrow: "Metrics"; title: "Latency and error budget"; }
+    Text { text: "p95 latency over the last 24 hours (bars scaled to each service's own peak) and the share of the 90-day error budget used."; color: Jupiter.text-muted; wrap: word-wrap; }
+    Card {
+        TRow { header: true; first: true; TCell { head: true; text: "SERVICE"; width: 150px; } TCell { head: true; text: "LATENCY P95, 24 H"; horizontal-stretch: 1; } TCell { head: true; text: "LAST / MAX"; right: true; width: 120px; } TCell { head: true; text: "BUDGET USED"; width: 150px; } }
+        for s[i] in Data.latency : Rectangle {
+            height: 40px + 2 * Jupiter.cell-y;
+            Rectangle { y: 0px; height: 1px; background: Jupiter.border; }
+            HorizontalLayout {
+                padding-left: Jupiter.space-4;
+                padding-right: Jupiter.space-4;
+                padding-top: Jupiter.cell-y;
+                padding-bottom: Jupiter.cell-y;
+                spacing: Jupiter.space-3;
+                TCell { mono: true; text: s.name; width: 150px; }
+                Spark { horizontal-stretch: 1; tint: Jupiter.accent; bars: s.bars; }
+                TCell { mono: true; text: s.last + " / " + s.max + " ms"; right: true; width: 120px; }
+                VerticalLayout { width: 150px; alignment: center; spacing: 2px; Meter { pct: Data.services[i].budget; } TCell { mono: true; head: true; text: Data.services[i].budget + "%"; height: 14px; } }
+            }
+        }
+    }
+}

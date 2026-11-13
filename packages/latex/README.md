@@ -28,6 +28,14 @@ JUPITER_LATEX_OUT=/some/dir packages/latex/scripts/build.sh my.tex   # choose th
 Other repos use the classes by calling this script (see `job-search/resumes/build.sh`) or by putting `src/` and
 `../tokens/dist/` on `TEXINPUTS`.
 
+## Generated report and invoice
+
+`templates/report-generated.tex` and `templates/invoice-generated.tex` are produced by `npm run export:sample` from the
+same fixtures the web dashboards render (service health, alerts, network, billing; the invoice goes through the web's
+own `invoiceTex()`). The report has a service-status table, hourly metric sparklines (TikZ), incidents and alert rules,
+VLAN/device/firewall tables and an invoice list. `npm run check:sample` (CI) fails if they are stale. Do not edit them by
+hand; compile them like any template with `scripts/build.sh`.
+
 ## Fonts
 
 SGI Text, SGI Alt and JetBrains Mono are loaded from `fonts/` (gitignored: the SGI files are proprietary Bitstream

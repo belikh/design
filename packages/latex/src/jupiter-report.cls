@@ -28,15 +28,15 @@
   \begin{titlepage}
     \thispagestyle{empty}
     \noindent{\color{jpAccent}\rule{\textwidth}{6pt}}\par\vspace{22mm}
-    \ifx\\\jp@rstat\\\else{\jpbadge[info]{\jp@rstat}}\par\vspace{8pt}\fi
+    \ifdefempty{\jp@rstat}{}{{\jpbadge[info]{\jp@rstat}}\par\vspace{8pt}}
     {\raggedright\jpdisplay\bfseries\fontsize{36}{40}\selectfont\color{jpText}\@title\par}
-    \ifx\\\jp@subtitle\\\else\vspace{8pt}{\raggedright\fontsize{15}{20}\selectfont\color{jpTextMuted}\jp@subtitle\par}\fi
+    \ifdefempty{\jp@subtitle}{}{\vspace{8pt}{\raggedright\fontsize{15}{20}\selectfont\color{jpTextMuted}\jp@subtitle\par}}
     \vspace{14mm}{\jpaccentrule[1.4pt]}\vspace{6pt}
     {\jpmono\small
      \begin{tabular}{@{}ll@{}}
        \color{jpTextMuted}\MakeUppercase{author} & \@author\\
        \color{jpTextMuted}\MakeUppercase{date} & \jp@rdate\\
-       \ifx\\\jp@rver\\\else\color{jpTextMuted}\MakeUppercase{version} & \jp@rver\\\fi
+       \ifdefempty{\jp@rver}{}{\color{jpTextMuted}\MakeUppercase{version} & \jp@rver\\}
      \end{tabular}\par}
     \vfill
   \end{titlepage}}

@@ -197,6 +197,17 @@ pub mod layout {
     pub const CONTROL_HEIGHT: f32 = 32.0;
 }
 
+/// Density presets (the web data-density attribute): control height, table cell padding, page padding.
+pub mod density {
+    pub struct Density {
+        pub control: f32,
+        pub cell_y: f32,
+        pub pad: f32,
+    }
+    pub const COMFORTABLE: Density = Density { control: 32.0, cell_y: 10.0, pad: 24.0 };
+    pub const COMPACT: Density = Density { control: 28.0, cell_y: 4.0, pad: 16.0 };
+}
+
 /// Touch / kiosk overrides.
 pub mod kiosk {
     pub const MIN_TARGET: f32 = 48.0;

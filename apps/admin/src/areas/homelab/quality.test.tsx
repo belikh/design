@@ -11,15 +11,15 @@ import a11yBaseline from "../../test/a11y-baseline.json";
 import { Quality } from "./Quality.tsx";
 import { Parity } from "./Parity.tsx";
 import { coverage, summary, hasShot, orphanShots, shotKey, VARIANTS } from "./quality.data.ts";
-import { PARITY, totals, gaps } from "./parity.data.ts";
+import { PARITY, TARGETS, totals, gaps, type View } from "./parity.data.ts";
 const wrap = (el: React.ReactNode) => render(<MemoryRouter><PrefsProvider>{el}</PrefsProvider></MemoryRouter>);
 const R = [{ path: "/a", label: "A", group: "G" }, { path: "/b", label: "B", group: "G" }, { path: "/c", label: "C", group: "G" }];
 const shots = { "/a#light": "x", "/a#dark": "x", "/a#light+compact": "x", "/a#dark+compact": "x", "/b#light": "x", "/b#dark+compact": "x", "/gone#dark": "x" };
 describe("quality logic", () => {
   it("builds keys: comfortable keeps the legacy form, compact adds a suffix", () => { expect(shotKey("/a", "dark")).toBe("/a#dark"); expect(shotKey("/a", "light", "compact")).toBe("/a#light+compact"); });
-  it("matches baseline keys per theme and density, with or without the /p2 prefix", () => {
+  it("matches baseline keys per theme and density", () => {
     expect(hasShot(shots, "/a", "dark")).toBe(true); expect(hasShot(shots, "/b", "light")).toBe(true); expect(hasShot(shots, "/b", "dark")).toBe(false);
-    expect(hasShot(shots, "/b", "dark", "compact")).toBe(true); expect(hasShot(shots, "/b", "light", "compact")).toBe(false); expect(hasShot({ "/chrome/x#dark+compact": "x" }, "/p2/chrome/x", "dark", "compact")).toBe(true);
+    expect(hasShot(shots, "/b", "dark", "compact")).toBe(true); expect(hasShot(shots, "/b", "light", "compact")).toBe(false); expect(hasShot({ "/chrome/x#dark+compact": "x" }, "/chrome/x", "dark", "compact")).toBe(true);
   });
   it("covers four variants per route and counts them", () => {
     expect(VARIANTS.map((v) => v.key)).toEqual(["light-comfortable", "dark-comfortable", "light-compact", "dark-compact"]);
@@ -44,7 +44,27 @@ describe("quality page", () => {
   it("says when the baseline has no compact shots", () => { wrap(<Quality routes={R} shots={{ "/a#light": "x", "/a#dark": "x" }} a11y={{}} />); expect(screen.getByText(/routes have no compact baseline yet/)).toBeInTheDocument(); });
 });
 describe("parity", () => {
-  it("every evidence path exists in the repo", () => { for (const v of PARITY) for (const p of v.evidence) expect(existsSync(`${process.cwd()}/../../${p}`), p).toBe(true); });
-  it("counts and gap filter agree with the data", () => { expect(totals(PARITY).n).toBe(PARITY.length); expect(gaps(PARITY).length).toBeGreaterThan(0); expect(PARITY.find((v) => v.id === "metrics")?.slint).toBe("no"); });
-  it("renders the table and filters to gaps", async () => { wrap(<Parity />); expect(screen.getByRole("table", { name: "Platform parity" })).toBeInTheDocument(); await userEvent.click(screen.getByRole("button", { name: "With gaps" })); expect(screen.queryByText("Theme (light and dark tokens)")).not.toBeInTheDocument(); });
+  it("every evidence path exists in the repo and is tracked, not a generated copy", () => {
+    const root = `${process.cwd()}/../..`;
+    for (const v of PARITY) for (const p of v.evidence) { expect(existsSync(`${root}/${p}`), p).toBe(true); expect(p, "generated copies are gitignored").not.toMatch(/examples\/slint\/ui\/(assets|fonts|jupiter\.slint)|examples\/gtk\/assets\/(svg|jupiter-gtk)|\/dist\/|\/build\//); }
+  });
+  it("counts and the gap filter follow the data; n/a is neither a yes nor a gap", () => {
+    const fx: View[] = [
+      { id: "a", view: "A", web: "/a", tui: "yes", slint: "yes", gtk: "yes", latex: "na", evidence: [], note: "", reasons: { latex: "no runtime" } },
+      { id: "b", view: "B", web: "/b", tui: "no", slint: "partial", gtk: "yes", latex: "na", evidence: [], note: "" },
+      { id: "c", view: "C", web: "/c", tui: "na", slint: "na", gtk: "na", latex: "yes", evidence: [], note: "" },
+    ];
+    expect(totals(fx)).toEqual({ tui: 1, slint: 1, gtk: 2, latex: 1, n: 3, applicable: { tui: 2, slint: 2, gtk: 2, latex: 1 } });
+    expect(gaps(fx).map((x) => x.id)).toEqual(["b"]);
+    expect(totals(PARITY).n).toBe(PARITY.length);
+  });
+  it("every n/a or partial cell in the data has a reason, and every yes has evidence", () => {
+    for (const v of PARITY) { expect(v.evidence.length, v.id).toBeGreaterThan(0); for (const t of TARGETS) if (v[t] === "na" || v[t] === "partial") expect((v.reasons?.[t] ?? "").length, `${v.id}.${t}`).toBeGreaterThan(10); }
+  });
+  it("metrics, alerts, settings, overview exist on every UI target", () => { for (const id of ["overview", "metrics", "alerts", "settings"]) { const v = PARITY.find((x) => x.id === id)!; expect([v.tui, v.slint, v.gtk], id).toEqual(["yes", "yes", "yes"]); } });
+  it("renders the table, shows n/a with its reason and filters to gaps", async () => {
+    wrap(<Parity />); expect(screen.getByRole("table", { name: "Platform parity" })).toBeInTheDocument();
+    expect(screen.getAllByText("n/a").length).toBeGreaterThan(0); expect(screen.getByText(/A PDF cannot be edited in place/)).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: "With gaps" })); expect(screen.queryByText("Theme (light and dark tokens)")).not.toBeInTheDocument(); expect(gaps(PARITY).length).toBe(0); expect(screen.queryByText("Data tables with in-place edit")).not.toBeInTheDocument();
+  });
 });

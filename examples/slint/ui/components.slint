@@ -81,7 +81,8 @@ export component JToggle inherits Rectangle {
         background: Jupiter.surface-raised;
         animate x { duration: Jupiter.dur-fast; easing: ease-out; }
     }
-    TouchArea { clicked => { root.checked = !root.checked; root.toggled(root.checked); } }
+    // The parent owns the state: it flips whatever `checked` is bound to, so two toggles on one setting never disagree.
+    TouchArea { clicked => { root.toggled(!root.checked); } }
 }
 
 export component StatTile inherits Rectangle {
@@ -130,4 +131,172 @@ export component NavItem inherits Rectangle {
         }
     }
     ta := TouchArea { clicked => { root.clicked(); } }
+}
+
+// ---- page building blocks (all sizes and colours come from the Jupiter global)
+export component PageHead inherits HorizontalLayout {
+    in property <string> eyebrow;
+    in property <string> title;
+    spacing: Jupiter.space-3;
+    VerticalLayout {
+        horizontal-stretch: 1;
+        Text { text: root.eyebrow.to-uppercase(); font-family: Jupiter.font-mono; font-size: Jupiter.font-xs; color: Jupiter.accent; }
+        Text { text: root.title; font-family: Jupiter.font-sans; font-size: Jupiter.font-xl; font-weight: 800; color: Jupiter.text; }
+    }
+    @children
+}
+
+export component Card inherits Rectangle {
+    background: Jupiter.surface-raised;
+    border-width: 1px;
+    border-color: Jupiter.border;
+    border-radius: Jupiter.radius-md;
+    clip: true;
+    VerticalLayout { @children }
+}
+
+// A table row: height follows the density tokens (cell-y), so Settings > Compact tightens every table.
+export component TRow inherits Rectangle {
+    in property <bool> first: false;
+    in property <bool> header: false;
+    in property <bool> selected: false;
+    callback clicked();
+    height: 18px + 2 * Jupiter.cell-y;
+    background: selected ? Jupiter.accent : header ? Jupiter.surface : transparent;
+    Rectangle { y: 0px; height: 1px; background: first ? transparent : Jupiter.border; }
+    // under the cells, so a SortCell inside a header row still receives its own clicks
+    ta := TouchArea { clicked => { root.clicked(); } }
+    HorizontalLayout {
+        padding-left: Jupiter.space-4;
+        padding-right: Jupiter.space-4;
+        spacing: Jupiter.space-3;
+        @children
+    }
+}
+
+export component TCell inherits Text {
+    in property <bool> mono: false;
+    in property <bool> head: false;
+    in property <bool> right: false;
+    font-family: mono || head ? Jupiter.font-mono : Jupiter.font-sans;
+    font-size: head ? Jupiter.font-xs : Jupiter.font-sm;
+    font-weight: head ? 400 : 400;
+    color: head ? Jupiter.text-muted : Jupiter.text;
+    vertical-alignment: center;
+    horizontal-alignment: right ? TextHorizontalAlignment.right : TextHorizontalAlignment.left;
+    overflow: elide;
+}
+
+export component SortCell inherits Rectangle {
+    in property <string> text;
+    in property <bool> active;
+    in property <bool> right: false;
+    callback clicked();
+    HorizontalLayout {
+        alignment: right ? end : start;
+        spacing: 4px;
+        Text { text: root.text.to-uppercase() + (root.active ? " v" : ""); font-family: Jupiter.font-mono; font-size: Jupiter.font-xs; color: root.active ? Jupiter.accent : Jupiter.text-muted; vertical-alignment: center; }
+    }
+    TouchArea { clicked => { root.clicked(); } }
+}
+
+// A bar sparkline: `bars` are values already scaled to 0..1.
+export component Spark inherits Rectangle {
+    in property <[float]> bars;
+    in property <color> tint: Jupiter.accent;
+    min-height: 32px;
+    HorizontalLayout {
+        spacing: 2px;
+        for b in root.bars : Rectangle {
+            horizontal-stretch: 1;
+            Rectangle { y: parent.height - self.height; height: max(2px, b * parent.height); border-radius: 1px; background: root.tint; }
+        }
+    }
+}
+
+export component Meter inherits Rectangle {
+    in property <int> pct;
+    height: 8px;
+    border-radius: 4px;
+    background: Jupiter.border;
+    Rectangle {
+        x: 0px;
+        width: parent.width * min(1.0, root.pct / 100.0);
+        border-radius: 4px;
+        background: root.pct >= 100 ? Jupiter.danger : root.pct > 50 ? Jupiter.warn : Jupiter.ok;
+    }
+}
+
+export component SettingRow inherits Rectangle {
+    in property <string> label;
+    in property <string> hint;
+    in-out property <bool> checked;
+    callback toggled(bool);
+    height: 56px + Jupiter.cell-y;
+    HorizontalLayout {
+        padding-left: Jupiter.space-4;
+        padding-right: Jupiter.space-4;
+        spacing: Jupiter.space-3;
+        VerticalLayout {
+            horizontal-stretch: 1;
+            alignment: center;
+            Text { text: root.label; font-family: Jupiter.font-sans; font-size: Jupiter.font-md; font-weight: 700; color: Jupiter.text; }
+            Text { text: root.hint; font-family: Jupiter.font-sans; font-size: Jupiter.font-sm; color: Jupiter.text-muted; }
+        }
+        VerticalLayout { alignment: center; JToggle { checked: root.checked; toggled(c) => { root.toggled(c); } } }
+    }
+}
+
+// A table cell that edits in place: click to start, Enter commits, Escape cancels (same keys as the web DataTable).
+export component EditCell inherits Rectangle {
+    in property <string> text;
+    in property <bool> editing;
+    in property <bool> mono: true;
+    in property <bool> right: false;
+    in property <color> tint: Jupiter.text;
+    callback start();
+    callback commit(string);
+    callback cancel();
+    changed editing => {
+        if (self.editing) {
+            ti.text = root.text;
+            ti.select-all();
+            ti.focus();
+        }
+    }
+    Rectangle {
+        visible: root.editing;
+        border-width: 1px;
+        border-color: Jupiter.accent;
+        border-radius: Jupiter.radius-sm;
+        background: Jupiter.bg;
+    }
+    ti := TextInput {
+        visible: root.editing;
+        x: 4px;
+        width: parent.width - 8px;
+        font-family: root.mono ? Jupiter.font-mono : Jupiter.font-sans;
+        font-size: Jupiter.font-sm;
+        color: Jupiter.text;
+        vertical-alignment: center;
+        horizontal-alignment: root.right ? TextHorizontalAlignment.right : TextHorizontalAlignment.left;
+        accepted => { root.commit(self.text); }
+        key-pressed(e) => {
+            if (e.text == Key.Escape) { root.cancel(); return accept; }
+            return reject;
+        }
+    }
+    Text {
+        visible: !root.editing;
+        x: 0px;
+        width: parent.width;
+        text: root.text;
+        font-family: root.mono ? Jupiter.font-mono : Jupiter.font-sans;
+        font-size: Jupiter.font-sm;
+        color: root.tint;
+        vertical-alignment: center;
+        horizontal-alignment: root.right ? TextHorizontalAlignment.right : TextHorizontalAlignment.left;
+        overflow: elide;
+    }
+    TouchArea { enabled: !root.editing; clicked => { root.start(); } }
 }

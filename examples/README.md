@@ -1,5 +1,15 @@
 # Native Linux demos
 
+Both demos have the same eight pages (Overview, Metrics, Alerts, Tables, Invoice, Documents, Network, Settings), all
+driven by the generated tokens (colours, type, spacing, radius, motion and the `density` presets) and by
+`data/sample.rs`, which `npm run export:sample` derives from the same fixtures as the web dashboards. Settings has a
+working Dark/Light switch, Compact density (control height, cell and page padding come from the density tokens) and
+Show resolved incidents (filters the Alerts page). The Tables page sorts by column, selects rows and edits Client, Status and Total cells in place (Enter commits, Escape cancels, invalid input stays open with a message). Documents previews the selected item's LaTeX source; Network draws the device topology from each uplink.
+
+Render every page to a PNG (needs a display): `examples/sync-assets.sh && examples/check-native.sh`. Both demos accept
+`--page <name> --dark --compact --hide-resolved --screenshot out.png`; Slint also takes ordered `--click x,y` and `--type text` (real pointer and key events, so a whole cell-editing session can be scripted); GTK takes `--toggle dark|compact|resolved`, `--select <row>` (document preview) and `--edit row,col,text` (drives a table cell's own entry). CI does not build these demos (it
+validates the generated GTK CSS only), so they are verified by building and rendering locally.
+
 Two small Rust apps showing the same dashboard themed from the generated outputs: the Slint theme global and the
 GTK4 named-colour stylesheet, plus the `@belikh/jupiter-graphics` icons, a spot illustration and a rule.
 

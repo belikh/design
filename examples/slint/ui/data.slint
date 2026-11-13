@@ -1,0 +1,36 @@
+// Row types and the global that the Rust side fills from examples/data/sample.rs
+// (generated from the same fixtures as the web dashboards).
+export struct Service { name: string, owner: string, uptime: string, p95: string, status: string, budget: int }
+export struct Series { name: string, last: string, max: string, bars: [float] }
+export struct Alert { id: string, title: string, svc: string, sev: string, state: string, duration: string }
+export struct Invoice { number: string, client: string, issued: string, due: string, status: string, subtotal: string, tax: string, total: string }
+export struct Line { desc: string, qty: string, unit: string, amount: string }
+export struct Doc { name: string, kind: string, detail: string, source: string }
+export struct Node { name: string, kind: string, status: string, depth: int, last: bool, guides: [bool] }
+export struct Vlan { vid: string, name: string, subnet: string, purpose: string, mode: string }
+export struct Device { name: string, kind: string, ip: string, uptime: string, status: string }
+export struct Fw { name: string, action: string, proto: string, hits: string, state: string }
+
+export global Data {
+    in-out property <[Service]> services;
+    in-out property <[Series]> latency;
+    in-out property <[Alert]> alerts;
+    in-out property <[Invoice]> invoices;
+    in-out property <Invoice> invoice;
+    in-out property <[Line]> lines;
+    in-out property <[Doc]> documents;
+    in-out property <[Vlan]> vlans;
+    in-out property <[Node]> topology;
+    in-out property <[Device]> devices;
+    in-out property <[Fw]> firewall;
+    in-out property <string> as-of;
+    // settings
+    in-out property <bool> show-resolved: true;
+    in-out property <int> sort-col: 0;
+    in-out property <string> open-count;
+    in-out property <string> firing-count;
+    in-out property <string> avg-uptime;
+    callback sort(int);
+    // Commit an in-place edit of an invoice cell (col 0 client, 1 status, 2 total); returns an error message, or "" when accepted.
+    callback edit-commit(string, int, string) -> string;
+}

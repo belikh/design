@@ -1,0 +1,50 @@
+import { Jupiter } from "../jupiter.slint";
+import { Data } from "../data.slint";
+import { JBadge, PageHead, Card, TRow, TCell } from "../components.slint";
+
+export component NetworkPage inherits VerticalLayout {
+    spacing: Jupiter.space-4;
+    alignment: start;
+    PageHead { eyebrow: "Network"; title: "VLANs, devices and firewall"; }
+    Card {
+        TRow { header: true; first: true; TCell { head: true; text: "TOPOLOGY (FROM EACH DEVICE'S UPLINK)"; horizontal-stretch: 1; } }
+        for n[i] in Data.topology : Rectangle {
+            height: 28px + Jupiter.cell-y;
+            // guide lines of the ancestors that still have children below
+            for g[k] in n.guides : Rectangle { x: Jupiter.space-4 + k * 28px + 10px; width: 1px; background: Jupiter.border; visible: g; }
+            if n.depth > 0 : Rectangle { x: Jupiter.space-4 + (n.depth - 1) * 28px + 10px; y: 0px; width: 1px; height: n.last ? parent.height / 2 : parent.height; background: Jupiter.text-muted; }
+            if n.depth > 0 : Rectangle { x: Jupiter.space-4 + (n.depth - 1) * 28px + 10px; y: parent.height / 2; width: 18px; height: 1px; background: Jupiter.text-muted; }
+            Rectangle {
+                x: Jupiter.space-4 + n.depth * 28px;
+                y: (parent.height - self.height) / 2;
+                height: 24px;
+                width: lbl.preferred-width + 20px;
+                border-radius: Jupiter.radius-sm;
+                border-width: 1px;
+                border-color: n.status == "online" ? Jupiter.ok : n.status == "updating" ? Jupiter.warn : Jupiter.danger;
+                background: n.status == "online" ? Jupiter.ok-bg : n.status == "updating" ? Jupiter.warn-bg : Jupiter.danger-bg;
+                lbl := Text { x: 10px; text: n.name + " (" + n.kind + ")"; font-family: Jupiter.font-sans; font-size: Jupiter.font-sm; color: Jupiter.text; vertical-alignment: center; height: parent.height; }
+            }
+        }
+    }
+    Card {
+        TRow { header: true; first: true; TCell { head: true; text: "VLAN"; width: 50px; } TCell { head: true; text: "NAME"; width: 140px; } TCell { head: true; text: "SUBNET"; width: 150px; } TCell { head: true; text: "PURPOSE"; horizontal-stretch: 1; } TCell { head: true; text: "MODE"; right: true; width: 80px; } }
+        for v[i] in Data.vlans : TRow {
+            TCell { mono: true; text: v.vid; width: 50px; } TCell { text: v.name; width: 140px; } TCell { mono: true; text: v.subnet; width: 150px; }
+            TCell { text: v.purpose; horizontal-stretch: 1; color: Jupiter.text-muted; } TCell { mono: true; text: v.mode; right: true; width: 80px; }
+        }
+    }
+    Card {
+        TRow { header: true; first: true; TCell { head: true; text: "DEVICE"; horizontal-stretch: 1; } TCell { head: true; text: "KIND"; width: 90px; } TCell { head: true; text: "ADDRESS"; width: 120px; } TCell { head: true; text: "UPTIME"; right: true; width: 70px; } Rectangle { width: 84px; } }
+        for d[i] in Data.devices : TRow {
+            TCell { text: d.name; horizontal-stretch: 1; } TCell { text: d.kind; width: 90px; color: Jupiter.text-muted; } TCell { mono: true; text: d.ip; width: 120px; } TCell { mono: true; text: d.uptime; right: true; width: 70px; }
+            VerticalLayout { width: 84px; alignment: center; JBadge { text: d.status; kind: d.status == "online" ? "ok" : d.status == "updating" ? "warn" : "danger"; } }
+        }
+    }
+    Card {
+        TRow { header: true; first: true; TCell { head: true; text: "FIREWALL RULE"; horizontal-stretch: 1; } TCell { head: true; text: "ACTION"; width: 70px; } TCell { head: true; text: "PROTO/PORT"; width: 110px; } TCell { head: true; text: "HITS"; right: true; width: 70px; } TCell { head: true; text: "STATE"; right: true; width: 50px; } }
+        for r[i] in Data.firewall : TRow {
+            TCell { text: r.name; horizontal-stretch: 1; } TCell { mono: true; text: r.action; width: 70px; color: r.action == "Allow" ? Jupiter.ok : Jupiter.danger; } TCell { mono: true; text: r.proto; width: 110px; } TCell { mono: true; text: r.hits; right: true; width: 70px; } TCell { mono: true; text: r.state; right: true; width: 50px; color: Jupiter.text-muted; }
+        }
+    }
+}

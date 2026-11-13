@@ -1,0 +1,16 @@
+import { Jupiter } from "../jupiter.slint";
+import { Data } from "../data.slint";
+import { PageHead, Card, SettingRow } from "../components.slint";
+
+export component SettingsPage inherits VerticalLayout {
+    spacing: Jupiter.space-4;
+    alignment: start;
+    PageHead { eyebrow: "Settings"; title: "Appearance and behaviour"; }
+    Card {
+        SettingRow { label: "Dark theme"; hint: "Switches every colour token to its dark value."; checked: Jupiter.dark; toggled(c) => { Jupiter.dark = c; } }
+        Rectangle { height: 1px; background: Jupiter.border; }
+        SettingRow { label: "Compact density"; hint: "Control height " + Jupiter.control-height / 1px + " px, cell padding " + Jupiter.cell-y / 1px + " px, page padding " + Jupiter.pad / 1px + " px (the density tokens)."; checked: Jupiter.compact; toggled(c) => { Jupiter.compact = c; } }
+        Rectangle { height: 1px; background: Jupiter.border; }
+        SettingRow { label: "Show resolved incidents"; hint: "When off, the Alerts page lists only open incidents and live rules."; checked: Data.show-resolved; toggled(c) => { Data.show-resolved = c; } }
+    }
+}

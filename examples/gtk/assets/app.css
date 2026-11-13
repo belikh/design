@@ -1,4 +1,5 @@
 /* App styling written against the generated named colours (jupiter-gtk-*.css). */
+window { color: @window_fg_color; background: @window_bg_color; }
 .sidebar { background: @sidebar_bg_color; border-right: 1px solid @sidebar_border_color; padding: 16px; }
 .brand { font-family: "JetBrains Mono", monospace; font-weight: 700; font-size: 17px; }
 button.nav { padding: 6px 10px; border-radius: 6px; background: transparent; box-shadow: none; border: none; color: @window_fg_color; }
@@ -23,3 +24,25 @@ button.primary { background: @accent_bg_color; color: @accent_fg_color; border-r
 button.primary:hover { background: shade(@accent_bg_color, 1.1); }
 button.secondary { background: @sidebar_bg_color; color: @window_fg_color; border: 1px solid @headerbar_border_color; border-radius: 6px; min-height: 32px; font-weight: 700; box-shadow: none; }
 button.secondary:hover { background: @card_bg_color; }
+.th { font-family: "JetBrains Mono", monospace; font-size: 13px; color: alpha(@window_fg_color, 0.6); }
+.thead { background: @sidebar_bg_color; }
+button.th-sort { font-family: "JetBrains Mono", monospace; font-size: 13px; color: alpha(@window_fg_color, 0.6); background: transparent; box-shadow: none; border: none; padding: 0; min-height: 0; border-radius: 0; }
+button.th-sort.active { color: @accent_color; }
+.row.selected { background: @accent_bg_color; color: @accent_fg_color; }
+.row.selected label { color: @accent_fg_color; }
+.strong { font-weight: 700; font-size: 16px; }
+.small { font-size: 12px; }
+.accent-text { color: @accent_color; }
+.warnc { color: @warning_color; }
+.infoc { color: @accent_color; }
+progressbar.meter-ok progress { background: @success_color; }
+progressbar.meter-warn progress { background: @warning_color; }
+progressbar.meter-danger progress { background: @error_color; }
+progressbar trough { background: alpha(@window_fg_color, 0.15); min-height: 8px; border-radius: 4px; }
+progressbar progress { min-height: 8px; border-radius: 4px; }
+.badge-info { color: @accent_color; background: alpha(@accent_color, 0.14); }
+.editable:hover { background: alpha(@accent_color, 0.10); }
+.row.selected .editable:hover { background: alpha(@accent_fg_color, 0.15); }
+entry.cell-entry { min-height: 0; padding: 2px 6px; border: 1px solid @accent_color; border-radius: 2px; background: @window_bg_color; color: @window_fg_color; font-family: "JetBrains Mono", monospace; box-shadow: none; }
+.source { font-size: 13px; }
+.source-card { background: @sidebar_bg_color; }

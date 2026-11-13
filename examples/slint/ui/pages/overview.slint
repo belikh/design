@@ -1,0 +1,30 @@
+import { Jupiter } from "../jupiter.slint";
+import { Data } from "../data.slint";
+import { JIcon, JButton, JBadge, StatTile, PageHead, Card, TRow, TCell } from "../components.slint";
+
+export component OverviewPage inherits VerticalLayout {
+    spacing: Jupiter.space-4;
+    alignment: start;
+    PageHead {
+        eyebrow: "Overview";
+        title: "Service status";
+        JButton { text: "Refresh"; icon: @image-url("../assets/icon/refresh.svg"); }
+    }
+    HorizontalLayout {
+        spacing: Jupiter.space-3;
+        StatTile { label: "Uptime (90 d)"; value: Data.avg-uptime; delta: "average across services"; }
+        StatTile { label: "Open incidents"; value: Data.open-count; delta: "as of " + Data.as-of; good: Data.open-count == "0"; }
+        StatTile { label: "Rules firing"; value: Data.firing-count; delta: "alert rules"; good: Data.firing-count == "0"; }
+    }
+    Image { source: @image-url("../assets/rule/wave.svg"); colorize: Jupiter.border; height: 24px; image-fit: contain; }
+    Card {
+        TRow { header: true; first: true; TCell { head: true; text: "SERVICE"; width: 170px; } TCell { head: true; text: "OWNER"; horizontal-stretch: 1; } TCell { head: true; text: "UPTIME"; right: true; width: 90px; } TCell { head: true; text: "P95"; right: true; width: 80px; } Rectangle { width: 84px; } }
+        for s[i] in Data.services : TRow {
+            TCell { mono: true; text: s.name; width: 170px; }
+            TCell { text: s.owner; horizontal-stretch: 1; color: Jupiter.text-muted; }
+            TCell { mono: true; text: s.uptime; right: true; width: 90px; }
+            TCell { mono: true; text: s.p95; right: true; width: 80px; }
+            VerticalLayout { width: 84px; alignment: center; JBadge { text: s.status == "ok" ? "healthy" : s.status == "warn" ? "degraded" : "down"; kind: s.status; } }
+        }
+    }
+}

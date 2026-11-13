@@ -1,0 +1,30 @@
+import { Jupiter } from "../jupiter.slint";
+import { Data } from "../data.slint";
+import { JIcon, PageHead, Card, TRow, TCell } from "../components.slint";
+
+export component DocumentsPage inherits VerticalLayout {
+    spacing: Jupiter.space-4;
+    alignment: start;
+    in-out property <int> selected: 0;
+    PageHead { eyebrow: "Documents"; title: "Letters, resumes, notes and PDFs"; }
+    Text { text: "Templates are the jupiter-* LaTeX classes; PDFs are their compiled output."; color: Jupiter.text-muted; }
+    Card {
+        for d[i] in Data.documents : TRow {
+            first: i == 0;
+            selected: root.selected == i;
+            clicked => { root.selected = i; }
+            VerticalLayout { width: 20px; alignment: center; JIcon { source: d.kind == "PDF" ? @image-url("../assets/icon/download.svg") : @image-url("../assets/icon/file.svg"); size: 16px; tint: root.selected == i ? Jupiter.on-accent : Jupiter.text-muted; } }
+            TCell { text: d.name; width: 230px; color: root.selected == i ? Jupiter.on-accent : Jupiter.text; }
+            TCell { mono: true; text: d.kind; width: 150px; color: root.selected == i ? Jupiter.on-accent : Jupiter.accent; }
+            TCell { text: d.detail; horizontal-stretch: 1; color: root.selected == i ? Jupiter.on-accent : Jupiter.text-muted; }
+        }
+    }
+    Text { text: "LaTeX SOURCE: " + Data.documents[root.selected].name; font-family: Jupiter.font-mono; font-size: Jupiter.font-xs; color: Jupiter.accent; }
+    Card {
+        Rectangle {
+            background: Jupiter.surface;
+            height: src.preferred-height + 2 * Jupiter.space-4;
+            src := Text { x: Jupiter.space-4; y: Jupiter.space-4; width: parent.width - 2 * Jupiter.space-4; text: Data.documents[root.selected].source; font-family: Jupiter.font-mono; font-size: Jupiter.font-xs; color: Jupiter.text; wrap: no-wrap; overflow: clip; }
+        }
+    }
+}
