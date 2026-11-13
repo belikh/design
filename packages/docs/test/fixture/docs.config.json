@@ -1,7 +1,0 @@
-{
-  "project": "Fixture",
-  "version": "9.9.9",
-  "repo": "https://example.org/fixture",
-  "sections": [{ "id": "a", "title": "Alpha", "summary": "First.", "icon": "home" }],
-  "glossary": { "Widget": "A thing." }
-}

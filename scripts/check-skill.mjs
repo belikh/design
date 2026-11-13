@@ -40,17 +40,5 @@ const header = /<p align="right">[\s\S]*?<\/p>/.exec(rs)?.[0]; const rootReadme 
 if (existsSync(join(root, "README.md"))) bad.push("github-readme: README.md exists next to README.rst (GitHub would show the Markdown one)");
 if (!header || !header.includes("logo-light.svg") || !header.includes('width="260"')) bad.push("github-readme: logo header snippet missing");
 else if (!/width="260"/.test(rootReadme.slice(0, 700)) || !rootReadme.startsWith(".. raw:: html")) bad.push("github-readme: the root README.rst does not open with the logo header the skill describes");
-// The docs skill: frontmatter, DESIGN.md pointer, and every path, command, directive and header key it names must exist in packages/docs.
-const ds = readFileSync(join(root, "packages/ui/skill-docs/SKILL.md"), "utf8"); const docsSpec = await import(join(root, "packages/docs/src/spec.mjs")); const docsCli = readFileSync(join(root, "packages/docs/src/cli.mjs"), "utf8");
-if (!/^---\nname: jupiter-docs\ndescription: [\s\S]+?\n---\n/.test(ds)) bad.push("jupiter-docs: expected frontmatter name jupiter-docs and a description");
-if (!ds.includes("DESIGN.md")) bad.push("jupiter-docs skill does not point to DESIGN.md");
-for (const m of ds.matchAll(/`((?:packages|apps|scripts|docs-src)\/[\w./-]+)`/g)) { const f = m[1].replace(/[.,]+$/, ""); if (!f.includes("<") && !existsSync(join(root, f))) bad.push(`jupiter-docs: missing ${f}`); }
-for (const m of ds.matchAll(/jupiter-docs (check|build|init)\b/g)) if (!docsCli.includes(`"${m[1]}"`)) bad.push(`jupiter-docs: command not in the CLI: ${m[1]}`);
-for (const m of ds.matchAll(/jupiter-docs build (--[a-z]+)/g)) if (!docsCli.includes(`"${m[1].slice(2)}"`) && !docsCli.includes(`flags.has("${m[1].slice(2)}")`) && !docsCli.includes(m[1])) bad.push(`jupiter-docs: flag not in the CLI: ${m[1]}`);
-for (const m of ds.matchAll(/npm run ([\w:.-]+)/g)) if (!(m[1] in rootScripts)) bad.push(`jupiter-docs: npm script not found: ${m[1]}`);
-for (const m of ds.matchAll(/(?:^|[\s`(-])(:{2,4})([a-z][a-z-]*)/gm)) if (!docsSpec.DIRECTIVES.includes(m[2])) bad.push(`jupiter-docs: directive not in spec.mjs: ${m[2]}`);
-for (const d of docsSpec.DIRECTIVES) if (!ds.includes(d)) bad.push(`jupiter-docs: directive not documented in the skill: ${d}`);
-for (const k of Object.keys(docsSpec.FRONT_MATTER)) if (!ds.includes(`\`${k}\``)) bad.push(`jupiter-docs: front matter key not documented in the skill: ${k}`);
-for (const k of Object.keys(docsSpec.CONFIG_KEYS).filter((x) => ["project", "version", "versionFrom", "repo", "siteUrl", "base", "sections", "glossary", "hero"].includes(x))) if (!ds.includes(k)) bad.push(`jupiter-docs: config key not documented in the skill: ${k}`);
 if (bad.length) { console.error(`SKILL.md drift:\n  ${bad.join("\n  ")}`); process.exit(1); }
 console.log("The agent skill matches the repository.");

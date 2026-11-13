@@ -19,7 +19,6 @@ Every document has the same typographic look, so a report, an invoice and a lett
 | `jupiter-resume` | Resume / CV | `dense` (one page, gutter of dates and labels), `sidebar` (tinted sidebar), `classic` (monochrome, ATS-friendly, multi-page) |
 | `jupiter-letter` | Formal letter, cover letter | `cover` (accent underline and the red spot); default is formal (ink underline) |
 | `jupiter-notes` | Working notes with remarks in the gutter and checklists | |
-| `jupiter-docs` | Generated documentation (`jupiter-docs build --pdf`): cover, running header, numbered sections, callouts, code, tables | |
 | `jupiter-report` | Reports and long documents (cover, contents, callouts, code, wide and long tables) | |
 | `jupiter-invoice` | Invoices with computed subtotal, tax and total; long invoices run onto further pages | |
 

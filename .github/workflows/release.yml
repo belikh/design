@@ -57,9 +57,6 @@ jobs:
             ! echo "$fonts" | grep -qiE "LMRoman|LMSans|LatinModern|CMR|CMSY|CMMI|Pagella|DejaVu|Fira" || { echo "$f embeds a non-Jupiter font"; exit 1; }
           done
           for f in packages/latex/build/*.pdf; do pdftoppm -r 70 -f 1 -l 1 -png -singlefile "$f" "${f%.pdf}"; done
-          node packages/docs/bin/jupiter-docs.mjs build --pdf
-          pdffonts dist/jupiter-docs.pdf | grep -qi sgi
-          pdftoppm -r 70 -f 1 -l 1 -png -singlefile dist/jupiter-docs.pdf dist/jupiter-docs
       - name: Build release assets
         if: steps.v.outputs.exists == 'false'
         run: scripts/release-assets.sh
