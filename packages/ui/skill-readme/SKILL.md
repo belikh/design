@@ -9,6 +9,19 @@ Every jupiter.au repo has a README that looks the same and reads the same. Follo
 
 The visual rules (type, colour, space, graphics) are in `DESIGN.md` in the `jupiter-design-system` skill; this skill applies them to READMEs.
 
+## Every README must use the artwork
+
+A README is not finished until it has all of these, taken from the design system's graphics and the layout rules in this skill:
+
+1. The logo header (right-aligned, 260px, `latest` tag URL) and the raw `<h1>` title.
+2. A rule divider (`end` by default) between the intro and the first section and before the footer line, and between other major blocks.
+3. An icon (20px, light/dark pair) beside each row of any table that lists parts, entities, commands or options with a name column, when the set has a fitting icon. If it has none, add one to `packages/graphics` first; do not leave the row bare or use an emoji.
+4. Boxed callouts for warnings and notes (the raw table recipe), not blockquotes or `.. note::`.
+5. `.. meta::` with a description, `|` spacing between big blocks, and the final `<sub>jupiter.au</sub>` line.
+6. The file is `README.rst`. A repo that still has `README.md` is converted in the same commit (`git mv`).
+
+Forks of other people's projects are the exception: add only the logo header and leave the upstream content alone.
+
 ## Format
 
 Write `README.rst` (reStructuredText), not `README.md`. If a repo has both, GitHub shows the Markdown one, so delete the `.md`. When you edit a repo that still has `README.md`, convert it to `README.rst` in the same commit (`git mv` first so the history follows).
