@@ -1,6 +1,6 @@
 {
   "name": "@belikh/jupiter-ui",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "Jupiter UI components (React): DataTable with edit in place and bulk edit, inputs, forms, feedback, charts, preferences, mock data layer. Ships as TypeScript/CSS source for Vite and other bundlers; styled only by @belikh/jupiter-tokens variables.",
   "type": "module",
   "license": "UNLICENSED",
