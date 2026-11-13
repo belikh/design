@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="24" viewBox="0 0 1280 24" role="img" aria-labelledby="t d">
+<!-- Generated from jupiter.tokens.json (jupiter 1.1.0), dark scheme. Do not edit by hand. -->
+<title id="t">Divider</title><desc id="d">Divider</desc>
+<style>
+.t{font-family:"SGI Text", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;font-weight:800}
+.b{font-family:"SGI Text", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;font-weight:400}
+.m{font-family:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;font-weight:500}
+@keyframes flow{to{stroke-dashoffset:-240}}
+@keyframes pulse{0%,100%{opacity:.18}50%{opacity:.5}}
+.flow{animation:flow 9s linear infinite}
+.halo{animation:pulse 4s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){.flow,.halo{animation:none}}
+</style>
+<path d="M0 12H1280" stroke="#2b3040" stroke-width="1"/>
+<path class="flow" d="M0 12H1280" stroke="#9d8cff" stroke-width="1" stroke-dasharray="2 22"/>
+<rect x="608" y="4" width="64" height="16" fill="#0e1016"/>
+<circle class="halo" cx="640" cy="12" r="9" fill="#9d8cff"/><circle cx="640" cy="12" r="4" fill="#9d8cff"/>
+<circle cx="618" cy="12" r="2" fill="#2b3040"/><circle cx="662" cy="12" r="2" fill="#2b3040"/>
+</svg>

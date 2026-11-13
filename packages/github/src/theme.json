@@ -1,0 +1,50 @@
+{
+  "name": "jupiter",
+  "version": "1.1.0",
+  "color": {
+    "light": {
+      "bg": "#faf9f7",
+      "surface": "#f3f1ec",
+      "surfaceRaised": "#fdfcfa",
+      "border": "#d9d5cc",
+      "text": "#16171d",
+      "textMuted": "#5b5f6b",
+      "accent": "#4b3fbf",
+      "onAccent": "#fdfcfa",
+      "ok": "#1b6e34",
+      "okBg": "#e3f1e6",
+      "warn": "#8a5a00",
+      "warnBg": "#f7ecd4",
+      "danger": "#b42323",
+      "dangerBg": "#f8e1df",
+      "info": "#0b6b7d",
+      "infoBg": "#dcf0f3"
+    },
+    "dark": {
+      "bg": "#0e1016",
+      "surface": "#151821",
+      "surfaceRaised": "#1c2030",
+      "border": "#2b3040",
+      "text": "#e6e4df",
+      "textMuted": "#9a9fab",
+      "accent": "#9d8cff",
+      "onAccent": "#0e1016",
+      "ok": "#5ad17a",
+      "okBg": "#11291b",
+      "warn": "#f2b544",
+      "warnBg": "#2e2410",
+      "danger": "#ff7a70",
+      "dangerBg": "#34161a",
+      "info": "#4fd1e0",
+      "infoBg": "#0f2a30"
+    }
+  },
+  "font": {
+    "sans": "\"SGI Text\", system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif",
+    "mono": "\"JetBrains Mono\", ui-monospace, SFMono-Regular, Menlo, Consolas, \"Liberation Mono\", monospace"
+  },
+  "radius": {
+    "sm": 2,
+    "md": 6
+  }
+}

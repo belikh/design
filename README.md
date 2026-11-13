@@ -1,3 +1,10 @@
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/banner-dark.svg">
+    <img alt="Jupiter design system: one JSON file, every surface" src=".github/assets/banner-light.svg" width="100%">
+  </picture>
+</p>
+
 # Jupiter design system
 
 One JSON file is the source of truth for every Jupiter surface: websites, apps, email, terminals, kiosks and mobile.
@@ -9,6 +16,7 @@ packages/rust/     jupiter-theme crate (palettes + ratatui/egui/iced adapters)
 packages/latex/    LaTeX classes + templates (resume x3, letter, cover letter, notes, report, invoice)
 apps/admin/        THE app: the design-system site (overview, tokens, type, layout, graphics, targets, live token editor) and the admin template, warehouse kiosk system, Home Assistant and ESPHome panels, as one site
 packages/esphome/  @belikh/jupiter-esphome: instrument widgets that emit ESPHome lambda / LVGL snippets
+packages/github/   @belikh/jupiter-github: README / profile banners, tiles, badges, social preview (SVG, light + dark) and templates
 ```
 
 ## Changing a token
