@@ -1,6 +1,6 @@
 {
   "name": "@belikh/jupiter-docs",
-  "version": "1.2.3",
+  "version": "1.3.2",
   "description": "Jupiter docs generator: one Markdown source (docs-src) becomes a themed static site, repo Markdown and a LaTeX/PDF document.",
   "type": "module",
   "license": "UNLICENSED",

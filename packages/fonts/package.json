@@ -1,6 +1,6 @@
 {
   "name": "@belikh/jupiter-fonts",
-  "version": "1.3.1",
+  "version": "1.3.2",
   "description": "The design system's licensed typefaces (SGI Text and SGI Alt, plus JetBrains Mono). PRIVATE: the SGI files are proprietary, so this package is published only to a private registry, and the files are never committed.",
   "type": "module",
   "license": "UNLICENSED",
