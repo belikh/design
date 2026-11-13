@@ -55,7 +55,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends texlive-xetex texlive-latex-recommended texlive-latex-extra \
-            texlive-pictures texlive-fonts-recommended latexmk
+            texlive-pictures texlive-fonts-recommended poppler-utils latexmk
       - name: Compile every template (with our SGI Text, SGI Alt and JetBrains Mono)
         run: |
           packages/latex/scripts/build.sh packages/latex/templates/*.tex

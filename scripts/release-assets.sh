@@ -51,6 +51,10 @@ rm -rf "$stage"
 cp "$gfx/logo/jupiter-logo-light.svg" "$out/logo-light.svg"; cp "$gfx/logo/jupiter-logo-dark.svg" "$out/logo-dark.svg"
 for f in "$root"/packages/github/graphics/*/*.svg; do tier="$(basename "$(dirname "$f")")"; cp "$f" "$out/$tier-$(basename "$f")"; done
 
+# 3c. LaTeX demo documents rendered by the release workflow: latex-<template>.pdf and latex-<template>.png (first page). Skipped when not rendered locally.
+for f in "$tex"/build/*.pdf; do [ -e "$f" ] || continue; n="$(basename "$f" .pdf)"
+  cp "$f" "$out/latex-$n.pdf"; [ -f "$tex/build/$n.png" ] && cp "$tex/build/$n.png" "$out/latex-$n.png"; done
+
 # 4. checksums
 ( cd "$out" && sha256sum * > SHA256SUMS )
 echo "release $version:"; ls -1 "$out"

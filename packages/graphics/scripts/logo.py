@@ -6,7 +6,8 @@ from fontTools.pens.svgPathPen import SVGPathPen
 from fontTools.pens.transformPen import TransformPen
 ROOT=os.path.abspath(os.path.join(os.path.dirname(__file__),'..','..','..'))
 FD=os.path.join(ROOT,'apps/admin/public/fonts')+'/'
-TH={'light':dict(ink='#16171d',acc='#4b3fbf',bg='#faf9f7'),'dark':dict(ink='#e6e4df',acc='#9d8cff',bg='#0e1016')}
+# red = the token `danger` colour for each scheme: the Great Red Spot
+TH={'light':dict(ink='#16171d',acc='#4b3fbf',red='#b42323',bg='#faf9f7'),'dark':dict(ink='#e6e4df',acc='#9d8cff',red='#ff7a70',bg='#0e1016')}
 def text_path(font, s, size, track=0):
     t=TTFont(FD+font+'.woff2'); gs=t.getGlyphSet(); cm=t.getBestCmap(); sc=size/t['head'].unitsPerEm
     x=0; parts=[]; dots=[]
@@ -20,7 +21,7 @@ def planet(cx,cy,r,sw,T):
     f'<path d="M{cx-r*.93} {cy-r*.3}Q{cx-r*.4} {cy-r*.5} {cx} {cy-r*.3}T{cx+r*.93} {cy-r*.3}"/>'
     f'<path d="M{cx-r*.98} {cy+r*.1}Q{cx-r*.5} {cy-.1*r} {cx} {cy+r*.1}T{cx+r*.98} {cy+r*.1}"/>'
     f'<path d="M{cx-r*.85} {cy+r*.5}Q{cx-r*.4} {cy+r*.35} {cx} {cy+r*.5}T{cx+r*.85} {cy+r*.5}"/>'
-    f'<path stroke="{T["acc"]}" d="M{cx+r*.28} {cy+r*.3}a{r*.2} {r*.14} 0 1 1 {r*.01} {r*.01}"/></g>')
+    f'<path stroke="{T["red"]}" d="M{cx+r*.28} {cy+r*.3}a{r*.2} {r*.14} 0 1 1 {r*.01} {r*.01}"/></g>')
 def logo(font, mode, size=150, track=2):
     T=TH[mode]; parts,w,xh=text_path(font,'jupiter.au',size,track)
     base=100; tx=160
