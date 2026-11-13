@@ -32,31 +32,31 @@ What is in here
    * - Part
      - Where
      - What
-   * - |drop-l| |drop-d| **Tokens**
+   * - |tokens-l| |tokens-d| **Tokens**
      - ``packages/tokens``
      - ``jupiter.tokens.json``, the generators, and every built output
-   * - |code-l| |code-d| **UI**
+   * - |ui-l| |ui-d| **UI**
      - ``packages/ui``
      - React components, shared styles and the agent skills
-   * - |edit-l| |edit-d| **Graphics**
+   * - |graphics-l| |graphics-d| **Graphics**
      - ``packages/graphics``
      - One-line SVG icons, illustrations, dividers and the logo
-   * - |book-l| |book-d| **Fonts**
+   * - |fonts-l| |fonts-d| **Fonts**
      - ``packages/fonts``
      - The font files, as their own package
-   * - |globe-l| |globe-d| **App**
+   * - |app-l| |app-d| **App**
      - ``apps/admin``
      - The design-system site and the admin template, one app
-   * - |cpu-l| |cpu-d| **Rust**
+   * - |rust-l| |rust-d| **Rust**
      - ``packages/rust``
      - ``jupiter-theme`` crate with ratatui, egui and iced adapters
-   * - |file-l| |file-d| **LaTeX**
+   * - |latex-l| |latex-d| **LaTeX**
      - ``packages/latex``
      - Classes and templates: resume, letter, notes, report, invoice
-   * - |bolt-l| |bolt-d| **ESPHome**
+   * - |esphome-l| |esphome-d| **ESPHome**
      - ``packages/esphome``
      - Instrument widgets that emit ESPHome / LVGL snippets
-   * - |git-branch-l| |git-branch-d| **GitHub**
+   * - |github-l| |github-d| **GitHub**
      - ``packages/github``
      - README, profile and social-preview kit
 
@@ -149,39 +149,39 @@ Develop
 
    <p align="right"><sub>jupiter.au</sub></p>
 
-.. |drop-l| image:: packages/github/graphics/icon/drop-light.svg#gh-light-mode-only
+.. |tokens-l| image:: packages/github/graphics/icon/tokens-light.svg#gh-light-mode-only
    :width: 20
-.. |drop-d| image:: packages/github/graphics/icon/drop-dark.svg#gh-dark-mode-only
+.. |tokens-d| image:: packages/github/graphics/icon/tokens-dark.svg#gh-dark-mode-only
    :width: 20
-.. |code-l| image:: packages/github/graphics/icon/code-light.svg#gh-light-mode-only
+.. |ui-l| image:: packages/github/graphics/icon/ui-light.svg#gh-light-mode-only
    :width: 20
-.. |code-d| image:: packages/github/graphics/icon/code-dark.svg#gh-dark-mode-only
+.. |ui-d| image:: packages/github/graphics/icon/ui-dark.svg#gh-dark-mode-only
    :width: 20
-.. |edit-l| image:: packages/github/graphics/icon/edit-light.svg#gh-light-mode-only
+.. |graphics-l| image:: packages/github/graphics/icon/graphics-light.svg#gh-light-mode-only
    :width: 20
-.. |edit-d| image:: packages/github/graphics/icon/edit-dark.svg#gh-dark-mode-only
+.. |graphics-d| image:: packages/github/graphics/icon/graphics-dark.svg#gh-dark-mode-only
    :width: 20
-.. |book-l| image:: packages/github/graphics/icon/book-light.svg#gh-light-mode-only
+.. |fonts-l| image:: packages/github/graphics/icon/fonts-light.svg#gh-light-mode-only
    :width: 20
-.. |book-d| image:: packages/github/graphics/icon/book-dark.svg#gh-dark-mode-only
+.. |fonts-d| image:: packages/github/graphics/icon/fonts-dark.svg#gh-dark-mode-only
    :width: 20
-.. |globe-l| image:: packages/github/graphics/icon/globe-light.svg#gh-light-mode-only
+.. |app-l| image:: packages/github/graphics/icon/app-light.svg#gh-light-mode-only
    :width: 20
-.. |globe-d| image:: packages/github/graphics/icon/globe-dark.svg#gh-dark-mode-only
+.. |app-d| image:: packages/github/graphics/icon/app-dark.svg#gh-dark-mode-only
    :width: 20
-.. |cpu-l| image:: packages/github/graphics/icon/cpu-light.svg#gh-light-mode-only
+.. |rust-l| image:: packages/github/graphics/icon/rust-light.svg#gh-light-mode-only
    :width: 20
-.. |cpu-d| image:: packages/github/graphics/icon/cpu-dark.svg#gh-dark-mode-only
+.. |rust-d| image:: packages/github/graphics/icon/rust-dark.svg#gh-dark-mode-only
    :width: 20
-.. |file-l| image:: packages/github/graphics/icon/file-light.svg#gh-light-mode-only
+.. |latex-l| image:: packages/github/graphics/icon/latex-light.svg#gh-light-mode-only
    :width: 20
-.. |file-d| image:: packages/github/graphics/icon/file-dark.svg#gh-dark-mode-only
+.. |latex-d| image:: packages/github/graphics/icon/latex-dark.svg#gh-dark-mode-only
    :width: 20
-.. |bolt-l| image:: packages/github/graphics/icon/bolt-light.svg#gh-light-mode-only
+.. |esphome-l| image:: packages/github/graphics/icon/esphome-light.svg#gh-light-mode-only
    :width: 20
-.. |bolt-d| image:: packages/github/graphics/icon/bolt-dark.svg#gh-dark-mode-only
+.. |esphome-d| image:: packages/github/graphics/icon/esphome-dark.svg#gh-dark-mode-only
    :width: 20
-.. |git-branch-l| image:: packages/github/graphics/icon/git-branch-light.svg#gh-light-mode-only
+.. |github-l| image:: packages/github/graphics/icon/github-light.svg#gh-light-mode-only
    :width: 20
-.. |git-branch-d| image:: packages/github/graphics/icon/git-branch-dark.svg#gh-dark-mode-only
+.. |github-d| image:: packages/github/graphics/icon/github-dark.svg#gh-dark-mode-only
    :width: 20

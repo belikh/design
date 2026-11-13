@@ -3,10 +3,10 @@ import { trace } from "../spline.ts";
 
 // Networking and infrastructure. Diagram-like subjects are edge networks walked by trace().
 const chain = (pts: string[]) => pts.slice(1).map((p, i) => `${pts[i]} ${p}`);
-const xs = (y: number, list: number[]) => chain(list.map((x) => `${x},${y}`));
-const ys = (x: number, list: number[]) => chain(list.map((y) => `${x},${y}`));
+export const xs = (y: number, list: number[]) => chain(list.map((x) => `${x},${y}`));
+export const ys = (x: number, list: number[]) => chain(list.map((y) => `${x},${y}`));
 // Sharp-cornered box whose sides are split at the given coordinates, so other edges can attach there.
-const box = (x1: number, y1: number, x2: number, y2: number, n: { t?: number[]; b?: number[]; l?: number[]; r?: number[] } = {}) => [
+export const box = (x1: number, y1: number, x2: number, y2: number, n: { t?: number[]; b?: number[]; l?: number[]; r?: number[] } = {}) => [
   ...xs(y1, [x1, ...(n.t ?? []), x2]), ...xs(y2, [x1, ...(n.b ?? []), x2]),
   ...ys(x1, [y1, ...(n.l ?? []), y2]), ...ys(x2, [y1, ...(n.r ?? []), y2]),
 ];
