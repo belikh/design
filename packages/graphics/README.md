@@ -29,6 +29,8 @@ import "@belikh/jupiter-graphics/css";
 el.innerHTML = svg("scene-walker", { title: "Someone walking" });
 ```
 
+The logo ships too: `@belikh/jupiter-graphics/logo/jupiter-logo-light.svg` and `jupiter-logo-dark.svg`. A bundler can import them for an `<img>` in a site header; pick the file with `prefers-color-scheme`.
+
 An `<img>` cannot inherit colour: it renders black. Use the sprite, inline markup or a CSS mask when the graphic must
 follow the theme.
 
