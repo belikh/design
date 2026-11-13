@@ -18,7 +18,9 @@ Colour, type and shape for websites, apps, email, terminals, kiosks, mobile, doc
 
 |
 
-----
+.. raw:: html
+
+   <p align="center"><picture><source media="(prefers-color-scheme: dark)" srcset="packages/github/graphics/rule/end-dark.svg"><img alt="" src="packages/github/graphics/rule/end-light.svg" width="50%"></picture></p>
 
 What is in here
 ---------------
@@ -30,31 +32,31 @@ What is in here
    * - Part
      - Where
      - What
-   * - **Tokens**
+   * - |drop-l| |drop-d| **Tokens**
      - ``packages/tokens``
      - ``jupiter.tokens.json``, the generators, and every built output
-   * - **UI**
+   * - |code-l| |code-d| **UI**
      - ``packages/ui``
      - React components, shared styles and the agent skills
-   * - **Graphics**
+   * - |edit-l| |edit-d| **Graphics**
      - ``packages/graphics``
      - One-line SVG icons, illustrations, dividers and the logo
-   * - **Fonts**
+   * - |book-l| |book-d| **Fonts**
      - ``packages/fonts``
      - The font files, as their own package
-   * - **App**
+   * - |globe-l| |globe-d| **App**
      - ``apps/admin``
      - The design-system site and the admin template, one app
-   * - **Rust**
+   * - |cpu-l| |cpu-d| **Rust**
      - ``packages/rust``
      - ``jupiter-theme`` crate with ratatui, egui and iced adapters
-   * - **LaTeX**
+   * - |file-l| |file-d| **LaTeX**
      - ``packages/latex``
      - Classes and templates: resume, letter, notes, report, invoice
-   * - **ESPHome**
+   * - |bolt-l| |bolt-d| **ESPHome**
      - ``packages/esphome``
      - Instrument widgets that emit ESPHome / LVGL snippets
-   * - **GitHub**
+   * - |git-branch-l| |git-branch-d| **GitHub**
      - ``packages/github``
      - README, profile and social-preview kit
 
@@ -139,8 +141,47 @@ Develop
    npm run lint       # divergence guard rails and house style
    npm run typecheck
 
-----
+.. raw:: html
+
+   <p align="center"><picture><source media="(prefers-color-scheme: dark)" srcset="packages/github/graphics/rule/end-dark.svg"><img alt="" src="packages/github/graphics/rule/end-light.svg" width="50%"></picture></p>
 
 .. raw:: html
 
    <p align="right"><sub>jupiter.au</sub></p>
+
+.. |drop-l| image:: packages/github/graphics/icon/drop-light.svg#gh-light-mode-only
+   :width: 20
+.. |drop-d| image:: packages/github/graphics/icon/drop-dark.svg#gh-dark-mode-only
+   :width: 20
+.. |code-l| image:: packages/github/graphics/icon/code-light.svg#gh-light-mode-only
+   :width: 20
+.. |code-d| image:: packages/github/graphics/icon/code-dark.svg#gh-dark-mode-only
+   :width: 20
+.. |edit-l| image:: packages/github/graphics/icon/edit-light.svg#gh-light-mode-only
+   :width: 20
+.. |edit-d| image:: packages/github/graphics/icon/edit-dark.svg#gh-dark-mode-only
+   :width: 20
+.. |book-l| image:: packages/github/graphics/icon/book-light.svg#gh-light-mode-only
+   :width: 20
+.. |book-d| image:: packages/github/graphics/icon/book-dark.svg#gh-dark-mode-only
+   :width: 20
+.. |globe-l| image:: packages/github/graphics/icon/globe-light.svg#gh-light-mode-only
+   :width: 20
+.. |globe-d| image:: packages/github/graphics/icon/globe-dark.svg#gh-dark-mode-only
+   :width: 20
+.. |cpu-l| image:: packages/github/graphics/icon/cpu-light.svg#gh-light-mode-only
+   :width: 20
+.. |cpu-d| image:: packages/github/graphics/icon/cpu-dark.svg#gh-dark-mode-only
+   :width: 20
+.. |file-l| image:: packages/github/graphics/icon/file-light.svg#gh-light-mode-only
+   :width: 20
+.. |file-d| image:: packages/github/graphics/icon/file-dark.svg#gh-dark-mode-only
+   :width: 20
+.. |bolt-l| image:: packages/github/graphics/icon/bolt-light.svg#gh-light-mode-only
+   :width: 20
+.. |bolt-d| image:: packages/github/graphics/icon/bolt-dark.svg#gh-dark-mode-only
+   :width: 20
+.. |git-branch-l| image:: packages/github/graphics/icon/git-branch-light.svg#gh-light-mode-only
+   :width: 20
+.. |git-branch-d| image:: packages/github/graphics/icon/git-branch-dark.svg#gh-dark-mode-only
+   :width: 20

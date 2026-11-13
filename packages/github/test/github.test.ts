@@ -89,3 +89,10 @@ test("templates reference only assets the kit can produce", () => {
     }
   }
 });
+
+test("README graphics are baked from the graphics package for both schemes", () => {
+  const r = spawnSync("node", [new URL("../scripts/readme-graphics.mjs", import.meta.url).pathname, "--check"], { encoding: "utf8" });
+  assert.equal(r.status, 0, r.stderr); assert.match(r.stdout, /in sync/);
+  const svg = readFileSync(new URL("../graphics/icon/bolt-dark.svg", import.meta.url), "utf8");
+  assert.ok(!svg.includes("currentColor")); assert.ok(svg.includes(theme.color.dark.text));
+});

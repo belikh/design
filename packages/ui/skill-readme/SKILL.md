@@ -57,13 +57,44 @@ Then, in this order:
 
 Rules for the page:
 
-- Images are SVG or PNG with a light and a dark file, chosen with `<picture>` in raw HTML. Every image has an `alt`.
-- Callouts use a one-column raw table, with the title in the `<th>` (`Note`, `Warning`) and the text in the `<td>`; the templates have the exact block. Keep them rare, and no emoji.
+- Images are SVG or PNG with a light and a dark file, chosen with `<picture>` in raw HTML. Every meaningful image has an `alt`.
+- Callouts use a one-column raw table, with the title in the `<th>` (`Note`, `Warning`) and the text in the `<td>`; the templates have the exact block. Keep them rare, and no emoji (see Icons and graphics).
 - Code blocks always name the language: `.. code-block:: sh`.
 - Inline code uses double backticks. Links are `` `text <url>`_ ``.
 - Badges only for status that changes (build, version). Make them with `@belikh/jupiter-github` (`node src/make.mjs --badge "build|passing|ok"`) so they use the token colours. One row, below the intro.
 - Profile README (`<user>/<user>`) and organisation README (`.github/profile/README.rst`): same logo header, a short intro, then tiles or a table of projects. The org page needs absolute `raw.githubusercontent.com` URLs.
 - The social preview is 1280x640 and set by hand under Settings > Social preview. Generate it with `@belikh/jupiter-github`.
+
+## Icons and graphics
+
+Use graphics from the design system and nothing else: no emoji, no icon fonts, no third-party icon sets, no clip art. Everything comes from `@belikh/jupiter-graphics`, baked for READMEs into `packages/github/graphics/<tier>/<name>-{light,dark}.svg` (tiers: `icon` 20 to 32px, `spot` 120px and up, `scene` wide hero art, `rule` dividers). `<img>` cannot take the text colour, so always use the baked light/dark pair, never the files in `packages/graphics/dist`. Find names in `packages/graphics/dist/manifest.json` or the Graphics page of the app. If the set has no graphic you need, add one to `packages/graphics` first.
+
+Where they go:
+
+- **Dividers:** a `rule` between major blocks instead of `----`. `end` (a diamond on a line) is the default; use `loops`, `wave` or `underline` for a change of mood. Centre it at 50% width.
+- **Icons:** 20px, beside a label in a table cell or list, never inside running text and never decorating every heading. One icon per row of a parts table is fine.
+- **Spot illustrations and scenes:** for an empty state, an intro on a profile or an org page, 160 to 240px wide, at most one per page.
+
+Light and dark in raw HTML:
+
+```rst
+.. raw:: html
+
+   <p align="center"><picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/belikh/design/main/packages/github/graphics/rule/end-dark.svg"><img alt="" src="https://raw.githubusercontent.com/belikh/design/main/packages/github/graphics/rule/end-light.svg" width="50%"></picture></p>
+```
+
+Light and dark inline (table cells, lists), as a substitution pair placed next to each other; only one of the two shows:
+
+```rst
+.. |bolt-l| image:: https://raw.githubusercontent.com/belikh/design/main/packages/github/graphics/icon/bolt-light.svg#gh-light-mode-only
+   :width: 20
+.. |bolt-d| image:: https://raw.githubusercontent.com/belikh/design/main/packages/github/graphics/icon/bolt-dark.svg#gh-dark-mode-only
+   :width: 20
+
+|bolt-l| |bolt-d| **ESPHome**
+```
+
+Inside `belikh/design` the paths are relative (under `packages/github/graphics`). Decorative images get an empty `alt`; meaningful ones get a real one.
 
 ## Writing
 

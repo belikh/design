@@ -34,7 +34,7 @@ jobs:
       - name: Generated Rust core must be committed and current
         run: git diff --exit-code -- packages/rust/src/generated.rs
       - name: Generated GitHub kit (theme, SVG assets, this repo's banner) must be committed and current
-        run: git diff --exit-code -- packages/github/src/theme.json packages/github/assets .github/assets/banner-light.svg .github/assets/banner-dark.svg .github/assets/social-preview-light.svg .github/assets/social-preview-dark.svg
+        run: git diff --exit-code -- packages/github/src/theme.json packages/github/assets packages/github/graphics .github/assets/banner-light.svg .github/assets/banner-dark.svg .github/assets/social-preview-light.svg .github/assets/social-preview-dark.svg
       - run: scripts/release-assets.sh
       - uses: actions/upload-artifact@v4
         with:

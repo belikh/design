@@ -5,18 +5,30 @@
   "type": "module",
   "license": "UNLICENSED",
   "sideEffects": false,
-  "bin": { "jupiter-github": "./src/make.mjs" },
+  "bin": {
+    "jupiter-github": "./src/make.mjs"
+  },
   "exports": {
-    "./render": { "types": "./src/render.d.mts", "default": "./src/render.mjs" },
+    "./render": {
+      "types": "./src/render.d.mts",
+      "default": "./src/render.mjs"
+    },
     "./theme.json": "./src/theme.json",
     "./assets/*": "./assets/*",
     "./templates/*": "./templates/*",
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./graphics/*": "./graphics/*"
   },
-  "files": ["src", "assets", "templates", "README.md"],
+  "files": [
+    "src",
+    "assets",
+    "graphics",
+    "templates",
+    "README.md"
+  ],
   "scripts": {
-    "build": "node scripts/sync-logo.mjs && node src/make.mjs --assets && node src/make.mjs --logo --title Jupiter --subtitle \"One JSON file, every surface\" --eyebrow \"design system\" --footer \"belikh/design\" --only banner,social --out ../../.github/assets",
-    "check": "node src/make.mjs --assets --check",
+    "build": "node scripts/sync-logo.mjs && node scripts/readme-graphics.mjs && node src/make.mjs --assets && node src/make.mjs --logo --title Jupiter --subtitle \"One JSON file, every surface\" --eyebrow \"design system\" --footer \"belikh/design\" --only banner,social --out ../../.github/assets",
+    "check": "node src/make.mjs --assets --check && node scripts/readme-graphics.mjs --check",
     "png": "node src/make.mjs --logo --title Jupiter --subtitle \"One JSON file, every surface\" --eyebrow \"design system\" --footer \"belikh/design\" --only social --png --out ../../.github/assets",
     "test": "node --test \"test/*.test.ts\""
   },
