@@ -51,7 +51,22 @@ function layoutLinks(P: P[], edges: [number, number][], aspect: number) {
 }
 
 /** Arrange by meaning: distance on the map follows 1 - cosine similarity, then the cloud is scaled to fill the map. */
-function layoutMeaning(P: P[], vecs: number[][], aspect: number) {
+/** Push items that sit too close apart, so their marks and labels do not collide. Labels are wide, so the minimum gap is wider than it is tall. */
+function spread(P: P[], W: number, H: number) {
+  const minX = 120, minY = 46;
+  for (let it = 0; it < 80; it++) {
+    for (let i = 0; i < P.length; i++) for (let j = i + 1; j < P.length; j++) {
+      const dx = (P[j].x - P[i].x) * W, dy = (P[j].y - P[i].y) * H, ox = minX - Math.abs(dx), oy = minY - Math.abs(dy);
+      if (ox <= 0 || oy <= 0) continue;
+      // separate along the axis that needs the smaller move
+      if (oy / minY < ox / minX) { const m = (oy / 2 / H) * (dy < 0 ? -1 : 1); P[i].y -= m; P[j].y += m; }
+      else { const m = (ox / 2 / W) * (dx < 0 ? -1 : 1); P[i].x -= m; P[j].x += m; }
+    }
+    P.forEach((p) => { p.x = Math.min(0.92, Math.max(0.08, p.x)); p.y = Math.min(0.86, Math.max(0.1, p.y)); });
+  }
+}
+
+function layoutMeaning(P: P[], vecs: number[][], aspect: number, W: number, H: number) {
   const n = P.length, T = vecs.map((a, i) => vecs.map((b, j) => (i === j ? 0 : Math.max(0.12, 1 - cos(a, b)))));
   for (let s = 0; s < 600; s++) {
     const cool = 1 - s / 600, V = P.map(() => [0, 0]);
@@ -61,9 +76,10 @@ function layoutMeaning(P: P[], vecs: number[][], aspect: number) {
     }
     P.forEach((p, i) => { p.x += V[i][0] * cool; p.y += V[i][1] * cool; });
   }
-  const xs = P.map((p) => p.x * aspect), ys = P.map((p) => p.y), x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
-  const sc = Math.min((0.86 * aspect) / Math.max(x1 - x0, 1e-6), 0.74 / Math.max(y1 - y0, 1e-6)), cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
-  P.forEach((p) => { p.x = 0.5 + ((p.x * aspect - cx) * sc) / aspect; p.y = 0.5 + (p.y - cy) * sc; });
+  // fill the map: width and height are scaled separately (the map is abstract, so it need not keep its proportions)
+  const xs = P.map((p) => p.x), ys = P.map((p) => p.y), x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+  P.forEach((p) => { p.x = 0.08 + (0.84 * (p.x - x0)) / Math.max(x1 - x0, 1e-6); p.y = 0.12 + (0.7 * (p.y - y0)) / Math.max(y1 - y0, 1e-6); });
+  spread(P, W, H);
 }
 
 export function buildTerrain(nodes: TerrainNode[], links: [string, string][], W: number, H: number, layout: "links" | "meaning") {
@@ -75,7 +91,7 @@ export function buildTerrain(nodes: TerrainNode[], links: [string, string][], W:
   const P: P[] = nodes.map((n) => ({ x: n.x ?? 0.15 + (hashInt(n.id) / 4294967296) * 0.7, y: n.y ?? 0.15 + (hashInt(n.id + "y") / 4294967296) * 0.7 }));
   const fixed = nodes.every((n) => n.x !== undefined && n.y !== undefined);
   const meaning = !fixed && layout === "meaning" && nodes.length > 2 && nodes.every((n) => n.vector && n.vector.length);
-  if (!fixed) { if (meaning) layoutMeaning(P, nodes.map((n) => n.vector!), aspect); else layoutLinks(P, edges, aspect); }
+  if (!fixed) { if (meaning) layoutMeaning(P, nodes.map((n) => n.vector!), aspect, W, H); else { layoutLinks(P, edges, aspect); spread(P, W, H); } }
   const U = Math.min(W, H), sigK = meaning ? 0.5 : 1;
   const cols = Math.ceil(W / CELL) + 2, rows = Math.ceil(H / CELL) + 2, g = new Float32Array(cols * rows);
   nodes.forEach((n, k) => {
