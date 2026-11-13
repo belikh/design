@@ -13,6 +13,10 @@ control.height=32
 kiosk.minTarget=48
 -->
 
+## Inherit, do not copy
+
+Everything here reaches an app through a live reference: tokens as CSS variables, graphics and components by name from the packages. Never restate a token value in your own code (the numbers in this file are for checking, not for pasting). When a value has to be baked into an image or a document, generate it from the tokens so the next release regenerates it.
+
 ## The look
 
 Flat, quiet and precise, with thin flowing line art as the one decorative idea. Large display type, a lot of space, one accent colour. It looks like a good technical manual: confident type, nothing ornamental that is not a drawing from the graphics set.
