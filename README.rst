@@ -120,6 +120,26 @@ Targets
 
    </details>
 
+Documents
+---------
+
+The LaTeX templates, rendered with SGI Text and SGI Alt on every release. Click a page for the PDF.
+
+.. raw:: html
+
+   <table>
+     <tr>
+        <td align="center"><a href="https://github.com/belikh/design/releases/latest/download/latex-report.pdf"><img alt="Report" src="https://github.com/belikh/design/releases/latest/download/latex-report.png" width="170"></a><br><sub>Report</sub></td>
+        <td align="center"><a href="https://github.com/belikh/design/releases/latest/download/latex-invoice.pdf"><img alt="Invoice" src="https://github.com/belikh/design/releases/latest/download/latex-invoice.png" width="170"></a><br><sub>Invoice</sub></td>
+        <td align="center"><a href="https://github.com/belikh/design/releases/latest/download/latex-resume-classic.pdf"><img alt="Resume, classic" src="https://github.com/belikh/design/releases/latest/download/latex-resume-classic.png" width="170"></a><br><sub>Resume, classic</sub></td>
+     </tr>
+     <tr>
+        <td align="center"><a href="https://github.com/belikh/design/releases/latest/download/latex-resume-sidebar.pdf"><img alt="Resume, sidebar" src="https://github.com/belikh/design/releases/latest/download/latex-resume-sidebar.png" width="170"></a><br><sub>Resume, sidebar</sub></td>
+        <td align="center"><a href="https://github.com/belikh/design/releases/latest/download/latex-letter-formal.pdf"><img alt="Letter" src="https://github.com/belikh/design/releases/latest/download/latex-letter-formal.png" width="170"></a><br><sub>Letter</sub></td>
+        <td align="center"><a href="https://github.com/belikh/design/releases/latest/download/latex-notes.pdf"><img alt="Notes" src="https://github.com/belikh/design/releases/latest/download/latex-notes.png" width="170"></a><br><sub>Notes</sub></td>
+     </tr>
+   </table>
+
 Releases
 --------
 

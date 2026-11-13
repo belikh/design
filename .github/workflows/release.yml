@@ -32,8 +32,9 @@ jobs:
         run: |
           version="$(node -p "require('./packages/tokens/package.json').version")"
           echo "version=$version" >> "$GITHUB_OUTPUT"
-          # a draft is a failed earlier attempt, not a release: remove it so this run can redo it (a draft has no tag yet)
-          if [ "$(gh release view "v$version" --json isDraft -q .isDraft 2>/dev/null)" = "true" ]; then gh release delete "v$version" --yes || true; fi
+          # a draft is a failed earlier attempt, not a release: find it in the list (a draft is not found by tag) and remove it so this run can redo it
+          draft="$(gh api "repos/$GITHUB_REPOSITORY/releases" --paginate -q ".[]|select(.draft and .tag_name==\"v$version\")|.id" | head -1)"
+          if [ -n "$draft" ]; then gh api -X DELETE "repos/$GITHUB_REPOSITORY/releases/$draft"; fi
           if gh release view "v$version" >/dev/null 2>&1; then echo "exists=true" >> "$GITHUB_OUTPUT"; else echo "exists=false" >> "$GITHUB_OUTPUT"; fi
       - name: Breaking-change gate (removed --jp-* variables or .jp-* classes need a major bump)
         if: steps.v.outputs.exists == 'false'
