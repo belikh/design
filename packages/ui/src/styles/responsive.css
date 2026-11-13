@@ -4,7 +4,7 @@
 @media (max-width: 860px) {
   .adm-shell { grid-template-columns: minmax(0, 1fr); }
   .adm-top { gap: var(--jp-space-2); overflow: hidden; }
-  .adm-top .adm-seg, .adm-top .jp-badge, .adm-top .adm-menu { display: none; }
+  .adm-top .adm-seg, .adm-top .jp-badge, .adm-top .adm-menu, .adm-top .adm-hide-sm { display: none; }
   .adm-search { min-width: 0; flex: 1; } .adm-search .adm-kbd { display: none; }
   .adm-dt__bar .adm-input { max-width: none !important; width: 100%; }
   .adm-kanban { grid-template-columns: repeat(4, 240px); } .adm-split { grid-template-columns: minmax(0, 1fr); }

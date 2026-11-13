@@ -3,8 +3,8 @@
 /* Layout mirrors through logical properties (margin-inline, inset-inline, text-align: start); only direction-sensitive visuals need an override. */ [dir="rtl"] .adm-chart svg, [dir="rtl"] .adm-heat, [dir="rtl"] .adm-uptime { direction: ltr; }
 @media print {
   .adm-side, .adm-top, .adm-toasts, .adm-savebar, .adm-banner, .adm-ctools, .adm-bulk, .adm-dt__bar, .adm-dt__foot, .jp-btn, .adm-scrim { display: none !important; }
-  .adm-shell { display: block; height: auto; } .adm-main { overflow: visible; padding: 0; } html, body, #root { height: auto; background: #fff; }
-  .jp-panel, .adm-card, .adm-stat, .adm-chart, tr { break-inside: avoid; } .jp-panel { border-color: #999; box-shadow: none; } a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; }
+  .adm-shell { display: block; height: auto; } .adm-main { overflow: visible; padding: 0; } html, body, #root { height: auto; background: white; }
+  .jp-panel, .adm-card, .adm-stat, .adm-chart, tr { break-inside: avoid; } .jp-panel { border-color: GrayText; box-shadow: none; } a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; }
 }
 .adm-help { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: var(--jp-space-6); align-items: start; } @media (max-width: 800px) { .adm-help { grid-template-columns: minmax(0, 1fr); } .adm-anchor { position: static; flex-direction: row; flex-wrap: wrap; border: 0; } }
 @media (max-width: 640px) {
