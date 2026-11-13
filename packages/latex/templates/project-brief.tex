@@ -1,0 +1,58 @@
+\documentclass{jupiter-report}
+\reportkind{Project brief}
+\title{Office network migration}
+\subtitle{Kickoff document}
+\author{Alex Example}
+\reportdate{12 November 2026}
+\reportversion{v0.3}
+\reportstatus{Draft}
+\begin{document}
+\maketitle
+\section{Overview}
+Move the office from the 2018 network to new equipment without interrupting work, finishing by 4 December 2026.
+
+\section{Goals}
+\begin{itemize}
+  \item Reliable Wi-Fi in every room.
+  \item Separate networks for staff, guests and cameras.
+  \item Alerts that reach a person.
+\end{itemize}
+
+\section{Out of scope}
+The phone system, the cloud services and the building's own cabling.
+
+\section{Team}
+\begin{jpwide}
+\begin{tabular}{@{}p{45mm}p{50mm}p{41mm}@{}}
+\toprule
+\jplabel{Person} & \jplabel{Role} & \jplabel{Contact}\\
+\midrule
+Alex Example & Project lead & alex@example.com\\
+Jordan Smith & Sponsor & jordan@example.com\\
+Riley Chen & Engineer & riley@example.com\\
+\bottomrule
+\end{tabular}
+\end{jpwide}
+
+\section{Milestones}
+\begin{jpwide}
+\begin{tabular}{@{}p{90mm}p{46mm}@{}}
+\toprule
+\jplabel{Milestone} & \jplabel{Date}\\
+\midrule
+Survey complete & \jpinline{20 Nov 2026}\\
+Camera network moved & \jpinline{27 Nov 2026}\\
+Cutover & \jpinline{2 Dec 2026}\\
+Handover & \jpinline{4 Dec 2026}\\
+\bottomrule
+\end{tabular}
+\end{jpwide}
+
+\section{Risks}
+\begin{jpcallout}[warn]{Vendor firmware}
+The current firmware drops clients when they roam. A patch is expected but not confirmed.
+\end{jpcallout}
+
+\section{Budget}
+\jpinline{\$24,000} approved, including a 10 percent contingency.
+\end{document}

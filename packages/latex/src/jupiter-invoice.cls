@@ -13,6 +13,7 @@
 \ProcessOptions\relax
 \LoadClass[a4paper,10pt]{article}
 \RequirePackage{jupiter}
+\RequirePackage{jupiter-money}
 \RequirePackage[top=30mm,bottom=24mm,left=62mm,right=18mm,headheight=12pt,headsep=8mm]{geometry}
 \RequirePackage{array}
 \RequirePackage{longtable}
@@ -29,76 +30,26 @@
 \newcommand{\invoicedate}[1]{\gdef\jp@idate{#1}}
 \newcommand{\invoiceduedate}[1]{\gdef\jp@due{#1}}
 \newcommand{\invoicestatus}[1]{\gdef\jp@stat{#1}}
-\newcommand{\currency}[1]{\gdef\jp@cur{#1}}
 \newcommand{\taxname}[1]{\gdef\jp@taxname{#1}}
 \newcommand{\paymentdetails}[1]{\gdef\jp@pay{#1}}
 \newcommand{\invoicenotes}[1]{\gdef\jp@notes{#1}}
+\newcommand{\invoicekind}[1]{\gdef\jp@kind{#1}}
+\newcommand{\invoicedatelabel}[1]{\gdef\jp@ldate{#1}}
+\newcommand{\invoiceduelabel}[1]{\gdef\jp@ldue{#1}}
+\newcommand{\invoicefromlabel}[1]{\gdef\jp@lfrom{#1}}
+\newcommand{\invoicetolabel}[1]{\gdef\jp@lto{#1}}
+\newcommand{\invoicetotallabel}[1]{\gdef\jp@ltotal{#1}}
+\newcommand{\invoiceextra}[2]{\g@addto@macro\jp@extra{\jp@irow{#1}{#2}}}
+\newcommand{\invoicesign}[2]{\gdef\jp@signa{#1}\gdef\jp@signb{#2}}
+\gdef\jp@kind{Invoice}\gdef\jp@ldate{Issued}\gdef\jp@ldue{Due}\gdef\jp@lfrom{From}\gdef\jp@lto{Bill to}\gdef\jp@ltotal{Total due}
+\gdef\jp@extra{}\gdef\jp@signa{}\gdef\jp@signb{}
 \gdef\jp@from{}\gdef\jp@to{}\gdef\jp@num{}\gdef\jp@idate{\today}\gdef\jp@due{}\gdef\jp@stat{}
-\gdef\jp@cur{\$}\gdef\jp@taxname{GST}\gdef\jp@pay{}\gdef\jp@notes{}
+\gdef\jp@taxname{GST}\gdef\jp@pay{}\gdef\jp@notes{}
 
-%% a figure: mono, small. \jp@fig keeps cells on one baseline with the description.
-\newcommand{\jp@fig}[1]{{\jpmono\small #1}}
+\newcommand{\invoiceitem}[3]{#1 & \jpcells{#2}{#3} \\}
+\let\invoiceitems\jpitems\let\endinvoiceitems\endjpitems
 
-\ExplSyntaxOn
-\fp_new:N \g__jp_sub_fp
-\fp_new:N \g__jp_tmp_fp
-\fp_new:N \g__jp_taxrate_fp
-\fp_gset:Nn \g__jp_taxrate_fp { 10 }
-\NewDocumentCommand{\taxrate}{m}{ \fp_gset:Nn \g__jp_taxrate_fp { #1 } }
-% money: format a number with thousands separators and two decimals
-\cs_new:Npn \__jp_money:n #1
-  {
-    \int_set:Nn \l__jp_cents_int { \fp_eval:n { round( #1 * 100 , 0 ) } }
-    \int_compare:nNnT { \l__jp_cents_int } < { 0 } { - }
-    \int_set:Nn \l__jp_abs_int { \int_abs:n { \l__jp_cents_int } }
-    \jp@cur
-    \__jp_grp:n { \int_div_truncate:nn { \l__jp_abs_int } { 100 } }
-    .
-    \int_compare:nNnT { \int_mod:nn { \l__jp_abs_int } { 100 } } < { 10 } { 0 }
-    \int_mod:nn { \l__jp_abs_int } { 100 }
-  }
-\int_new:N \l__jp_cents_int
-\int_new:N \l__jp_abs_int
-\cs_new:Npn \__jp_grp:n #1
-  {
-    \int_compare:nNnTF { #1 } < { 1000 }
-      { #1 }
-      { \exp_args:Nf \__jp_grp:n { \int_div_truncate:nn { #1 } { 1000 } } , \int_compare:nNnT { \int_mod:nn { #1 } { 1000 } } < { 100 } { 0 } \int_compare:nNnT { \int_mod:nn { #1 } { 1000 } } < { 10 } { 0 } \int_mod:nn { #1 } { 1000 } }
-  }
-\NewDocumentCommand{\jpmoney}{m}{ \__jp_money:n { #1 } }
-\NewDocumentCommand{\invoiceitem}{m m m}
-  {
-    \fp_gset:Nn \g__jp_tmp_fp { #2 * #3 }
-    \fp_gadd:Nn \g__jp_sub_fp { \g__jp_tmp_fp }
-    #1 & \jp@fig{#2} & \jp@fig{ \__jp_money:n { #3 } } & \jp@fig{ \__jp_money:n { \g__jp_tmp_fp } } \\
-  }
-\NewDocumentCommand{\jpsubtotal}{}{ \__jp_money:n { \g__jp_sub_fp } }
-\NewDocumentCommand{\jptaxamount}{}{ \__jp_money:n { \g__jp_sub_fp * \g__jp_taxrate_fp / 100 } }
-\NewDocumentCommand{\jptotaldue}{}{ \__jp_money:n { \g__jp_sub_fp * ( 1 + \g__jp_taxrate_fp / 100 ) } }
-\NewDocumentCommand{\jptaxrate}{}{ \fp_eval:n { \g__jp_taxrate_fp } }
-\ExplSyntaxOff
-%% ---- item table: description + three right-aligned mono columns, no vertical rules, header repeats on every page.
-\newlength{\jp@wqty}\setlength{\jp@wqty}{14mm}
-\newlength{\jp@wunit}\setlength{\jp@wunit}{28mm}
-\newlength{\jp@wamt}\setlength{\jp@wamt}{30mm}
-\newcolumntype{R}[1]{>{\raggedleft\arraybackslash}p{#1}}
-\newcommand{\jp@ihead}{%
-  \jpgutter{}{\color{jpTextMuted}\jplabel{Description}} & \multicolumn{1}{R{\jp@wqty}}{\color{jpTextMuted}\jplabel{Qty}} & \multicolumn{1}{R{\jp@wunit}}{\color{jpTextMuted}\jplabel{Unit}} & \multicolumn{1}{R{\jp@wamt}}{\color{jpTextMuted}\jplabel{Amount}}\\
-  \noalign{\color{jpText}\hrule height 0.9pt}}
-\newenvironment{invoiceitems}{%
-  \par\vspace{10pt}\noindent
-  \setlength{\extrarowheight}{3pt}\setlength{\tabcolsep}{0pt}%
-  \begin{longtable}{@{}>{\raggedright\arraybackslash}p{\dimexpr\linewidth-\jp@wqty-\jp@wunit-\jp@wamt\relax}R{\jp@wqty}R{\jp@wunit}R{\jp@wamt}@{}}
-  \jp@ihead \endfirsthead
-  \jp@ihead \endhead
-  \noalign{\color{jpBorder}\hrule height 0.4pt}\endfoot
-  \noalign{\color{jpBorder}\hrule height 0.4pt}\endlastfoot
-  \ignorespaces}{%
-  \end{longtable}\vspace{-\baselineskip}}
-
-%% ---- header rows: a hairline, a mono label in the gutter, the value in the column
-\newcommand{\jp@irow}[2]{\par\noindent{\color{jpBorder}\rule{\linewidth}{0.4pt}}\par\vspace{4pt}%
-  \noindent\jpgutter{#1}{#2}\par\vspace{5pt}}
+\let\jp@irow\jprow
 
 \newcommand{\invoicetotals}{%
   \par\Needspace*{40mm}\vspace{8pt}\nopagebreak\noindent
@@ -107,32 +58,34 @@
     \jpmuted{\jp@taxname\ (\jptaxrate\%)} & \jp@fig{\jptaxamount} \\
   \end{tabular*}\par\vspace{6pt}\nopagebreak
   \noindent{\color{jpText}\rule{\linewidth}{0.9pt}}\par\vspace{5pt}\nopagebreak
-  \noindent\jpgutter[jpAccent]{Total due}%
+  \noindent\jpgutter[jpAccent]{\jp@ltotal}%
   \hfill{\jpdisplay\bfseries\fontsize{50}{54}\selectfont\jptotaldue}\par}
 
 \renewcommand{\maketitle}{%
   \thispagestyle{empty}%
   \jpat[north east]{192mm}{16mm}{\jpart[width=31mm]{logo-light}}%
   \jpat{0mm}{51mm}{\jpart[width=210mm]{swash-accent}}%
-  \noindent\jpgutter[jpAccent]{Invoice}%
-  {\jpdisplay\bfseries\fontsize{48}{50}\selectfont Invoice}\par
+  \noindent\jpgutter[jpAccent]{\jp@kind}%
+  {\jpdisplay\bfseries\fontsize{48}{50}\selectfont\jp@kind}\par
   \vspace{4pt}\noindent{\jpmono\small\color{jpAccent}\jp@num}%
   \ifdefempty{\jp@stat}{}{\hspace{10pt}\jpbadge[warn]{\jp@stat}}\par
   \vspace{15mm}
-  \jp@irow{Issued}{\jpmono\small\jp@idate}%
-  \ifdefempty{\jp@due}{}{\jp@irow{Due}{\jpmono\small\jp@due}}%
-  \jp@irow{From}{\jp@from}%
-  \jp@irow{Bill to}{\jp@to}%
+  \jp@irow{\jp@ldate}{\jpmono\small\jp@idate}%
+  \ifdefempty{\jp@due}{}{\jp@irow{\jp@ldue}{\jpmono\small\jp@due}}%
+  \jp@irow{\jp@lfrom}{\jp@from}%
+  \jp@irow{\jp@lto}{\jp@to}%
+  \jp@extra
   {\color{jpBorder}\rule{\linewidth}{0.4pt}}\par}
 
 \newcommand{\invoicefooter}{%
   \Needspace*{50mm}%
   \ifdefempty{\jp@pay}{}{\vspace{14pt}\jp@irow{Payment}{\jp@pay}}%
-  \ifdefempty{\jp@notes}{}{\vspace{4pt}\jp@irow{Notes}{\small\jp@notes}}}
+  \ifdefempty{\jp@notes}{}{\vspace{4pt}\jp@irow{Notes}{\small\jp@notes}}%
+  \ifdefempty{\jp@signa}{}{\jpsign{\jp@signa}{\jp@signb}}}
 
 %% pages after the first: a running line with the invoice number and page
 \pagestyle{fancy}\fancyhf{}\fancyhfoffset[L]{\jpgutterw}
 \renewcommand{\headrulewidth}{0.4pt}\renewcommand{\headrule}{{\color{jpBorder}\hrule width\headwidth height 0.4pt}}
-\fancyhead[L]{\jpmono\fontsize{7}{9}\selectfont\color{jpTextMuted}INVOICE \jp@num}
+\fancyhead[L]{\jpmono\fontsize{7}{9}\selectfont\color{jpTextMuted}\MakeUppercase{\jp@kind} \jp@num}
 \fancyfoot[L]{\jpmono\fontsize{7}{9}\selectfont\color{jpAccent}\thepage}
 \endinput

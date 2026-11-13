@@ -1,6 +1,7 @@
 %% jupiter-report.cls: reports and long documents. The typographic Jupiter look: a 44 mm gutter of mono labels and section
 %% numbers beside a 130 mm text column, a large SGI Alt title, three flowing lines on the cover.
 %%   \title{..} \subtitle{..} \author{..} \reportdate{..} \reportversion{..} \reportstatus{Draft}
+%%   \reportkind{Proposal}   the mono label top left of the cover (default Report)
 %%   \maketitle \tableofcontents
 %% Tables: no vertical rules (use booktabs); the `r` column type is right-aligned mono for figures. A table wider than the
 %% 130 mm column goes in \begin{jpwide} ... \end{jpwide}, which extends it left over the gutter (192 mm). Long tables: longtable.
@@ -10,6 +11,7 @@
 \ProcessOptions\relax
 \LoadClass[a4paper,10pt]{article}
 \RequirePackage{jupiter}
+\RequirePackage{jupiter-doc}
 \RequirePackage[top=30mm,bottom=26mm,left=62mm,right=18mm,headheight=14pt,headsep=10mm,footskip=12mm]{geometry}
 \RequirePackage{titlesec}
 \RequirePackage{fancyhdr}
@@ -38,7 +40,8 @@
 \newcommand{\reportdate}[1]{\gdef\jp@rdate{#1}}
 \newcommand{\reportversion}[1]{\gdef\jp@rver{#1}}
 \newcommand{\reportstatus}[1]{\gdef\jp@rstat{#1}}
-\gdef\jp@subtitle{}\gdef\jp@rdate{\today}\gdef\jp@rver{}\gdef\jp@rstat{}
+\newcommand{\reportkind}[1]{\gdef\jp@rkind{#1}}
+\gdef\jp@rkind{Report}\gdef\jp@subtitle{}\gdef\jp@rdate{\today}\gdef\jp@rver{}\gdef\jp@rstat{}
 
 \newcommand{\jp@coverrow}[2]{{\jpmono\fontsize{6.8}{9}\selectfont\color{jpTextMuted}\MakeUppercase{#1}}\par{\jpmono\fontsize{8}{11}\selectfont\color{jpText}#2}\par\vspace{7pt}}
 \renewcommand{\maketitle}{%
@@ -46,7 +49,7 @@
     \thispagestyle{empty}\newgeometry{margin=0pt}%
     \jpcoverlines{170mm}%
     \jpat[north east]{192mm}{15mm}{\jpart[width=31mm]{logo-light}}%
-    \jpat{18mm}{18.5mm}{{\jpmono\fontsize{7.5}{10}\selectfont\color{jpAccent}\MakeUppercase{Report}}}%
+    \jpat{18mm}{18.5mm}{{\jpmono\fontsize{7.5}{10}\selectfont\color{jpAccent}\MakeUppercase{\jp@rkind}}}%
     \jpat{62mm}{50mm}{\begin{minipage}[t]{136mm}\raggedright\jpdisplay\bfseries\fontsize{48}{50}\selectfont\color{jpText}\@title\par
       \ifdefempty{\jp@subtitle}{}{\vspace{9mm}{\fontsize{14}{19}\selectfont\color{jpTextMuted}\jp@subtitle\par}}%
     \end{minipage}}%

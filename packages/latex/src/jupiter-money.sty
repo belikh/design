@@ -1,0 +1,99 @@
+%% jupiter-money.sty: money arithmetic and the item table, shared by the invoice, quote, purchase order, expense report and budget.
+%%   \currency{\$}  \taxrate{10}  \jpmoney{1234.5}  ->  $1,234.50
+%%   \begin{jpitems} ... \end{jpitems}   a description column and three right-aligned mono columns, header repeats on every page
+%%   \jpitemlabels{Description}{Qty}{Unit}{Amount}   \jpitemwidths{14mm}{28mm}{30mm}
+%%   \jpcells{qty}{unit}   the three figure cells of a quantity x unit price row (adds to the subtotal)
+%%   \jpaccum{x} \jpaccumb{x}   add to the first or second running total; \jpsubtotal \jpsumb read them; \jpvar{x} formats a variance (red when negative)
+%%   \jpbigtotal{label}{figure}   the heavy rule and the one big figure
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{jupiter-money}[2026/11/13 Jupiter money]
+\RequirePackage{jupiter}
+\RequirePackage{jupiter-doc}
+\RequirePackage{array}
+\RequirePackage{longtable}
+\RequirePackage{booktabs}
+\setlength{\LTleft}{0pt}\setlength{\LTright}{0pt}
+
+\newcommand{\currency}[1]{\gdef\jp@cur{#1}}
+\gdef\jp@cur{\$}
+\newcommand{\jp@fig}[1]{{\jpmono\small #1}}
+
+\ExplSyntaxOn
+\fp_new:N \g__jp_sub_fp
+\fp_new:N \g__jp_tmp_fp
+\fp_new:N \g__jp_subb_fp
+\fp_new:N \g__jp_taxrate_fp
+\fp_gset:Nn \g__jp_taxrate_fp { 10 }
+\NewDocumentCommand{\taxrate}{m}{ \fp_gset:Nn \g__jp_taxrate_fp { #1 } }
+% money: format a number with thousands separators and two decimals
+\cs_new:Npn \__jp_money:n #1
+  {
+    \int_set:Nn \l__jp_cents_int { \fp_eval:n { round( ( #1 ) * 100 , 0 ) } }
+    \int_compare:nNnT { \l__jp_cents_int } < { 0 } { - }
+    \int_set:Nn \l__jp_abs_int { \int_abs:n { \l__jp_cents_int } }
+    \jp@cur
+    \__jp_grp:n { \int_div_truncate:nn { \l__jp_abs_int } { 100 } }
+    .
+    \int_compare:nNnT { \int_mod:nn { \l__jp_abs_int } { 100 } } < { 10 } { 0 }
+    \int_mod:nn { \l__jp_abs_int } { 100 }
+  }
+\int_new:N \l__jp_cents_int
+\int_new:N \l__jp_abs_int
+\cs_new:Npn \__jp_grp:n #1
+  {
+    \int_compare:nNnTF { #1 } < { 1000 }
+      { #1 }
+      { \exp_args:Nf \__jp_grp:n { \int_div_truncate:nn { #1 } { 1000 } } , \int_compare:nNnT { \int_mod:nn { #1 } { 1000 } } < { 100 } { 0 } \int_compare:nNnT { \int_mod:nn { #1 } { 1000 } } < { 10 } { 0 } \int_mod:nn { #1 } { 1000 } }
+  }
+\NewDocumentCommand{\jpmoney}{m}{ \__jp_money:n { #1 } }
+\NewDocumentCommand{\jpcells}{m m}
+  {
+    \fp_gset:Nn \g__jp_tmp_fp { #1 * #2 }
+    \fp_gadd:Nn \g__jp_sub_fp { \g__jp_tmp_fp }
+    \jp@fig{#1} & \jp@fig{ \__jp_money:n { #2 } } & \jp@fig{ \__jp_money:n { \g__jp_tmp_fp } }
+  }
+\NewDocumentCommand{\jpaccum}{m}{ \fp_gadd:Nn \g__jp_sub_fp { #1 } }
+\NewDocumentCommand{\jpaccumb}{m}{ \fp_gadd:Nn \g__jp_subb_fp { #1 } }
+\NewDocumentCommand{\jpsubtotal}{}{ \__jp_money:n { \g__jp_sub_fp } }
+\NewDocumentCommand{\jpsumb}{}{ \__jp_money:n { \g__jp_subb_fp } }
+\NewDocumentCommand{\jpdiffab}{}{ \jpvar { \g__jp_sub_fp - \g__jp_subb_fp } }
+\NewDocumentCommand{\jptaxamount}{}{ \__jp_money:n { \g__jp_sub_fp * \g__jp_taxrate_fp / 100 } }
+\NewDocumentCommand{\jptotaldue}{}{ \__jp_money:n { \g__jp_sub_fp * ( 1 + \g__jp_taxrate_fp / 100 ) } }
+\NewDocumentCommand{\jptaxrate}{}{ \fp_eval:n { \g__jp_taxrate_fp } }
+\NewDocumentCommand{\jpvar}{m}
+  {
+    \fp_compare:nNnTF { #1 } < { 0 }
+      { \textcolor { jpDanger } { \__jp_money:n { #1 } } }
+      { \__jp_money:n { #1 } }
+  }
+\ExplSyntaxOff
+
+%% ---- item table: description + three right-aligned mono columns, no vertical rules, header repeats on every page.
+\newlength{\jp@wqty}\setlength{\jp@wqty}{14mm}
+\newlength{\jp@wunit}\setlength{\jp@wunit}{28mm}
+\newlength{\jp@wamt}\setlength{\jp@wamt}{30mm}
+\newcommand{\jpitemwidths}[3]{\setlength{\jp@wqty}{#1}\setlength{\jp@wunit}{#2}\setlength{\jp@wamt}{#3}}
+\newcommand{\jpitemlabels}[4]{\gdef\jp@ila{#1}\gdef\jp@ilb{#2}\gdef\jp@ilc{#3}\gdef\jp@ild{#4}}
+\jpitemlabels{Description}{Qty}{Unit}{Amount}
+\newcolumntype{R}[1]{>{\raggedleft\arraybackslash}p{#1}}
+\newcommand{\jp@ihead}{%
+  \jpgutter{}{\color{jpTextMuted}\jplabel{\jp@ila}} & \multicolumn{1}{R{\jp@wqty}}{\color{jpTextMuted}\jplabel{\jp@ilb}} & \multicolumn{1}{R{\jp@wunit}}{\color{jpTextMuted}\jplabel{\jp@ilc}} & \multicolumn{1}{R{\jp@wamt}}{\color{jpTextMuted}\jplabel{\jp@ild}}\\
+  \noalign{\color{jpText}\hrule height 0.9pt}}
+\newenvironment{jpitems}{%
+  \par\vspace{10pt}\noindent
+  \setlength{\extrarowheight}{3pt}\setlength{\tabcolsep}{0pt}%
+  \begin{longtable}{@{}>{\raggedright\arraybackslash}p{\dimexpr\linewidth-\jp@wqty-\jp@wunit-\jp@wamt\relax}R{\jp@wqty}R{\jp@wunit}R{\jp@wamt}@{}}
+  \jp@ihead \endfirsthead
+  \jp@ihead \endhead
+  \noalign{\color{jpBorder}\hrule height 0.4pt}\endfoot
+  \noalign{\color{jpBorder}\hrule height 0.4pt}\endlastfoot
+  \ignorespaces}{%
+  \end{longtable}\vspace{-\baselineskip}}
+
+%% the heavy rule, then a gutter label and one big figure
+\newcommand{\jpbigtotal}[2]{%
+  \par\Needspace*{40mm}\vspace{6pt}\nopagebreak
+  \noindent{\color{jpText}\rule{\linewidth}{0.9pt}}\par\vspace{5pt}\nopagebreak
+  \noindent\jpgutter[jpAccent]{#1}%
+  \hfill{\jpdisplay\bfseries\fontsize{50}{54}\selectfont #2}\par}
+\endinput

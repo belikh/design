@@ -1,0 +1,50 @@
+%% jupiter-doc.sty: shared building blocks for the Jupiter business documents (forms, agreements, quotes, letters).
+%%   \jprow{label}{value}     hairline, then a mono label in the gutter and the value in the column. \jprowend closes a run of rows.
+%%   \jpfield{label}          gutter label and a write-on line
+%%   \jpcheck \jpchecked      an open and a filled accent square; \jpcheckitem{text} \jpcheckeditem{text} are checklist lines
+%%   \jprating{n}             five squares, n of them filled
+%%   \jpstat{figure}{label}   a large SGI Alt figure over a mono label (three fit across the column)
+%%   \jpsign{Party A}{Party B}  two signature blocks (signature, name, title, date), kept together
+%%   \jpsetrunning{left}{right}  running head and accent page number for pages after the first
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{jupiter-doc}[2026/11/13 Jupiter document components]
+\RequirePackage{jupiter}
+\RequirePackage{array}
+\RequirePackage{needspace}
+\RequirePackage{fancyhdr}
+
+\newcommand{\jprow}[2]{\par\vspace{-\parskip}\noindent{\color{jpBorder}\rule{\linewidth}{0.4pt}}\par\vspace{4pt}\vspace{-\parskip}%
+  \noindent\jpgutter{#1}{#2}\par\vspace{5pt}}
+\newcommand{\jprowend}{\par\vspace{-\parskip}\noindent{\color{jpBorder}\rule{\linewidth}{0.4pt}}\par}
+
+\newcommand{\jpfield}[1]{\par\vspace{15pt}\noindent\jpgutter{#1}{\color{jpTextMuted}\rule[-2pt]{\linewidth}{0.4pt}}\par}
+
+\newcommand{\jpcheck}{{\fboxsep=0pt\fboxrule=0.6pt\color{jpAccent}\fbox{\rule{0pt}{0.62em}\rule{0.62em}{0pt}}}}
+\newcommand{\jpchecked}{{\color{jpAccent}\rule{0.62em}{0.62em}}}
+\newcommand{\jpcheckitem}[1]{\par\noindent\hangindent=1.7em\hangafter=1\makebox[1.7em][l]{\jpcheck}#1\par\vspace{2pt}}
+\newcommand{\jpcheckeditem}[1]{\par\noindent\hangindent=1.7em\hangafter=1\makebox[1.7em][l]{\jpchecked}{\color{jpTextMuted}#1}\par\vspace{2pt}}
+\newcommand{\jprating}[1]{{\count@=0
+  \loop\ifnum\count@<5 \advance\count@ by 1
+    \ifnum\count@>#1 \jpcheck\else\jpchecked\fi\hspace{3pt}%
+  \repeat}}
+
+\newcommand{\jpstat}[2]{\begin{minipage}[t]{0.3\linewidth}%
+  {\jpdisplay\bfseries\fontsize{28}{30}\selectfont\color{jpText}#1}\par\vspace{2pt}%
+  {\jpmono\fontsize{7}{9}\selectfont\color{jpTextMuted}\MakeUppercase{#2}}\end{minipage}}
+
+\newcommand{\jp@siglab}[1]{{\jpmono\fontsize{6.8}{9}\selectfont\color{jpTextMuted}\MakeUppercase{#1}}}
+\newcommand{\jp@sigcol}[1]{{\jpmono\fontsize{7}{9}\selectfont\color{jpAccent}\MakeUppercase{#1}}\par
+  \vspace{13mm}{\color{jpText}\rule{\linewidth}{0.4pt}}\par\jp@siglab{Signature}\par
+  \vspace{8mm}{\color{jpText}\rule{\linewidth}{0.4pt}}\par\jp@siglab{Name}\par
+  \vspace{8mm}{\color{jpText}\rule{\linewidth}{0.4pt}}\par\jp@siglab{Title}\par
+  \vspace{8mm}{\color{jpText}\rule{\linewidth}{0.4pt}}\par\jp@siglab{Date}}
+\newcommand{\jpsign}[2]{\par\Needspace*{78mm}\vspace{10mm}\noindent
+  \begin{minipage}[t]{0.47\linewidth}\jp@sigcol{#1}\end{minipage}\hfill
+  \begin{minipage}[t]{0.47\linewidth}\jp@sigcol{#2}\end{minipage}\par}
+
+\newcommand{\jpsetrunning}[2]{\pagestyle{fancy}\fancyhf{}\fancyhfoffset[L]{\jpgutterw}%
+  \renewcommand{\headrulewidth}{0.4pt}\renewcommand{\headrule}{{\color{jpBorder}\hrule width\headwidth height 0.4pt}}%
+  \fancyhead[L]{\jpmono\fontsize{7}{9}\selectfont\color{jpTextMuted}#1}%
+  \fancyhead[R]{\jpmono\fontsize{7}{9}\selectfont\color{jpTextMuted}#2}%
+  \fancyfoot[L]{\jpmono\fontsize{7}{9}\selectfont\color{jpAccent}\thepage}}
+\endinput

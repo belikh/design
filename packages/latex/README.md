@@ -19,8 +19,12 @@ Every document has the same typographic look, so a report, an invoice and a lett
 | `jupiter-resume` | Resume / CV | `dense` (one page, gutter of dates and labels), `sidebar` (tinted sidebar), `classic` (monochrome, ATS-friendly, multi-page) |
 | `jupiter-letter` | Formal letter, cover letter | `cover` (accent underline and the red spot); default is formal (ink underline) |
 | `jupiter-notes` | Working notes with remarks in the gutter and checklists | |
-| `jupiter-report` | Reports and long documents (cover, contents, callouts, code, wide and long tables) | |
-| `jupiter-invoice` | Invoices with computed subtotal, tax and total; long invoices run onto further pages | |
+| `jupiter-report` | Reports and long documents (cover, contents, callouts, code, wide and long tables) | `\reportkind{Proposal}` sets the cover label |
+| `jupiter-invoice` | Invoices, quotes and purchase orders with computed subtotal, tax and total (`\invoicekind`, `\invoicetolabel`, `\invoiceextra`, `\invoicesign`); long documents run onto further pages | |
+| `jupiter-form` | Minutes, status reports, checklists, review forms, briefs, job descriptions, one-pagers, press releases, fax covers, expense reports, budgets | `\formkind`, `\jpentry`, `\expenseitem`, `\budgetline` |
+| `jupiter-agreement` | NDA, MSA, contractor agreement, SOW: parties as rows, clause numbers in the gutter, signature blocks | `\clause`, `\term`, `\jpsign` |
+| `jupiter-deck` | Short 16:9 decks, one idea per slide | `slide` environment |
+| `jupiter-doc.sty`, `jupiter-money.sty` | Shared rows, checks, ratings, stats, signatures; money arithmetic and the item table | loaded by the classes above |
 
 `jupiter.sty` is the shared base: SGI Text as main font, `\jpsans` / `\jpdisplay` / `\jpmono`, `jpcallout` / `jpnote`, `jpcode`, `\jpbadge`, `\jplabel`, the graphics placement (`\jpart`, `\jpat`, `\jprect`, `\jpdot`, `\jpcoverlines`, `\jpunderline`) and the grid helpers (`\jpgutter`, `\jpgutterw`, `\jptwodigits`). `\jpbody{size}{leading}` sets the body size. `\jpserif` is an alias of `\jpsans`; no serif font ships.
 
