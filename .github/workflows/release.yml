@@ -61,7 +61,9 @@ jobs:
             --notes "Generated from jupiter.tokens.json at $GITHUB_SHA. Use unversioned URLs under .../releases/latest/download/ to track current."
           # SVGs, PNGs and PDFs go up through the API with an explicit content type. `gh release upload` falls back to application/octet-stream on the runner,
           # and browsers (and GitHub's image proxy) refuse an octet-stream SVG in <img>, so the README logo and graphics would not render.
-          id="$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/v$v" -q .id 2>/dev/null || gh api "repos/$GITHUB_REPOSITORY/releases" -q "[.[]|select(.tag_name==\"v$v\")][0].id")"
+          # a draft is not found by tag, so read its id from the list (newest first)
+          id="$(gh api "repos/$GITHUB_REPOSITORY/releases" -q "[.[]|select(.tag_name==\"v$v\")][0].id")"
+          case "$id" in ''|*[!0-9]*) echo "could not find the draft release id: $id"; exit 1;; esac
           ( cd release && ls | grep -vE '\.(svg|png|pdf)$' | xargs -n 50 sh -c 'for i in 1 2 3; do gh release upload "v'"$v"'" "$@" --clobber && break || sleep 5; done' _ )
           ( cd release && ls | grep -E '\.(svg|png|pdf)$' | xargs -P 8 -I{} sh -c 'case "{}" in *.svg) t=image/svg+xml;; *.png) t=image/png;; *) t=application/pdf;; esac; for i in 1 2 3; do curl -fsS -o /dev/null -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Content-Type: $t" --data-binary @"{}" "https://uploads.github.com/repos/'"$GITHUB_REPOSITORY"'/releases/'"$id"'/assets?name={}" && exit 0; sleep 3; done; echo "failed: {}"; exit 1' )
           want="$(ls release | wc -l)"; have="$(gh release view "v$v" --json assets -q '.assets|length')"

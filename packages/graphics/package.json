@@ -1,6 +1,6 @@
 {
   "name": "@belikh/jupiter-graphics",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "Jupiter line graphics: every icon, illustration and ornament is one continuous stroke, generated from waypoints.",
   "type": "module",
   "license": "UNLICENSED",
