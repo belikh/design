@@ -19,7 +19,7 @@ const layers = () => ({
   name: "jupiter-layers", enforce: "pre" as const,
   transform(code: string, id: string) {
     const f = id.split("?")[0]; if (!f.endsWith(".css") || f.includes("/node_modules/") || /^\s*@(import|charset)/m.test(code)) return null;
-    const layer = /\/packages\/ui\/src\/styles\/(shell|docs)\.css$/.test(f) ? "app" : f.includes("/packages/tokens/") || f.includes("/packages/ui/") ? "jp" : f.includes("/apps/admin/src/") ? "app" : null; return layer ? { code: `@layer ${layer} {\n${code}\n}`, map: null } : null;
+    const layer = /\/packages\/ui\/src\/styles\/(shell|docs|responsive|a11y)\.css$/.test(f) ? "app" : f.includes("/packages/tokens/") || f.includes("/packages/ui/") ? "jp" : f.includes("/apps/admin/src/") ? "app" : null; return layer ? { code: `@layer ${layer} {\n${code}\n}`, map: null } : null;
   },
   transformIndexHtml: () => [{ tag: "style", attrs: { "data-jupiter": "layers" }, children: "@layer jp, app;", injectTo: "head-prepend" as const }],
 });
