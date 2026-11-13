@@ -5,91 +5,116 @@
   </picture>
 </p>
 
+<br>
+
 # Jupiter design system
 
-One JSON file is the source of truth for every Jupiter surface: websites, apps, email, terminals, kiosks and mobile.
+**One JSON file. Every surface.**<br>
+Websites, apps, email, terminals, kiosks, mobile, documents and READMEs all take their colour, type and shape from a single token file.
 
-```
-packages/tokens/   @belikh/jupiter-tokens: jupiter.tokens.json + generators + built outputs
-packages/graphics/  @belikh/jupiter-graphics: one-line SVG icons, illustrations, scenes and dividers
-packages/rust/     jupiter-theme crate (palettes + ratatui/egui/iced adapters)
-packages/latex/    LaTeX classes + templates (resume x3, letter, cover letter, notes, report, invoice)
-apps/admin/        THE app: the design-system site (overview, tokens, type, layout, graphics, targets, live token editor) and the admin template, warehouse kiosk system, Home Assistant and ESPHome panels, as one site
-packages/esphome/  @belikh/jupiter-esphome: instrument widgets that emit ESPHome lambda / LVGL snippets
-packages/github/   @belikh/jupiter-github: README logo header, tiles, badges, social preview (SVG, light + dark) and templates
-```
+<br>
 
-## Changing a token
+<p>
+  <a href="docs/consuming.md"><b>Use it in a project</b></a> &nbsp;·&nbsp;
+  <a href="#change-a-token">Change a token</a> &nbsp;·&nbsp;
+  <a href="#targets">Targets</a> &nbsp;·&nbsp;
+  <a href="#releases">Releases</a> &nbsp;·&nbsp;
+  <a href="#develop">Develop</a>
+</p>
 
-1. Edit `packages/tokens/jupiter.tokens.json` (the `/editor` page of the app can build the JSON for you; use **Copy**).
-2. `npm run build` regenerates everything in `packages/tokens/dist/`.
-3. Bump the version and release. Consumers update the dependency and every surface follows.
+<br>
 
-## Using it in a project
+---
 
-Every file is generated from the one tokens JSON and published as an **unversioned** release asset, so a project can
-track `current` or pin a version.
+<br>
+
+## What is in here
+
+| Part | Where | What |
+| :-- | :-- | :-- |
+| **Tokens** | `packages/tokens` | `jupiter.tokens.json`, the generators, and every built output |
+| **UI** | `packages/ui` | React components, shared styles and the agent skill |
+| **Graphics** | `packages/graphics` | One-line SVG icons, illustrations, dividers and the logo |
+| **Fonts** | `packages/fonts` | The font files, as their own package |
+| **App** | `apps/admin` | The design-system site and the admin template, one app |
+| **Rust** | `packages/rust` | `jupiter-theme` crate with ratatui, egui and iced adapters |
+| **LaTeX** | `packages/latex` | Classes and templates: resume, letter, notes, report, invoice |
+| **ESPHome** | `packages/esphome` | Instrument widgets that emit ESPHome / LVGL snippets |
+| **GitHub** | `packages/github` | README, profile and social-preview kit |
+
+<br>
+
+## Change a token
+
+<br>
+
+1. Edit `packages/tokens/jupiter.tokens.json`. The `/editor` page of the app can build the JSON for you.
+2. Run `npm run build`. Every output is regenerated.
+3. Bump the version with `node scripts/bump-version.mjs X.Y.Z` and push.
+
+Projects depend on the published `@belikh/jupiter-*` packages, so they pick the change up with `npm run update:design`. Nothing is copied into them.
+
+<br>
+
+## Targets
+
+<br>
+
+<details>
+<summary><b>Every generated target</b></summary>
+
+<br>
 
 | Surface | Use |
-| --- | --- |
-| Plain HTML / static sites (Cloudflare Pages, Workers assets) | `<link rel="stylesheet" href="https://<pages-host>/current/jupiter.css">`, or copy the file |
-| Any bundler (Vite, Astro, Next, ...) | `import "@belikh/jupiter-tokens/css"` |
-| Tailwind v4 | `@import "@belikh/jupiter-tokens/tokens.css"; @import "@belikh/jupiter-tokens/tailwind.css";` then `bg-jp-surface`, `text-jp-accent`, `font-jp-mono` |
-| Variables only / components only | `@belikh/jupiter-tokens/tokens.css`, `@belikh/jupiter-tokens/components.css` (components sit in `@layer jupiter`, so app styles and utilities win) |
-| Fonts (opt in) | `@belikh/jupiter-tokens/fonts.css` + your own copy of the font files |
+| :-- | :-- |
+| Plain HTML / static sites | `<link rel="stylesheet" href="https://<pages-host>/current/jupiter.css">` |
+| Any bundler (Vite, Astro, Next) | `import "@belikh/jupiter-tokens/css"` |
+| Tailwind v4 | `@import "@belikh/jupiter-tokens/tokens.css"; @import "@belikh/jupiter-tokens/tailwind.css";` |
+| Variables or components only | `tokens.css`, `components.css` (components sit in `@layer jupiter`) |
+| Fonts | `@belikh/jupiter-fonts/fonts.css` |
 | Kiosk touchscreens | `@belikh/jupiter-tokens/kiosk.css` |
-| Email | `@belikh/jupiter-tokens/email.html` (inline-styled, table-based) |
-| Terminals / SSH | `@belikh/jupiter-tokens/terminal.sh`, `@belikh/jupiter-tokens/Xresources` |
-| Go TUIs (Bubble Tea / Lip Gloss) | `jupiter_theme.go`: `lipgloss.Color(jupiter.Dark.Accent)` |
-| Rust (ratatui, egui, iced) | `jupiter-theme` crate (`packages/rust`) with optional adapters |
-| Linux GUI: Slint, GTK4/libadwaita, Qt/QML, KDE | `jupiter.slint`, `jupiter-gtk-{light,dark}.css`, `jupiter-qt.tgz`, `Jupiter{Light,Dark}.colors`; see `packages/rust/README.md` |
-| iOS / Android | `@belikh/jupiter-tokens/mobile.json` |
-| LaTeX | `jupiter-latex.tgz` (classes + `jupiter-tokens.sty`); see `packages/latex` |
-| Line graphics (icons, illustrations, dividers) | `@belikh/jupiter-graphics`: single SVGs, a sprite, CSS and a JS helper; see `packages/graphics/README.md` |
-| JS/TS | `import { DEFAULT_TOKENS, generateCSS, ansiPalette } from "@belikh/jupiter-tokens"` |
-| Raw tokens | `@belikh/jupiter-tokens/tokens.json` |
+| Email | `@belikh/jupiter-tokens/email.html` |
+| Terminals / SSH | `terminal.sh`, `Xresources` |
+| Go TUIs | `jupiter_theme.go` |
+| Rust (ratatui, egui, iced) | the `jupiter-theme` crate |
+| Slint, GTK4, Qt, KDE | `jupiter.slint`, `jupiter-gtk-*.css`, `jupiter-qt.tgz`, `Jupiter*.colors` |
+| iOS / Android | `mobile.json` |
+| LaTeX | `jupiter-latex.tgz` |
+| ESPHome | `@belikh/jupiter-esphome` |
+| READMEs and profiles | `jupiter-github.tgz` |
+| JS / TS | `import { DEFAULT_TOKENS, generateCSS } from "@belikh/jupiter-tokens"` |
 
-Components are plain CSS classes (`jp-btn`, `jp-table`, ...), so any framework can use them; see the docs site.
+</details>
 
-### Tracking `current`
-
-- **Static sites, email, scripts:** point at `/current/<file>` on the Pages site (see Releases below). No rebuild needed
-  for CSS; email, terminal, Go and mobile outputs only change when the consumer rebuilds, so run an update PR there.
-- **npm consumers:** do not depend on a moving URL in a project that has a lockfile (the integrity hash will fail on
-  the next release). Depend on the versioned tarball and let Renovate/Dependabot open update PRs:
-  `"@belikh/jupiter-tokens": "https://github.com/<owner>/<repo>/releases/download/v1.0.0/jupiter-tokens-1.0.0.tgz"`.
+<br>
 
 ## Releases
 
-`.github/workflows/release.yml` runs on every push to `main`. If `packages/tokens/package.json` has a new version it:
+<br>
 
-1. runs typecheck, the token **validation gate** (schema, version in sync with `jupiter.tokens.json`, WCAG AA contrast in
-   light and dark), the build, and a **breaking-change gate** (removing a `--jp-*` variable or `.jp-*` class needs a
-   major version bump, checked against the previous release's `names.json`);
-2. publishes an immutable `vX.Y.Z` GitHub release with unversioned assets (`.../releases/latest/download/jupiter.css`);
-3. if the repo variable `CLOUDFLARE_PAGES_PROJECT` (and secrets `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`) is set,
-   deploys a Pages site with `/current/` and every `/vX.Y.Z/` (versioned paths are immutable-cached).
+Every push to `main` runs the release workflow. If the token version is new, it:
 
-A private repo means each consumer needs a token to fetch release assets; the Pages site does not.
+1. checks the schema, WCAG AA contrast in light and dark, and that nothing was removed without a major bump;
+2. publishes an immutable `vX.Y.Z` release with the generated files;
+3. publishes the npm packages to GitHub Packages;
+4. deploys the Pages site, when `CLOUDFLARE_PAGES_PROJECT` is set.
+
+<br>
 
 ## Develop
 
+<br>
+
 ```sh
 npm install
-npm run dev        # builds tokens, then serves the app (design-system site + admin template) on :3000
-npm run build      # tokens + app
-npm run lint       # divergence guard rails + house style lint
+npm run dev        # tokens, then the app on :3000
+npm run build
+npm run lint       # divergence guard rails and house style
 npm run typecheck
 ```
 
-## Fonts (not in the package)
+<br>
 
-SGI Text / SGI Alt are Bitstream typefaces marked "confidential and proprietary". They live only in
-`apps/admin/public/fonts/` and are **not** shipped in `@belikh/jupiter-tokens`. The CSS falls back to system fonts.
-JetBrains Mono is OFL-licensed. Confirm redistribution rights before adding any of these to a published package.
+---
 
-## Publishing
-
-Not published to a registry yet. Consumers install the versioned tarball from the GitHub release (above); GitHub
-Packages or a private npm scope can be added later without changing the file layout. Run `npm run build` locally and
-`scripts/release-assets.sh` to see exactly what a release contains.
+<p align="right"><sub>jupiter.au</sub></p>
