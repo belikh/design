@@ -31,6 +31,8 @@
 
 /* Native dialog (Modal, Drawer) and popover (Menu) */
 dialog.adm-modal, dialog.adm-drawer { padding: 0; color: var(--jp-text); max-width: calc(100% - 2 * var(--jp-space-4)); overscroll-behavior: contain; }
+/* .adm-modal sets display:flex, which would otherwise show a closed <dialog> when it is rendered outside React */
+dialog.adm-modal:not([open]), dialog.adm-drawer:not([open]) { display: none; }
 dialog.adm-modal[open], dialog.adm-drawer[open] { display: flex; }
 dialog.adm-modal::backdrop, dialog.adm-drawer::backdrop { background: color-mix(in oklab, var(--jp-bg) 55%, transparent); backdrop-filter: blur(2px); }
 dialog.adm-drawer { margin: 0; }

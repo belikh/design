@@ -75,6 +75,10 @@ export const icons: Drawing[] = [
   ["drop", "water rain humidity", "24,5! 16,17 o(24,30,13,190,-200) 32,17 24,5"],
   ["wind", "air breeze fan", "5,24 27,24 o(31,16,8,90,-300)"],
   ["leaf", "eco nature plant", "6,44 12,38 40,8! 38,26 26,38 12,38! 10,24 22,10 40,8"],
+  // garden stages: a note's growth, small enough to sit beside a label
+  ["sprout", "garden stage seedling new growth", "24,44 24,28! 14,28 8,20 10,12 18,14 24,28! 34,24 40,16 38,10 30,12 24,28"],
+  ["bud", "garden stage budding growing", "24,44 24,30! 15,25 13,15 24,4! 35,15 33,25 24,30"],
+  ["evergreen", "garden stage evergreen mature tree", "24,3! 36,19! 30,19 40,33! 28,33 28,45! 20,45! 20,33 8,33! 18,19 12,19! 24,3"],
   ["thermometer", "temperature climate heat", "20,29 20,9 o(24,9,4,180,180) 28,29 o(24,35,7,-55,290)"],
   ["lightbulb", "idea light lamp", "o(24,19,14,110,320) 29,36! 19,36! 19,40! 29,40! 26,44 21,44"],
   ["cup", "coffee tea break", "32.5,31 39,33 44,27 41,20 34,19 34,16! 8,16! 10,34 14,40 28,40 32,34 34,16"],
