@@ -9,8 +9,7 @@
 
 # Jupiter design system
 
-**One JSON file. Every surface.**<br>
-Websites, apps, email, terminals, kiosks, mobile, documents and READMEs all take their colour, type and shape from a single token file.
+Colour, type and shape for websites, apps, email, terminals, kiosks, mobile, documents and READMEs, generated from one token file.
 
 <br>
 
@@ -48,11 +47,11 @@ Websites, apps, email, terminals, kiosks, mobile, documents and READMEs all take
 
 <br>
 
-1. Edit `packages/tokens/jupiter.tokens.json`. The `/editor` page of the app can build the JSON for you.
+1. Edit `packages/tokens/jupiter.tokens.json`. The `/editor` page of the app can build the JSON.
 2. Run `npm run build`. Every output is regenerated.
 3. Bump the version with `node scripts/bump-version.mjs X.Y.Z` and push.
 
-Projects depend on the published `@belikh/jupiter-*` packages, so they pick the change up with `npm run update:design`. Nothing is copied into them.
+Projects depend on the published `@belikh/jupiter-*` packages and pick up the change with `npm run update:design`.
 
 <br>
 
@@ -94,7 +93,7 @@ Projects depend on the published `@belikh/jupiter-*` packages, so they pick the 
 
 Every push to `main` runs the release workflow. If the token version is new, it:
 
-1. checks the schema, WCAG AA contrast in light and dark, and that nothing was removed without a major bump;
+1. checks the schema, WCAG AA contrast in light and dark, and that no variable or class was removed without a major bump;
 2. publishes an immutable `vX.Y.Z` release with the generated files;
 3. publishes the npm packages to GitHub Packages;
 4. deploys the Pages site, when `CLOUDFLARE_PAGES_PROJECT` is set.
