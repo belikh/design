@@ -1,0 +1,26 @@
+\documentclass{jupiter-form}
+\formkind{Expenses}
+\title{Expense report}
+\subtitle{EXP-2026-031}
+\formbadge[warn]{Submitted}
+\currency{\$}
+\begin{document}
+\maketitle
+\jprow{Employee}{Alex Example}
+\jprow{Department}{Operations}
+\jprow{Period}{\jpmono\small 1 to 31 October 2026}
+\jprow{Approver}{Jordan Smith}
+\jprowend
+\jpitemlabels{Description}{Date}{Category}{Amount}
+\jpitemwidths{24mm}{36mm}{28mm}
+\begin{jpitems}
+  \expenseitem{Return flights to Sydney}{3 Oct}{Travel}{412.50}
+  \expenseitem{Hotel, two nights}{3 Oct}{Travel}{386.00}
+  \expenseitem{Client dinner}{4 Oct}{Meals}{148.20}
+  \expenseitem{Taxi to the airport}{5 Oct}{Travel}{54.90}
+  \expenseitem{Cable testing kit}{14 Oct}{Equipment}{229.00}
+  \expenseitem{Parking, client site}{21 Oct}{Travel}{36.00}
+\end{jpitems}
+\jpbigtotal{Total claimed}{\jpsubtotal}
+\jpsign{Employee}{Approver}
+\end{document}

@@ -1,0 +1,26 @@
+\documentclass{jupiter-invoice}
+\invoicekind{Quote}
+\invoicefrom{Alex Example \\ 12 Example Street \\ Brisbane QLD 4000 \\ ABN 00 000 000 000}
+\invoiceto{Example Pty Ltd \\ 1 Sample Road \\ Sydney NSW 2000}
+\invoicenumber{QUO-0007}
+\invoicedatelabel{Prepared}
+\invoicedate{12 Nov 2026}
+\invoiceduelabel{Valid until}
+\invoiceduedate{12 Dec 2026}
+\invoicetolabel{Prepared for}
+\invoicetotallabel{Total quoted}
+\invoicestatus{Draft}
+\taxrate{10}
+\invoicenotes{Prices are in Australian dollars. Work starts within two weeks of acceptance. A 30 percent deposit is due on acceptance.}
+\invoicesign{Alex Example}{Example Pty Ltd}
+\begin{document}
+\maketitle
+\begin{invoiceitems}
+  \invoiceitem{Site survey and network design}{8}{95}
+  \invoiceitem{Access points, supplied and installed}{6}{440}
+  \invoiceitem{Switch, 24 port, supplied and configured}{1}{1180}
+  \invoiceitem{Cabling and materials}{1}{1250.50}
+\end{invoiceitems}
+\invoicetotals
+\invoicefooter
+\end{document}

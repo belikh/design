@@ -1,0 +1,29 @@
+\documentclass{jupiter-invoice}
+\invoicekind{Purchase order}
+\invoicefrom{Example Pty Ltd \\ 1 Sample Road \\ Sydney NSW 2000 \\ ABN 00 000 000 000}
+\invoicefromlabel{Buyer}
+\invoiceto{Example Supplies Pty Ltd \\ 9 Trade Street \\ Brisbane QLD 4000}
+\invoicetolabel{Supplier}
+\invoiceextra{Ship to}{Example Pty Ltd, Loading dock \\ 1 Sample Road \\ Sydney NSW 2000}
+\invoicenumber{PO-0042}
+\invoicedatelabel{Ordered}
+\invoicedate{12 Nov 2026}
+\invoiceduelabel{Deliver by}
+\invoiceduedate{26 Nov 2026}
+\invoicetotallabel{Order total}
+\invoicestatus{Open}
+\taxrate{10}
+\invoicenotes{Quote the PO number on every delivery note and invoice. Goods are subject to inspection on arrival. Terms: 30 days from invoice.}
+\invoicesign{Authorised by}{Supplier acceptance}
+\begin{document}
+\maketitle
+\jpitemlabels{Description}{Qty}{Unit}{Amount}
+\begin{invoiceitems}
+  \invoiceitem{Access point, wall mount}{6}{229}
+  \invoiceitem{Switch, 24 port PoE}{1}{780}
+  \invoiceitem{Patch cable, 1 m (pack of 10)}{4}{36.50}
+  \invoiceitem{Rack shelf, 1U}{2}{48}
+\end{invoiceitems}
+\invoicetotals
+\invoicefooter
+\end{document}

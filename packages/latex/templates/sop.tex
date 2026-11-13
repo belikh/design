@@ -1,0 +1,46 @@
+\documentclass{jupiter-report}
+\reportkind{Procedure}
+\title{Restoring a client backup}
+\subtitle{SOP-014}
+\author{Operations}
+\reportdate{12 November 2026}
+\reportversion{v2.1}
+\reportstatus{Approved}
+\begin{document}
+\maketitle
+\section{Purpose}
+This procedure restores a client's files from the nightly backup after data loss. It applies to all managed clients.
+
+\section{Scope}
+Applies to the support team. It does not cover restoring a full server, which is SOP-021.
+
+\section{Roles}
+\begin{jpwide}
+\begin{tabular}{@{}p{50mm}p{86mm}@{}}
+\toprule
+\jplabel{Role} & \jplabel{Responsibility}\\
+\midrule
+Support engineer & Carries out the restore and records it\\
+Team lead & Approves restores of more than 50 GB\\
+Client contact & Confirms what is needed and checks the result\\
+\bottomrule
+\end{tabular}
+\end{jpwide}
+
+\section{Procedure}
+\begin{enumerate}
+  \item Confirm the client's identity and what needs restoring.
+  \item Open the backup console and select the latest good backup.
+  \item Restore to a new folder, never over the original.
+  \item Ask the client contact to check the files.
+  \item Move the files into place once confirmed.
+  \item Record the restore in the ticket.
+\end{enumerate}
+\begin{jpnote}[warn]Never restore over live files before the client has checked the copy.\end{jpnote}
+
+\section{Records}
+Each restore is logged in the ticket with the backup date, the files restored and who confirmed the result.
+
+\section{Review}
+This procedure is reviewed every year by the team lead.
+\end{document}

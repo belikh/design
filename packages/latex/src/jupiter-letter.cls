@@ -8,6 +8,7 @@
 %%   \letterdate{12 November 2026}   % optional, defaults to \today
 %%   \subject{Re: Application for ...}
 %%   \begin{jpletter}{Dear Ms Smith,} ... \end{jpletter}
+%%   \lettertype{Memo}  \letterrow{Label}{value}  \subjectlabel{Subject}  \recipientlabel{To}   other kinds of letter: memo, offer, thank-you
 %%   \signoff{Yours sincerely,}{Name}[Enclosures: Resume]
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{jupiter-letter}[2026/01/01 Jupiter letter]
@@ -18,6 +19,7 @@
 \ProcessOptions\relax
 \LoadClass[a4paper,10pt]{article}
 \RequirePackage{jupiter}
+\RequirePackage{jupiter-doc}
 \RequirePackage[top=22mm,bottom=24mm,left=62mm,right=18mm]{geometry}
 \pagestyle{empty}
 \setlength{\parindent}{0pt}
@@ -29,6 +31,11 @@
 \newcommand{\recipient}[1]{\gdef\jp@rcpt{#1}}
 \newcommand{\letterdate}[1]{\gdef\jp@date{#1}}
 \newcommand{\subject}[1]{\gdef\jp@subject{#1}}
+\newcommand{\lettertype}[1]{\gdef\jp@ltype{#1}}
+\newcommand{\letterrow}[2]{\g@addto@macro\jp@lextra{\jp@lrow{#1}{#2}}}
+\newcommand{\subjectlabel}[1]{\gdef\jp@lsubj{#1}}
+\newcommand{\recipientlabel}[1]{\gdef\jp@lrcpt{#1}}
+\gdef\jp@ltype{}\gdef\jp@lextra{}\gdef\jp@lsubj{Re}\gdef\jp@lrcpt{To}
 \gdef\jp@sname{}\gdef\jp@saddr{}\gdef\jp@scontact{}\gdef\jp@rcpt{}\gdef\jp@date{\today}\gdef\jp@subject{}
 
 \newcommand{\jp@lrow}[2]{\par\noindent{\color{jpBorder}\rule{\linewidth}{0.4pt}}\par\vspace{5pt}\nointerlineskip
@@ -38,14 +45,15 @@
 \newcommand{\jp@letterhead}{%
   \jpat[north east]{192mm}{14mm}{\jpart[width=28mm]{logo-light}}%
   \vspace*{5mm}%
-  \noindent\jpgutter[\ifjp@cover jpAccent\else jpTextMuted\fi]{\ifjp@cover Cover letter\else Letter\fi}%
+  \noindent\jpgutter[\ifjp@cover jpAccent\else jpTextMuted\fi]{\ifdefempty{\jp@ltype}{\ifjp@cover Cover letter\else Letter\fi}{\jp@ltype}}%
   {\jpdisplay\bfseries\fontsize{30}{32}\selectfont\color{jpText}\jp@sname\ifjp@cover\jp@spotdot\fi\par}
   \vspace{3pt}\noindent{\jpmono\fontsize{7.5}{10.5}\selectfont\color{jpTextMuted}\jp@saddr\ifx\\\jp@scontact\\\else\\\jp@scontact\fi\par}
   \vspace{1mm}\ifjp@cover\jpunderline[accent]{70mm}\else\jpunderline[ink]{70mm}\fi
   \vspace{9mm}
   \jp@lrow{Date}{\jpmono\small\jp@date}%
-  \ifx\\\jp@rcpt\\\else\jp@lrow{To}{\jp@rcpt}\fi
-  \ifx\\\jp@subject\\\else\jp@lrow{Re}{\bfseries\jp@subject}\fi
+  \ifx\\\jp@rcpt\\\else\jp@lrow{\jp@lrcpt}{\jp@rcpt}\fi
+  \ifx\\\jp@subject\\\else\jp@lrow{\jp@lsubj}{\bfseries\jp@subject}\fi
+  \jp@lextra
   {\color{jpBorder}\rule{\linewidth}{0.4pt}}\par\vspace{10mm}}
 
 \newenvironment{jpletter}[1]{\jp@letterhead\noindent #1\par}{}
