@@ -28,9 +28,10 @@ and attaches the generated files to a GitHub release. `npm run check:consumer` p
 `examples/consumer`, checks the new values arrived, and restores.
 
 ## Fonts
-SGI Text and SGI Alt are proprietary and never committed or public. `node scripts/stage-fonts.mjs` copies them from `apps/admin/public/fonts`
-into the gitignored `packages/fonts/files`; `node scripts/publish-packages.mjs --only fonts --include-fonts` publishes them to the private registry
-from a machine that has them (CI does not). Projects import `@belikh/jupiter-fonts/fonts.css`; without the package they fall back to free fonts.
+SGI Text and SGI Alt are Bitstream typefaces used with the owner's consent. The woff2 files are committed in `apps/admin/public/fonts`, and every release carries
+them as `jupiter-fonts.tgz` (the `@belikh/jupiter-fonts` package: the files and a `fonts.css`). `node scripts/stage-fonts.mjs` copies them into the gitignored
+`packages/fonts/files` before the package is packed. Projects import `@belikh/jupiter-fonts/fonts.css`, or unpack `jupiter-fonts.tgz` at build time as docs.jupiter.au does;
+without the files they fall back to free fonts.
 
 ## Other targets (no npm mechanism)
 Rust, Go, Slint, GTK, Qt, KDE, LaTeX, ESPHome YAML, email, terminal and mobile consume generated files from the release. Fetch them into a

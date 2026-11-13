@@ -69,4 +69,4 @@ Agents: extend `@belikh/jupiter-ui` rather than restyling locally. The theme (au
 - Hand-roll an edit mode, a modal, a table, a toast, or a select. Use the shared one.
 - Add a charting or table library.
 - Raise `scripts/lint-baseline.json`. It only ever goes down.
-- Commit the proprietary SGI fonts (`apps/admin/public/fonts/sgi-*` is gitignored).
+- Move or rename the SGI font files in `apps/admin/public/fonts`: the release packs them as `jupiter-fonts.tgz` for belikh/docs.
