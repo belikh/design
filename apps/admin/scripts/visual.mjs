@@ -6,7 +6,7 @@
 // Baseline keys: "<route>#<theme>" is the comfortable density (the original format, so old baselines stay valid) and
 // "<route>#<theme>+compact" is compact. The file header lists the densities it holds.
 //   npm run visual -- --update         accept the current look as the new baseline
-//   npm run visual -- --only /p2/chrome   limit to routes starting with this prefix (combine with --update to refresh a subset)
+//   npm run visual -- --only /chrome   limit to routes starting with this prefix (combine with --update to refresh a subset)
 //   VISUAL_URL=http://127.0.0.1:3000 npm run visual   reuse a running dev server instead of starting one
 // Screenshots go to .visual/ (gitignored). The baseline stores a small perceptual grid per screenshot (average
 // luminance in 24x14 cells), so clocks and "5 minutes ago" text don't cause failures but layout/colour changes do.
@@ -30,7 +30,7 @@ const CHROMIUM = process.env.CHROMIUM || "chromium";
 const outDir = join(root, ".visual"), baselinePath = join(root, "visual", "baseline.json");
 
 function routePaths() {
-  const files = [join(root, "src/routes.ts"), ...readdirSync(join(root, "src/p2"), { withFileTypes: true }).filter((d) => d.isDirectory()).map((d) => join(root, "src/p2", d.name, "index.tsx"))].filter(existsSync);
+  const files = [join(root, "src/routes.ts"), ...readdirSync(join(root, "src/areas"), { withFileTypes: true }).filter((d) => d.isDirectory()).map((d) => join(root, "src/areas", d.name, "index.tsx"))].filter(existsSync);
   const set = new Set();
   for (const f of files) for (const m of readFileSync(f, "utf8").matchAll(/\bpath:\s*"(\/[^"?]*)"/g)) set.add(m[1]);
   return [...set].filter((p) => !only || p.startsWith(only)).sort();

@@ -20,7 +20,7 @@ export function CohortTable({ users, periods, title = "Cohort retention by signu
             rowExtra={(r) => [r === rows.length ? fmt(rows.reduce((a, x) => a + x.size, 0)) : fmt(rows[r].size)]}
             cell={(r, k) => { const v = r === rows.length ? avg[k] : rows[r].pct[k]; const n = r === rows.length ? null : rows[r].counts[k]; return { t: v === null ? null : v, text: v === null ? "" : pct(v), label: v === null ? `${r === rows.length ? "Average" : wk(r)} +${k} weeks: not yet observed` : `${r === rows.length ? "Weighted average" : `Cohort ${wk(r)}`}, ${k} weeks after signup: ${pct(v, 1)} still active${n === null ? "" : ` (${n} of ${rows[r].size} users)`}` }; }} />
           <Readout>{text}</Readout>
-          <div className="p3e-controls"><HeatScale lo="0%" hi="100%" /><span className="pc-note">Average row is weighted by cohort size and only uses cohorts old enough to have reached that week. Dashed cells have not happened yet.</span></div>
+          <div className="dg-controls"><HeatScale lo="0%" hi="100%" /><span className="pc-note">Average row is weighted by cohort size and only uses cohorts old enough to have reached that week. Dashed cells have not happened yet.</span></div>
         </>
       )}
     </ChartFrame>
@@ -33,7 +33,7 @@ export function Funnel({ data, title = "Funnel: visit to purchase", state }: Com
   const worst = steps.slice(1).reduce((a, s, i) => (s.fromPrev < (steps[a + 1]?.fromPrev ?? 2) ? i : a), 0) + 1;
   return (
     <>
-      <div className="p3e-controls"><Segmented label="Segment" value={seg} onChange={setSeg} options={segs.map((s) => ({ value: s, label: s }))} /></div>
+      <div className="dg-controls"><Segmented label="Segment" value={seg} onChange={setSeg} options={segs.map((s) => ({ value: s, label: s }))} /></div>
       <Chart title={`${title} (${seg})`} n={steps.length} state={state} height={300}
         table={{ head: ["Step", "Users", "From previous step", "From top", "Lost at this step"], rows: steps.map((s) => [s.name, s.count, pct(s.fromPrev, 1), pct(s.fromTop, 1), s.lost]) }}>
         {(w) => {
@@ -46,11 +46,11 @@ export function Funnel({ data, title = "Funnel: visit to purchase", state }: Com
                     {next && <path d={`M${x},${y + rowH}L${x + bw},${y + rowH}L${L + (maxW + nw) / 2},${y + rowH + gap}L${L + (maxW - nw) / 2},${y + rowH + gap}Z`} fill="var(--adm-c1)" fillOpacity="0.2" />}
                     <g {...hit(i, `${s.name}: ${fmt(s.count)} users, ${pct(s.fromTop, 1)} of the top${i ? `, ${pct(s.fromPrev, 1)} of the previous step, ${fmt(s.lost)} lost here` : ""}`)}>
                       <rect x={x} y={y} width={bw} height={rowH} rx="4" fill={heat(0.35 + 0.65 * s.fromTop)} stroke={i === worst ? "var(--jp-warn)" : "none"} strokeWidth="3" />
-                      <text x={x + bw / 2} y={y + rowH / 2} dy="0.35em" textAnchor="middle" className="p3e-b" style={{ fill: onHeat(0.35 + 0.65 * s.fromTop) }}>{bw > 70 ? fmt(s.count) : ""}</text>
+                      <text x={x + bw / 2} y={y + rowH / 2} dy="0.35em" textAnchor="middle" className="dg-b" style={{ fill: onHeat(0.35 + 0.65 * s.fromTop) }}>{bw > 70 ? fmt(s.count) : ""}</text>
                     </g>
-                    <text x={L - 8} y={y + rowH / 2} dy="0.35em" textAnchor="end" className="p3e-sm">{s.name}</text>
-                    <text x={L + maxW + 10} y={y + rowH / 2} dy="0.35em" className="p3e-mute">{pct(s.fromTop, 1)}</text>
-                    {i > 0 && <text x={w / 2 + 6 + (L - 100) / 2} y={y - gap / 2 + 4} className="p3e-mute" textAnchor="start">{`▼ ${pct(s.fromPrev, 1)} continue, ${fmt(s.lost)} lost`}</text>}
+                    <text x={L - 8} y={y + rowH / 2} dy="0.35em" textAnchor="end" className="dg-sm">{s.name}</text>
+                    <text x={L + maxW + 10} y={y + rowH / 2} dy="0.35em" className="dg-mute">{pct(s.fromTop, 1)}</text>
+                    {i > 0 && <text x={w / 2 + 6 + (L - 100) / 2} y={y - gap / 2 + 4} className="dg-mute" textAnchor="start">{`▼ ${pct(s.fromPrev, 1)} continue, ${fmt(s.lost)} lost`}</text>}
                   </g>); })}
               </Svg>
               <Readout>{text}</Readout>

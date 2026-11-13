@@ -7,7 +7,7 @@ import { usePrefs } from "@belikh/jupiter-ui/store.tsx";
 
 const SB: Record<string, "ok" | "warn" | "danger" | "info"> = { Delivered: "ok", "In transit": "info", Delayed: "warn", Held: "danger" };
 
-/** Grid lab: every P2 table capability on one dataset (grouping, aggregates, header menus, conditional formats, pinned rows, range selection, find, exports...). */
+/** Grid lab: every table capability on one dataset (grouping, aggregates, header menus, conditional formats, pinned rows, range selection, find, exports...). */
 export function GridLab() {
   const { toast } = usePrefs(); const [rows, setRows] = useState<Ship[]>(SHIPMENTS);
   const cols: Col<Ship>[] = useMemo(() => [
@@ -27,7 +27,7 @@ export function GridLab() {
   ], []);
   return (
     <>
-      <PageHeader title="Grid lab" crumbs={["Grids", "Grid lab"]} desc="Every P2 table capability on one dataset. Open a column’s ⋯ menu, drag a header into the group bar, drag across cells, or press Ctrl+F."
+      <PageHeader title="Grid lab" crumbs={["Grids", "Grid lab"]} desc="Every table capability on one dataset. Open a column’s ⋯ menu, drag a header into the group bar, drag across cells, or press Ctrl+F."
         actions={<Btn icon="refresh" onClick={() => setRows(SHIPMENTS)}>Reset data</Btn>} />
       <Alert s="info" title="Things to try">
         Group by <b>State</b> then <b>Status</b> (drag headers into the bar). Pick <b>Aggregate</b> from a header menu. Switch a numeric column to <b>data bars</b> or <b>icons</b>. Drag across cells for a sum/average status bar. Pin a row (📌) while scrolling. Export to <b>Excel</b> or <b>PDF</b>. Switch <b>Rows → Wrap</b>.

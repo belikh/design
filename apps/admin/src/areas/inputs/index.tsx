@@ -1,4 +1,4 @@
-import type { P2Route } from "../registry.ts";
+import type { AreaRoute } from "../registry.ts";
 import { lazy } from "react";
 const AccessPage = lazy(() => import("./pages.tsx").then((m) => ({ default: m.AccessPage })));
 const ChoicesPage = lazy(() => import("./pages.tsx").then((m) => ({ default: m.ChoicesPage })));
@@ -13,7 +13,7 @@ const PickersPage = lazy(() => import("./pages.tsx").then((m) => ({ default: m.P
 const SecurityPage = lazy(() => import("./pages.tsx").then((m) => ({ default: m.SecurityPage })));
 const TextPage = lazy(() => import("./pages.tsx").then((m) => ({ default: m.TextPage })));
 
-export const routes: P2Route[] = [
+export const routes: AreaRoute[] = [
   { path: "/inputs/text", label: "Text entry", icon: "edit", group: "Forms", keywords: "mask card iban bsb abn username slug click to edit autocomplete chips paste mention slash", element: <TextPage /> },
   { path: "/inputs/security", label: "Secrets and security", icon: "lock", group: "Forms", keywords: "api key secret password generator totp qr recovery codes passkey webauthn", element: <SecurityPage /> },
   { path: "/inputs/editors", label: "Editors", icon: "code", group: "Forms", keywords: "markdown rich text code editor lint format diff snippets variables attachments", element: <EditorsPage /> },

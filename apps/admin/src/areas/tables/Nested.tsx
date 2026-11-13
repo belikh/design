@@ -20,7 +20,7 @@ export function Nested() {
       <PageHeader title="Nested tables and multi-row headers" crumbs={["Grids", "Nested"]} desc="A sub-table inside an expanded row, and a grid with column groups and rotated headers." />
       <Panel title="Customers with a nested shipment table (B025)" flush>
         <DataTable<Cust> rows={custs} cols={cols} pageSize={6} selectable={false} headerMenu expand={(c) => (
-          <div className="p2t-nested"><DataTable<Ship> rows={SHIPMENTS.filter((s) => s.customer === c.customer)} cols={subCols} pageSize={5} selectable={false} exportName={`${c.customer}-shipments`} ariaLabel={`Shipments for ${c.customer}`} /></div>)} />
+          <div className="tbl-nested"><DataTable<Ship> rows={SHIPMENTS.filter((s) => s.customer === c.customer)} cols={subCols} pageSize={5} selectable={false} exportName={`${c.customer}-shipments`} ariaLabel={`Shipments for ${c.customer}`} /></div>)} />
       </Panel>
       <Panel title="Net volume change by state and month: column groups, rotated headers (B027)" className="adm-section" flush>
         <DataTable<Heat> rows={heat} cols={heatCols} pageSize={10} selectable={false} headerMenu />

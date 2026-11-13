@@ -5,7 +5,7 @@ import { Markdown } from "@belikh/jupiter-ui/extra.tsx";
 import { prefixLines, stats, wrap } from "../md.ts";
 import { useStored } from "../common.tsx";
 
-const START = "# Release notes\n\nWrite in **Markdown** and see it render live.\n\n## What’s new\n\n- Charts gain *zoom* and export\n- A new `SQL console`\n\n> Raw HTML is never rendered, so pasted content is safe.\n\n```\nnpm run dev:admin\n```\n\nSee the [docs](/p2/tools/docs).\n";
+const START = "# Release notes\n\nWrite in **Markdown** and see it render live.\n\n## What’s new\n\n- Charts gain *zoom* and export\n- A new `SQL console`\n\n> Raw HTML is never rendered, so pasted content is safe.\n\n```\nnpm run dev:admin\n```\n\nSee the [docs](/tools/docs).\n";
 export function MarkdownEditor() {
   const [text, setText] = useStored("pt-md-doc", START); const [view, setView] = useState<"edit" | "split" | "preview">("split"); const ta = useRef<HTMLTextAreaElement>(null); const [saved, setSaved] = useState(true);
   useEffect(() => { setSaved(false); const t = setTimeout(() => setSaved(true), 600); return () => clearTimeout(t); }, [text]);

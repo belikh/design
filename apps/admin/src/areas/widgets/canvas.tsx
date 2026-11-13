@@ -30,9 +30,9 @@ export function InkCanvas({ strokes, onChange, width = 480, height = 200, color,
     if (!m[e.key]) return; e.preventDefault(); const p = { x: Math.max(0, Math.min(width, pen.p.x + m[e.key][0])), y: Math.max(0, Math.min(height, pen.p.y + m[e.key][1])) }; if (pen.down && live.current) { live.current.pts.push(p); draw(strokes, live.current); } setPen({ ...pen, p });
   };
   return (
-    <div className="p3-ink" style={{ aspectRatio: `${width} / ${height}` }}>
-      <canvas ref={ref} width={width} height={height} tabIndex={0} aria-label={`${label}. Draw with a pointer, or use the arrow keys to move the pen and Space to put it down or lift it.`} role="application" className="p3-ink__cv" onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerLeave={up} onKeyDown={keyDown} onFocus={() => setFocused(true)} onBlur={() => { setFocused(false); if (pen.down) { up(); setPen({ ...pen, down: false }); } }} />
-      {focused && <span className={`p3-ink__pen ${pen.down ? "is-down" : ""}`} aria-hidden style={{ insetInlineStart: `${(pen.p.x / width) * 100}%`, insetBlockStart: `${(pen.p.y / height) * 100}%` }} />}
+    <div className="lab-ink" style={{ aspectRatio: `${width} / ${height}` }}>
+      <canvas ref={ref} width={width} height={height} tabIndex={0} aria-label={`${label}. Draw with a pointer, or use the arrow keys to move the pen and Space to put it down or lift it.`} role="application" className="lab-ink__cv" onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerLeave={up} onKeyDown={keyDown} onFocus={() => setFocused(true)} onBlur={() => { setFocused(false); if (pen.down) { up(); setPen({ ...pen, down: false }); } }} />
+      {focused && <span className={`lab-ink__pen ${pen.down ? "is-down" : ""}`} aria-hidden style={{ insetInlineStart: `${(pen.p.x / width) * 100}%`, insetBlockStart: `${(pen.p.y / height) * 100}%` }} />}
     </div>
   );
 }
@@ -47,10 +47,10 @@ export function SignaturePad({ onAccept }: { onAccept?: (svgOrText: string) => v
       <Segmented label="Signature method" value={mode} onChange={(m) => { setMode(m); setAccepted(null); }} options={[{ value: "draw", label: "Draw" }, { value: "type", label: "Type" }]} />
       {mode === "draw" ? <>
         <InkCanvas strokes={strokes} onChange={(s) => { setStrokes(s); setRedo([]); setAccepted(null); }} color="currentColor" lineWidth={2.5} label="Signature pad" guide />
-        <Row><Btn sm icon="undo" disabled={!strokes.length} onClick={() => { setRedo((r) => [...r, strokes.at(-1)!]); setStrokes(strokes.slice(0, -1)); }}>Undo stroke</Btn><Btn sm disabled={!redo.length} onClick={() => { setStrokes([...strokes, redo.at(-1)!]); setRedo(redo.slice(0, -1)); }}>Redo</Btn><Btn sm variant="ghost" disabled={!strokes.length} onClick={() => { setStrokes([]); setRedo([]); }}>Clear</Btn><span className="p3-note" aria-live="polite">{strokes.length} stroke{strokes.length === 1 ? "" : "s"}, {Math.round(inkLength(strokes))} units of ink{strokes.length && !ok ? " (a little more, please)" : ""}</span></Row></>
-        : <><label className="p3-field"><span className="jp-label">Type your full name</span><input className="jp-input" value={typed} onChange={(e) => { setTyped(e.target.value); setAccepted(null); }} /></label><div className="p3-typedsig" style={{ fontFamily: SCRIPT }} aria-hidden>{typed || "Your name"}</div></>}
+        <Row><Btn sm icon="undo" disabled={!strokes.length} onClick={() => { setRedo((r) => [...r, strokes.at(-1)!]); setStrokes(strokes.slice(0, -1)); }}>Undo stroke</Btn><Btn sm disabled={!redo.length} onClick={() => { setStrokes([...strokes, redo.at(-1)!]); setRedo(redo.slice(0, -1)); }}>Redo</Btn><Btn sm variant="ghost" disabled={!strokes.length} onClick={() => { setStrokes([]); setRedo([]); }}>Clear</Btn><span className="lab-note" aria-live="polite">{strokes.length} stroke{strokes.length === 1 ? "" : "s"}, {Math.round(inkLength(strokes))} units of ink{strokes.length && !ok ? " (a little more, please)" : ""}</span></Row></>
+        : <><label className="lab-field"><span className="jp-label">Type your full name</span><input className="jp-input" value={typed} onChange={(e) => { setTyped(e.target.value); setAccepted(null); }} /></label><div className="lab-typedsig" style={{ fontFamily: SCRIPT }} aria-hidden>{typed || "Your name"}</div></>}
       <Checkbox checked={agree} onChange={setAgree} label="I agree this is my signature for this document" />
-      <Row><Btn variant="primary" disabled={!ok || !agree} onClick={accept}>Accept signature</Btn>{accepted && <span className="p3-ok" role="status">Signed {accepted.at} ({accepted.kind === "draw" ? `${pointCount(strokes)} points captured` : "typed"})</span>}</Row>
+      <Row><Btn variant="primary" disabled={!ok || !agree} onClick={accept}>Accept signature</Btn>{accepted && <span className="lab-ok" role="status">Signed {accepted.at} ({accepted.kind === "draw" ? `${pointCount(strokes)} points captured` : "typed"})</span>}</Row>
     </Stack>
   );
 }
@@ -63,12 +63,12 @@ export function DrawingCanvas() {
     <Stack>
       <Row>
         <Segmented label="Tool" value={tool} onChange={setTool} options={[{ value: "pen", label: "Pen" }, { value: "eraser", label: "Eraser" }]} />
-        <div className="p3-swatches" role="radiogroup" aria-label="Ink colour">{COLOURS.map((c, i) => <button key={c} type="button" role="radio" aria-checked={color === c} aria-label={`Colour ${i + 1}`} style={{ background: c === "currentColor" ? "var(--jp-text)" : c }} className={color === c ? "is-on" : ""} onClick={() => { setColor(c); setTool("pen"); }} />)}</div>
-        <label className="p3-field p3-inline"><span className="jp-label">Width {w}</span><input type="range" min={1} max={24} value={w} onChange={(e) => setW(Number(e.target.value))} /></label>
+        <div className="lab-swatches" role="radiogroup" aria-label="Ink colour">{COLOURS.map((c, i) => <button key={c} type="button" role="radio" aria-checked={color === c} aria-label={`Colour ${i + 1}`} style={{ background: c === "currentColor" ? "var(--jp-text)" : c }} className={color === c ? "is-on" : ""} onClick={() => { setColor(c); setTool("pen"); }} />)}</div>
+        <label className="lab-field lab-inline"><span className="jp-label">Width {w}</span><input type="range" min={1} max={24} value={w} onChange={(e) => setW(Number(e.target.value))} /></label>
       </Row>
       <InkCanvas strokes={strokes} onChange={(s) => { setStrokes(s); setRedo([]); }} width={480} height={280} color={color} lineWidth={tool === "eraser" ? w * 3 : w} tool={tool} label="Drawing canvas" />
       <Row><Btn sm icon="undo" disabled={!strokes.length} onClick={() => { setRedo((r) => [...r, strokes.at(-1)!]); setStrokes(strokes.slice(0, -1)); }}>Undo</Btn><Btn sm disabled={!redo.length} onClick={() => { setStrokes([...strokes, redo.at(-1)!]); setRedo(redo.slice(0, -1)); }}>Redo</Btn><Btn sm variant="ghost" disabled={!strokes.length} onClick={() => { setStrokes([]); setRedo([]); }}>Clear</Btn>
-        <a className={`jp-btn jp-btn--sm jp-btn--secondary ${strokes.length ? "" : "is-disabled"}`} aria-disabled={!strokes.length} href={strokes.length ? `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}` : undefined} download="drawing.svg">Export SVG</a><span className="p3-note" aria-live="polite">{strokes.length} stroke{strokes.length === 1 ? "" : "s"}</span></Row>
+        <a className={`jp-btn jp-btn--sm jp-btn--secondary ${strokes.length ? "" : "is-disabled"}`} aria-disabled={!strokes.length} href={strokes.length ? `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}` : undefined} download="drawing.svg">Export SVG</a><span className="lab-note" aria-live="polite">{strokes.length} stroke{strokes.length === 1 ? "" : "s"}</span></Row>
       <Note>Eraser strokes are kept in the history so Undo restores what they removed; the SVG export includes only visible ink strokes (eraser results are not baked in).</Note>
     </Stack>
   );

@@ -2,16 +2,18 @@ import { useMemo, useState } from "react";
 import { Badge, CodeBlock, PageHeader, Panel, Section, Tabs } from "@belikh/jupiter-ui/kit.tsx";
 import { StatTile } from "@belikh/jupiter-ui/Charts.tsx";
 import { useCopy } from "./copy.ts";
-import { ansiPalette, generateEmailHTML, generateKioskCSS, generateMobileJSON, generateTerminalSh, generateXresources } from "@belikh/jupiter-tokens";
+import { ansiPalette, generateGithubTheme, generateEmailHTML, generateKioskCSS, generateMobileJSON, generateTerminalSh, generateXresources } from "@belikh/jupiter-tokens";
+import { SCHEMES, renderBadge, renderBanner, renderDivider, renderSocial, renderTile, type GithubTheme } from "../../../../packages/github/src/render.mjs";
 import { SPARK_A } from "./samples.ts";
 import { useDs } from "./store.tsx";
 
-type Tab = "email" | "terminal" | "kiosk" | "mobile";
+type Tab = "email" | "terminal" | "kiosk" | "mobile" | "github";
 const TABS: { id: Tab; label: string }[] = [
   { id: "email", label: "Email" },
   { id: "terminal", label: "SSH / terminal" },
   { id: "kiosk", label: "Kiosk touch" },
   { id: "mobile", label: "Mobile" },
+  { id: "github", label: "GitHub" },
 ];
 
 function EmailTarget() {
@@ -242,6 +244,49 @@ function MobileTarget() {
   );
 }
 
+const svgUrl = (svg: string) => `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+
+/** README / profile / social-preview SVGs rendered by @belikh/jupiter-github from the live tokens, shown as <img> like GitHub does. */
+function GithubTarget() {
+  const { tokens } = useDs();
+  const copyText = useCopy();
+  const theme = useMemo(() => JSON.parse(generateGithubTheme(tokens)) as GithubTheme, [tokens]);
+  const json = useMemo(() => generateGithubTheme(tokens), [tokens]);
+  return (
+    <div className="adm-stack">
+      <div className="adm-row">
+        <Badge s="info">SVG via &lt;img&gt; · light + dark files</Badge>
+        <Badge>&lt;picture&gt; theme switch</Badge>
+        <Badge s="ok">fonts embedded</Badge>
+        <span className="adm-spacer" />
+        <button type="button" className="jp-btn jp-btn--primary jp-btn--sm" data-testid="copy-github" onClick={() => copyText("jupiter-github.json", json)}>
+          Copy jupiter-github.json
+        </button>
+      </div>
+      <div className="adm-grid adm-grid--2" data-testid="github-preview">
+        {SCHEMES.map((s) => (
+          <div key={s} data-theme={s} className="adm-stack" style={{ padding: "var(--jp-space-4)", background: "var(--jp-bg)", border: "1px solid var(--jp-border)" }}>
+            <span className="jp-label">{s}</span>
+            <img alt={`Banner, ${s}`} width="100%" src={svgUrl(renderBanner(theme, s, { title: "Project name", subtitle: "One line about what it does" }))} />
+            <img alt={`Divider, ${s}`} width="100%" src={svgUrl(renderDivider(theme, s))} />
+            <div className="adm-row">
+              <img alt={`Tile, ${s}`} src={svgUrl(renderTile(theme, s, { label: "Build", value: "passing", status: "ok" }))} />
+              <img alt={`Tile, ${s}`} src={svgUrl(renderTile(theme, s, { label: "Open PRs", value: "3", status: "info" }))} />
+            </div>
+            <div className="adm-row">
+              {(["ok", "warn", "danger", "info", "accent"] as const).map((st) => (
+                <img key={st} alt={`${st} badge, ${s}`} src={svgUrl(renderBadge(theme, s, { label: "status", value: st, status: st }))} />
+              ))}
+            </div>
+            <img alt={`Social preview, ${s}`} width="100%" src={svgUrl(renderSocial(theme, s, { title: "Project name", subtitle: "One line about what it does", footer: "owner/repo" }))} />
+          </div>
+        ))}
+      </div>
+      <CodeBlock code="node packages/github/src/make.mjs --title 'My project' --subtitle 'What it does' --out .github/assets [--logo] [--png]" label="make a banner + social preview" testId="github-code" maxHeight="6rem" />
+    </div>
+  );
+}
+
 export function DsTargets() {
   const [tab, setTab] = useState<Tab>("email");
   return (
@@ -256,6 +301,7 @@ export function DsTargets() {
           {tab === "terminal" && <TerminalTarget />}
           {tab === "kiosk" && <KioskTarget />}
           {tab === "mobile" && <MobileTarget />}
+          {tab === "github" && <GithubTarget />}
         </div>
       </Section>
     </>

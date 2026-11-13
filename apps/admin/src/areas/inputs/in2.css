@@ -1,4 +1,4 @@
-/* Styles for the P2 input components. Tokens only; logical properties so RTL works. */
+/* Styles for the input components. Tokens only; logical properties so RTL works. */
 .in2-grid { display: grid; gap: var(--jp-space-4); grid-template-columns: repeat(2, minmax(0, 1fr)); } @media (max-width: 900px) { .in2-grid { grid-template-columns: minmax(0, 1fr); } }
 .in2-stack { display: flex; flex-direction: column; gap: var(--jp-space-3); } .in2-row { display: flex; gap: var(--jp-space-2); align-items: center; flex-wrap: wrap; }
 .in2-note { color: var(--jp-text-muted); font-size: var(--jp-fs-xs); } .in2-ok { color: var(--jp-ok); } .in2-bad { color: var(--jp-danger); } .in2-warn { color: var(--jp-warn); }

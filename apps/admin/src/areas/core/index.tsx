@@ -1,5 +1,5 @@
 import { lazy } from "react";
-import type { P2Route } from "../registry.ts";
+import type { AreaRoute } from "../registry.ts";
 
 // First-wave pages. They register exactly like every other area (this folder's `routes` is picked up by the registry),
 // and the lazy() calls keep each page in its own chunk.
@@ -38,7 +38,7 @@ const WhLobby = lazy(() => import("../../pages/WhLobby.tsx").then((m) => ({ defa
 const WhTicket = lazy(() => import("../../pages/WhTicket.tsx").then((m) => ({ default: m.WhTicket })));
 const HomeAssistant = lazy(() => import("../../pages/HomeAssistant.tsx").then((m) => ({ default: m.HomeAssistant })));
 
-export const routes: P2Route[] = [
+export const routes: AreaRoute[] = [
   { path: "/overview", label: "Admin overview", icon: "home", group: "Dashboards", keywords: "kpi home dashboard", element: <Overview /> },
   { path: "/analytics", label: "Analytics", icon: "chart", group: "Dashboards", keywords: "time range compare breakdown", element: <Analytics /> },
   { path: "/ops", label: "Operations wall", icon: "monitor", group: "Dashboards", keywords: "noc status services", element: <Ops /> },

@@ -9,7 +9,7 @@ version="$(node -p "require('$tok/package.json').version")"
 
 # 1. generated outputs (web css, email, terminal, kiosk, mobile, latex colours, tokens json, api names)
 for f in jupiter.css jupiter-tokens.css jupiter-components.css jupiter-fonts.css jupiter-tailwind.css jupiter-kiosk.css \
-         jupiter-email.html jupiter-terminal.sh jupiter.Xresources jupiter.mobile.json jupiter-tokens.sty jupiter_theme.go jupiter_theme.rs jupiter.slint jupiter-esphome.yaml jupiter-gtk-light.css jupiter-gtk-dark.css jupiter-gtk-widgets.css \
+         jupiter-email.html jupiter-terminal.sh jupiter.Xresources jupiter.mobile.json jupiter-tokens.sty jupiter_theme.go jupiter_theme.rs jupiter.slint jupiter-esphome.yaml jupiter-github.json jupiter-gtk-light.css jupiter-gtk-dark.css jupiter-gtk-widgets.css \
          Jupiter.qml JupiterLight.colors JupiterDark.colors names.json; do
   cp "$tok/dist/$f" "$out/$f"
 done
@@ -22,6 +22,7 @@ cp "$tok/jupiter.tokens.json" "$out/jupiter.tokens.json"
 #        depend on https://github.com/<owner>/<repo>/releases/latest/download/jupiter-ui.tgz and always get the current one.
 ( cd "$root/packages/ui" && npm pack --pack-destination "$out" >/dev/null 2>&1 )
 ( cd "$root/packages/esphome" && npm pack --pack-destination "$out" >/dev/null 2>&1 )
+( cd "$root/packages/github" && npm pack --pack-destination "$out" >/dev/null 2>&1 )  # jupiter-github.tgz: SVG kit (banner, tile, badge, social preview), CLI, templates
 
 # 2a. line graphics: sprite, stylesheet, manifest, every SVG as one archive, and the npm tarball
 gfx="$root/packages/graphics"
@@ -31,7 +32,7 @@ tar czf "$out/jupiter-graphics-svg.tgz" -C "$gfx/dist" svg
 ( cd "$gfx" && npm pack --pack-destination "$out" >/dev/null 2>&1 )
 
 # unversioned aliases of every package tarball (after all of them are packed)
-for n in tokens graphics ui esphome; do cp "$out/belikh-jupiter-$n-$version.tgz" "$out/jupiter-$n.tgz"; done
+for n in tokens graphics ui esphome github; do cp "$out/belikh-jupiter-$n-$version.tgz" "$out/jupiter-$n.tgz"; done
 
 # 2b. Qt module (drop the Jupiter/ folder on the QML import path) and the Rust crate
 qt="$(mktemp -d)"; mkdir -p "$qt/Jupiter"; cp "$tok/dist/Jupiter.qml" "$tok/dist/qmldir" "$qt/Jupiter/"

@@ -1,5 +1,6 @@
 // Generators: Tokens → every target. Pure functions, no DOM.
 import { hexToRgb, mix } from "./contrast.ts";
+import { generateGithubTheme } from "./github.ts";
 import { ROLE_LABELS, ROLE_ORDER, TYPE_NAMES, cssVarName, withDefaults, type ColorSet, type Tokens } from "./tokens.ts";
 
 const px = (n: number) => `${n}px`;
@@ -641,6 +642,7 @@ const snake = (role: string) => role.replace(/[A-Z]/g, (c) => `_${c.toLowerCase(
  * The `jupiter-theme` crate (packages/rust) re-exports this and adds ratatui / egui / iced adapters.
  */
 export function generateRustTheme(t: Tokens): string {
+  const dd = withDefaults(t).density;
   const rgb = (h: string) => {
     const [r, g, b] = hexToRgb(h);
     return `Rgb(${r}, ${g}, ${b})`;
@@ -762,6 +764,17 @@ pub mod layout {
     pub const CONTROL_HEIGHT: f32 = ${t.control.height.toFixed(1)};
 }
 
+/// Density presets (the web data-density attribute): control height, table cell padding, page padding.
+pub mod density {
+    pub struct Density {
+        pub control: f32,
+        pub cell_y: f32,
+        pub pad: f32,
+    }
+    pub const COMFORTABLE: Density = Density { control: ${dd.comfortable.control.toFixed(1)}, cell_y: ${dd.comfortable.cellY.toFixed(1)}, pad: ${dd.comfortable.pad.toFixed(1)} };
+    pub const COMPACT: Density = Density { control: ${dd.compact.control.toFixed(1)}, cell_y: ${dd.compact.cellY.toFixed(1)}, pad: ${dd.compact.pad.toFixed(1)} };
+}
+
 /// Touch / kiosk overrides.
 pub mod kiosk {
     pub const MIN_TARGET: f32 = ${t.kiosk.minTarget.toFixed(1)};
@@ -781,6 +794,7 @@ export function generateSlint(t: Tokens): string {
   const colors = ROLE_ORDER.map((r) => `    out property <color> ${kebab(r)}: dark ? ${t.color.dark[r]} : ${t.color.light[r]};`).join("\n");
   const sizes = TYPE_NAMES.map((n, i) => `    out property <length> font-${n}: ${t.type.scale[i]}px;`).join("\n");
   const space = t.space.map((v, i) => `    out property <length> space-${i + 1}: ${v}px;`).join("\n");
+  const d = withDefaults(t).density;
   return `// Generated from jupiter.tokens.json (${t.name} ${t.version}). Do not edit by hand.
 // Usage: import { Jupiter } from "jupiter.slint";  then  background: Jupiter.bg;  and set Jupiter.dark from the OS.
 
@@ -797,8 +811,13 @@ ${space}
 
     out property <length> radius-sm: ${t.radius.sm}px;
     out property <length> radius-md: ${t.radius.md}px;
-    out property <length> control-height: ${t.control.height}px;
     out property <length> gutter: ${t.layout.gutter}px;
+
+    // Density: set \`compact\` from the app's setting; every component reads these three.
+    in-out property <bool> compact: false;
+    out property <length> control-height: compact ? ${d.compact.control}px : ${d.comfortable.control}px;
+    out property <length> cell-y: compact ? ${d.compact.cellY}px : ${d.comfortable.cellY}px;
+    out property <length> pad: compact ? ${d.compact.pad}px : ${d.comfortable.pad}px;
 
     out property <duration> dur-fast: ${t.motion.fast}ms;
     out property <duration> dur-base: ${t.motion.base}ms;
@@ -1174,5 +1193,6 @@ export const OUTPUTS: OutputFile[] = [
   { id: "qmldir", filename: "qmldir", target: "Qt / QML module file", mime: "text/plain", build: () => generateQmldir() },
   { id: "kde-light", filename: "JupiterLight.colors", target: "KDE Plasma colour scheme (light)", mime: "text/plain", build: (t) => generateKdeScheme(t, "light") },
   { id: "kde-dark", filename: "JupiterDark.colors", target: "KDE Plasma colour scheme (dark)", mime: "text/plain", build: (t) => generateKdeScheme(t, "dark") },
+  { id: "github", filename: "jupiter-github.json", target: "GitHub (README, profile, social preview SVGs)", mime: "application/json", build: generateGithubTheme },
   { id: "mobile", filename: "jupiter.mobile.json", target: "iOS & Android", mime: "application/json", build: generateMobileJSON },
 ];

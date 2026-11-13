@@ -1,4 +1,4 @@
-/* DataTable P2 additions. Tokens only: works in light, dark, high-contrast and RTL. */
+/* DataTable additions. Tokens only: works in light, dark, high-contrast and RTL. */
 .adm-dt__wrap.is-busy { opacity: .6; transition: opacity var(--jp-dur-fast); }
 .adm-table--wrap td { white-space: normal !important; word-break: break-word; }
 .adm-table--trunc td { max-width: 220px; overflow: hidden; text-overflow: ellipsis; }

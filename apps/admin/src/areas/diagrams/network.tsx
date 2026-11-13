@@ -20,8 +20,8 @@ export function Faceplate({ ports, poeBudget = 370, title = "Switch faceplate: 2
   const cnt = (s: Port["state"]) => ports.filter((p) => p.state === s).length;
   return (
     <>
-      <div className="p3e-controls"><Segmented label="Colour ports by" value={mode} onChange={setMode} options={[{ value: "status", label: "Status" }, { value: "poe", label: "PoE draw" }, { value: "vlan", label: "VLAN" }]} /></div>
-      <div className="p3e-stats"><div><b>{cnt("up")}</b><span>links up</span></div><div><b>{cnt("error")}</b><span>in error</span></div><div><b>{poe.used.toFixed(1)} W</b><span>PoE of {poeBudget} W ({pct(poe.pct)})</span></div></div>
+      <div className="dg-controls"><Segmented label="Colour ports by" value={mode} onChange={setMode} options={[{ value: "status", label: "Status" }, { value: "poe", label: "PoE draw" }, { value: "vlan", label: "VLAN" }]} /></div>
+      <div className="dg-stats"><div><b>{cnt("up")}</b><span>links up</span></div><div><b>{cnt("error")}</b><span>in error</span></div><div><b>{poe.used.toFixed(1)} W</b><span>PoE of {poeBudget} W ({pct(poe.pct)})</span></div></div>
       <Chart title={title} n={ports.length} state={state} height={150} table={{ head: ["Port", "Type", "State", "Speed", "PoE (W)", "VLAN", "Label"], rows: ports.map((p) => [p.n, p.kind === "sfp" ? "SFP+" : "RJ45", PSTATE[p.state], p.speed ? speed(p.speed) : "", p.poe, p.vlan, p.label]) }}>
         {() => {
           const f = faceplate(ports, { w: 30, h: 36, gap: 5 }, 12), P = 12;
@@ -30,7 +30,7 @@ export function Faceplate({ ports, poeBudget = 370, title = "Switch faceplate: 2
               <Scroll label={title}>
                 <Svg w={f.width + 2 * P} h={f.height + 2 * P + 14} label={`${title}. ${cnt("up")} of ${ports.length} ports linked, ${cnt("error")} in error, PoE ${poe.used.toFixed(1)} of ${poeBudget} watts.`}>
                   <g transform={`translate(${P},${P})`}>
-                    <rect x="-8" y="-8" width={f.width + 16} height={f.height + 16} rx="6" className="p3e-box" />
+                    <rect x="-8" y="-8" width={f.width + 16} height={f.height + 16} rx="6" className="dg-box" />
                     {f.cells.map(({ port: p, x, y, w, h }) => { const fill = mode === "status" ? "var(--jp-surface)" : mode === "poe" ? (p.poe ? heat(p.poe / maxPoe) : "var(--jp-surface)") : C(vlans.indexOf(p.vlan)); return (
                       <g key={p.n} {...hit(p.n, `Port ${p.n} (${p.kind === "sfp" ? "SFP+" : "RJ45"}), ${p.label}: ${PSTATE[p.state]}${p.speed ? ` at ${speed(p.speed)}` : ""}, VLAN ${p.vlan}${p.poe ? `, PoE ${p.poe} W` : ""}`)}>
                         <rect x={x} y={y} width={w} height={h} rx="3" fill={fill} stroke="var(--jp-text-muted)" strokeWidth={p.kind === "sfp" ? 2 : 1} />
@@ -40,7 +40,7 @@ export function Faceplate({ ports, poeBudget = 370, title = "Switch faceplate: 2
                 </Svg>
               </Scroll>
               <Readout>{text}</Readout>
-              <Legend items={[{ label: "Link up (circle)", color: "var(--jp-ok)" }, { label: "No link (hollow)", cls: "p3e-ring" }, { label: "Disabled (slashed)", cls: "p3e-ring" }, { label: "Error (triangle)", color: "var(--jp-danger)" }, ...(mode === "vlan" ? vlans.map((v, i) => ({ label: `VLAN ${v}`, color: C(i) })) : [])]} />
+              <Legend items={[{ label: "Link up (circle)", color: "var(--jp-ok)" }, { label: "No link (hollow)", cls: "dg-ring" }, { label: "Disabled (slashed)", cls: "dg-ring" }, { label: "Error (triangle)", color: "var(--jp-danger)" }, ...(mode === "vlan" ? vlans.map((v, i) => ({ label: `VLAN ${v}`, color: C(i) })) : [])]} />
             </>
           );
         }}
@@ -61,21 +61,21 @@ export function RackElevation({ racks, units = 42, powerCap = 4500, title = "Rac
           <>
             <Scroll label={title}>
               <Svg w={Math.max(w, racks.length * (rw + 60))} h={H} label={`${title}. ${racks.map((r, i) => `${r.name}: ${models[i].usedU} of ${units} units used, ${fmt(models[i].watts)} watts`).join("; ")}.`}>
-                <defs><pattern id="p3e-free" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0,0V8" stroke="var(--jp-border)" strokeWidth="1.5" /></pattern></defs>
+                <defs><pattern id="dg-free" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0,0V8" stroke="var(--jp-border)" strokeWidth="1.5" /></pattern></defs>
                 {racks.map((r, ri) => { const x0 = 30 + ri * (rw + 60), m = models[ri]; const yU = (u: number) => 26 + (units - u) * uh; return (
                   <g key={r.name}>
-                    <text x={x0} y="14" className="p3e-b">{r.name}</text>
-                    <rect x={x0} y="26" width={rw} height={units * uh} className="p3e-box" strokeWidth="3" />
-                    {m.free.map((f) => <rect key={f.from} x={x0 + 1} y={yU(f.to)} width={rw - 2} height={(f.to - f.from + 1) * uh} fill="url(#p3e-free)" />)}
-                    {Array.from({ length: units }, (_, i) => i + 1).filter((u) => u % 2 === 1 || u === units).map((u) => <text key={u} x={x0 - 6} y={yU(u) + uh / 2} dy="0.35em" textAnchor="end" className="p3e-mute">{u}</text>)}
-                    {r.devs.map((d) => <g key={d.name} {...hit(d.name, `${r.name}, ${d.h > 1 ? `U${d.u} to U${d.u + d.h - 1}` : `U${d.u}`}: ${d.name} (${d.kind}), ${d.watts} W`)}><rect x={x0 + 2} y={yU(d.u + d.h - 1) + 1} width={rw - 4} height={d.h * uh - 2} rx="2" fill={C(KIND_C[d.kind] ?? 0)} fillOpacity="0.35" stroke={C(KIND_C[d.kind] ?? 0)} strokeWidth="2" /><text x={x0 + 8} y={yU(d.u + d.h - 1) + (d.h * uh) / 2} dy="0.35em" className="p3e-halo">{d.name}</text></g>)}
+                    <text x={x0} y="14" className="dg-b">{r.name}</text>
+                    <rect x={x0} y="26" width={rw} height={units * uh} className="dg-box" strokeWidth="3" />
+                    {m.free.map((f) => <rect key={f.from} x={x0 + 1} y={yU(f.to)} width={rw - 2} height={(f.to - f.from + 1) * uh} fill="url(#dg-free)" />)}
+                    {Array.from({ length: units }, (_, i) => i + 1).filter((u) => u % 2 === 1 || u === units).map((u) => <text key={u} x={x0 - 6} y={yU(u) + uh / 2} dy="0.35em" textAnchor="end" className="dg-mute">{u}</text>)}
+                    {r.devs.map((d) => <g key={d.name} {...hit(d.name, `${r.name}, ${d.h > 1 ? `U${d.u} to U${d.u + d.h - 1}` : `U${d.u}`}: ${d.name} (${d.kind}), ${d.watts} W`)}><rect x={x0 + 2} y={yU(d.u + d.h - 1) + 1} width={rw - 4} height={d.h * uh - 2} rx="2" fill={C(KIND_C[d.kind] ?? 0)} fillOpacity="0.35" stroke={C(KIND_C[d.kind] ?? 0)} strokeWidth="2" /><text x={x0 + 8} y={yU(d.u + d.h - 1) + (d.h * uh) / 2} dy="0.35em" className="dg-halo">{d.name}</text></g>)}
                     <rect x={x0} y={26 + units * uh + 10} width={rw} height="10" rx="3" fill="var(--jp-surface)" stroke="var(--jp-border)" /><rect x={x0} y={26 + units * uh + 10} width={Math.min(1, m.watts / powerCap) * rw} height="10" rx="3" fill={m.watts / powerCap > 0.8 ? "var(--jp-warn)" : "var(--adm-c1)"} />
                     <text x={x0} y={26 + units * uh + 34}>{fmt(m.watts)} W of {fmt(powerCap)} W · {m.freeU} U free</text>
                   </g>); })}
               </Svg>
             </Scroll>
             <Readout>{text}</Readout>
-            <Legend items={[...kinds.map((k) => ({ label: k, color: C(KIND_C[k] ?? 0) })), { label: "free space (hatched)", cls: "p3e-hatched" }]} />
+            <Legend items={[...kinds.map((k) => ({ label: k, color: C(KIND_C[k] ?? 0) })), { label: "free space (hatched)", cls: "dg-hatched" }]} />
           </>
         );
       }}
@@ -92,21 +92,21 @@ export function WifiSpectrum({ networks, title = "Wi-Fi spectrum", state }: Comm
   const ssids = [...new Set(networks.map((n) => n.ssid))];
   return (
     <>
-      <div className="p3e-controls"><Segmented label="Band" value={band} onChange={setBand} options={[{ value: "2.4", label: "2.4 GHz" }, { value: "5", label: "5 GHz" }]} />{best && <span className="p3e-badge is-ok">Quietest 20 MHz channel: {best.c} (score {best.s.toFixed(2)})</span>}</div>
+      <div className="dg-controls"><Segmented label="Band" value={band} onChange={setBand} options={[{ value: "2.4", label: "2.4 GHz" }, { value: "5", label: "5 GHz" }]} />{best && <span className="dg-badge is-ok">Quietest 20 MHz channel: {best.c} (score {best.s.toFixed(2)})</span>}</div>
       <Chart title={`${title}, ${band} GHz`} n={list.length} state={state} height={300} table={{ head: ["SSID", "Band", "Channel", "Width (MHz)", "Signal (dBm)", "Frequency span (MHz)"], rows: networks.map((n) => [n.ssid, `${n.band} GHz`, n.channel, n.width, n.rssi, span(n).join("-")]) }}>
         {(w) => {
           const chs = band === "2.4" ? CH24 : CH5; const lo = band === "2.4" ? 2399 : centreMHz("5", chs[0]) - 20, hi = band === "2.4" ? 2485 : centreMHz("5", chs[chs.length - 1]) + 40; const H = 300, L = 40, B = 34, T = 10; const X = (f: number) => L + ((f - lo) / (hi - lo)) * (w - L - 8), Y = (dbm: number) => T + (1 - (dbm + 100) / 70) * (H - T - B);
           return (
             <>
               <Svg w={w} h={H} label={`${title}, ${band} GHz: ${list.length} networks. ${list.map((n) => `${n.ssid} channel ${n.channel} at ${n.rssi} dBm`).join("; ")}.`}>
-                {[-90, -70, -50, -30].map((d) => <g key={d}><line x1={L} x2={w} y1={Y(d)} y2={Y(d)} stroke="var(--jp-border)" /><text x={L - 6} y={Y(d)} dy="0.35em" textAnchor="end" className="p3e-mute">{d}</text></g>)}
-                {chs.map((c) => <text key={c} x={X(centreMHz(band, c))} y={H - 16} textAnchor="middle" className="p3e-mute">{c}</text>)}
-                <text x={L} y={H - 2} className="p3e-mute">channel · quietest 20 MHz choices marked ▲</text>
+                {[-90, -70, -50, -30].map((d) => <g key={d}><line x1={L} x2={w} y1={Y(d)} y2={Y(d)} stroke="var(--jp-border)" /><text x={L - 6} y={Y(d)} dy="0.35em" textAnchor="end" className="dg-mute">{d}</text></g>)}
+                {chs.map((c) => <text key={c} x={X(centreMHz(band, c))} y={H - 16} textAnchor="middle" className="dg-mute">{c}</text>)}
+                <text x={L} y={H - 2} className="dg-mute">channel · quietest 20 MHz choices marked ▲</text>
                 {scores.map((s) => <path key={s.c} d={`M${X(centreMHz(band, s.c))},${H - 28}l-4,8h8z`} fill={s.c === best?.c ? "var(--jp-ok)" : "var(--jp-text-muted)"} />)}
                 {list.map((n, i) => { const [a, b] = span(n), cx = X(centreMHz(band, n.channel)), top = Y(n.rssi), y0 = Y(-100) - 0, x0 = X(a), x1 = X(b); const d = `M${x0},${y0}C${x0 + (cx - x0) * 0.5},${y0} ${cx - (cx - x0) * 0.4},${top} ${cx},${top}C${cx + (x1 - cx) * 0.4},${top} ${x1 - (x1 - cx) * 0.5},${y0} ${x1},${y0}Z`; return (
                   <g key={i} {...hit(String(i), `${n.ssid}: channel ${n.channel}, ${n.width} MHz wide, ${n.rssi} dBm`)}>
                     <path d={d} fill={C(ssids.indexOf(n.ssid))} fillOpacity="0.22" stroke={C(ssids.indexOf(n.ssid))} strokeWidth="2" strokeDasharray={i % 2 ? "6 3" : undefined} />
-                    <text x={cx} y={top - 5} textAnchor="middle" className="p3e-halo">{n.ssid}</text>
+                    <text x={cx} y={top - 5} textAnchor="middle" className="dg-halo">{n.ssid}</text>
                   </g>); })}
               </Svg>
               <Readout>{text}</Readout>
@@ -131,18 +131,18 @@ export function SignalHeat({ cols, rows, cell, aps, walls, rooms, title = "Signa
       {() => (
         <>
           <Scroll label={title}>
-            <div className="p3e-focus-grid" {...cur.props} aria-label={`${title}: ${aps.length} access points. Arrow keys read the predicted signal in each ${cell / 7} metre cell.`}>
+            <div className="dg-focus-grid" {...cur.props} aria-label={`${title}: ${aps.length} access points. Arrow keys read the predicted signal in each ${cell / 7} metre cell.`}>
               <Svg w={cols * cell + 2} h={rows * cell + 2} label={`${title}. ${pct(share(0) + share(1))} of the floor has good or excellent signal; ${pct(share(3))} is poor.`}>
                 {g.map((row, r) => row.map((c, i) => <rect key={`${r}-${i}`} x={i * cell} y={r * cell} width={cell} height={cell} fill={heat(t(c.rssi))} />))}
-                {rooms.map((r) => <text key={r.id} x={r.x + 6} y={r.y + 14} className="p3e-halo">{r.name}</text>)}
+                {rooms.map((r) => <text key={r.id} x={r.x + 6} y={r.y + 14} className="dg-halo">{r.name}</text>)}
                 {walls.map((w, i) => <line key={i} x1={w[0]} y1={w[1]} x2={w[2]} y2={w[3]} stroke="var(--jp-text)" strokeWidth="3" />)}
-                {aps.map((a) => <g key={a.id}><circle cx={a.x} cy={a.y} r="9" fill="var(--jp-surface-raised)" stroke="var(--jp-text)" strokeWidth="2.5" /><path d={`M${a.x - 4},${a.y + 1}a4.5,4.5 0 0 1 8,0M${a.x - 2},${a.y + 3.5}a2,2 0 0 1 4,0`} fill="none" stroke="var(--jp-text)" strokeWidth="1.5" /><text x={a.x} y={a.y + 22} textAnchor="middle" className="p3e-halo">{a.id}</text></g>)}
+                {aps.map((a) => <g key={a.id}><circle cx={a.x} cy={a.y} r="9" fill="var(--jp-surface-raised)" stroke="var(--jp-text)" strokeWidth="2.5" /><path d={`M${a.x - 4},${a.y + 1}a4.5,4.5 0 0 1 8,0M${a.x - 2},${a.y + 3.5}a2,2 0 0 1 4,0`} fill="none" stroke="var(--jp-text)" strokeWidth="1.5" /><text x={a.x} y={a.y + 22} textAnchor="middle" className="dg-halo">{a.id}</text></g>)}
                 {cur.on && <rect x={cur.pos[1] * cell} y={cur.pos[0] * cell} width={cell} height={cell} fill="none" stroke="var(--jp-text)" strokeWidth="3" />}
               </Svg>
             </div>
           </Scroll>
           <Readout>{cur.text}</Readout>
-          <div className="p3e-controls"><HeatScale lo="-90 dBm" hi="-50 dBm" /><span className="pc-note">{RSSI_BANDS.map((b, i) => `${b.name} ${pct(share(i))}`).join(" · ")}</span></div>
+          <div className="dg-controls"><HeatScale lo="-90 dBm" hi="-50 dBm" /><span className="pc-note">{RSSI_BANDS.map((b, i) => `${b.name} ${pct(share(i))}`).join(" · ")}</span></div>
           <Note>Prediction, not a site survey: free-space path loss exponent 3 and 7 dB per wall crossed. Verify with measurements before moving access points.</Note>
         </>
       )}

@@ -1,4 +1,4 @@
-// Pure, deterministic helpers behind the P2 charts. No React, no DOM: everything here is unit-tested.
+// Pure, deterministic helpers behind the charts. No React, no DOM: everything here is unit-tested.
 import { rng } from "../../data/fixtures.ts";
 
 export const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));

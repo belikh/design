@@ -3,7 +3,7 @@ import { C } from "@belikh/jupiter-ui/Charts.tsx";
 import type { ChartTableData } from "@belikh/jupiter-ui/chartTools.tsx";
 import { ChartFrame, Readout, type FrameState } from "../charts/frame.tsx";
 import { autoState } from "../charts/shared.tsx";
-import "./p3e.css";
+import "./diagrams.css";
 
 export { C, Readout };
 export type { ChartTableData };
@@ -21,7 +21,7 @@ export function Chart({ title, table, n, state, height = 320, children, footer }
 export function useHits<T extends string | number = string>() {
   const [sel, setSel] = useState<T | null>(null); const [text, setText] = useState("");
   const set = (id: T, label: string) => { setSel(id); setText(label); }; const clear = () => { setSel(null); setText(""); };
-  const hit = (id: T, label: string) => ({ tabIndex: 0, role: "img" as const, "aria-label": label, className: "p3e-pt", onFocus: () => set(id, label), onMouseEnter: () => set(id, label), onBlur: clear, onMouseLeave: clear });
+  const hit = (id: T, label: string) => ({ tabIndex: 0, role: "img" as const, "aria-label": label, className: "dg-pt", onFocus: () => set(id, label), onMouseEnter: () => set(id, label), onBlur: clear, onMouseLeave: clear });
   return { sel, text, hit, set, clear };
 }
 /** Same, but for datums that can also be activated (zoom, collapse). */
@@ -44,20 +44,20 @@ export function useGridCursor(rows: number, cols: number, describe: (r: number, 
 
 /** SVG shell: a labelled group (not role=img, because it contains focusable data), sized in CSS pixels. */
 export function Svg({ w, h, label, children }: { w: number; h: number; label: string; children: ReactNode }) {
-  return <svg className="p3e-svg" viewBox={`0 0 ${w} ${h}`} width={w} height={h} role="group" aria-label={label}>{children}</svg>;
+  return <svg className="dg-svg" viewBox={`0 0 ${w} ${h}`} width={w} height={h} role="group" aria-label={label}>{children}</svg>;
 }
 /** Wide diagrams scroll sideways instead of shrinking text. */
-export const Scroll = ({ label, children }: { label: string; children: ReactNode }) => <div className="p3e-scroll" tabIndex={0} role="region" aria-label={`${label} (scrolls sideways)`}>{children}</div>;
+export const Scroll = ({ label, children }: { label: string; children: ReactNode }) => <div className="dg-scroll" tabIndex={0} role="region" aria-label={`${label} (scrolls sideways)`}>{children}</div>;
 
 export const Legend = ({ items }: { items: { label: ReactNode; color?: string; cls?: string }[] }) => (
-  <ul className="p3e-legend">{items.map((it, i) => <li key={i}><i className={it.cls} style={it.color ? { background: it.color } : undefined} />{it.label}</li>)}</ul>
+  <ul className="dg-legend">{items.map((it, i) => <li key={i}><i className={it.cls} style={it.color ? { background: it.color } : undefined} />{it.label}</li>)}</ul>
 );
 export const Note = ({ children }: { children: ReactNode }) => <p className="pc-note">{children}</p>;
 
 /** Accent-tinted heat colour for t in 0..1 (single hue, so lightness carries the value). */
 export const heat = (t: number) => `color-mix(in oklab, var(--jp-accent) ${Math.round(8 + 85 * Math.min(1, Math.max(0, t)))}%, var(--jp-surface-raised))`;
 export const onHeat = (t: number) => (t > 0.55 ? "var(--jp-on-accent)" : "var(--jp-text)");
-export const HeatScale = ({ lo, hi }: { lo: string; hi: string }) => <div className="p3e-scale" aria-hidden="true"><span>{lo}</span><i /><span>{hi}</span></div>;
+export const HeatScale = ({ lo, hi }: { lo: string; hi: string }) => <div className="dg-scale" aria-hidden="true"><span>{lo}</span><i /><span>{hi}</span></div>;
 
 export type HeatCell = { t: number | null; text: string; label: string };
 /** Heat table: a real <table> with one roving tab stop; arrow keys move between cells and the focused cell is read out. */
@@ -71,12 +71,12 @@ export function HeatTable({ caption, corner, rowHeads, colHeads, cell, vertical,
     e.preventDefault(); nr = Math.min(rowHeads.length - 1, Math.max(0, nr)); nc = Math.min(colHeads.length - 1, Math.max(0, nc)); setPos([nr, nc]); ref.current?.querySelector<HTMLElement>(`td[data-r="${nr}"][data-c="${nc}"]`)?.focus();
   };
   return (
-    <div className="p3e-scroll" role="region" aria-label={`${caption} (scrolls sideways)`} tabIndex={-1}>
-      <table className={`p3e-heat${vertical ? " is-vertical" : ""}`} ref={ref} onKeyDown={move}>
+    <div className="dg-scroll" role="region" aria-label={`${caption} (scrolls sideways)`} tabIndex={-1}>
+      <table className={`dg-heat${vertical ? " is-vertical" : ""}`} ref={ref} onKeyDown={move}>
         <caption className="adm-sr">{caption}. Arrow keys move between cells.</caption>
-        <thead><tr><th scope="col">{corner}</th>{(extraCols ?? []).map((h) => <th scope="col" key={h} className="p3e-num">{h}</th>)}{colHeads.map((h) => <th scope="col" key={h} className={vertical ? "p3e-vert" : "p3e-num"}><span>{h}</span></th>)}</tr></thead>
+        <thead><tr><th scope="col">{corner}</th>{(extraCols ?? []).map((h) => <th scope="col" key={h} className="dg-num">{h}</th>)}{colHeads.map((h) => <th scope="col" key={h} className={vertical ? "dg-vert" : "dg-num"}><span>{h}</span></th>)}</tr></thead>
         <tbody>{rowHeads.map((rh, r) => (
-          <tr key={rh}><th scope="row">{rh}</th>{(rowExtra?.(r) ?? []).map((x, i) => <td key={i} className="p3e-num p3e-plain">{x}</td>)}
+          <tr key={rh}><th scope="row">{rh}</th>{(rowExtra?.(r) ?? []).map((x, i) => <td key={i} className="dg-num dg-plain">{x}</td>)}
             {colHeads.map((_, c) => { const d = cell(r, c); return (
               <td key={c} data-r={r} data-c={c} tabIndex={r === pos[0] && c === pos[1] ? 0 : -1} aria-label={d.label} className={d.t === null ? "is-empty" : undefined} style={d.t === null ? undefined : { background: heat(d.t), color: onHeat(d.t) }}
                 onFocus={() => { setPos([r, c]); onRead?.(d.label); }} onMouseEnter={() => onRead?.(d.label)} onBlur={() => onRead?.("")}>{d.text}</td>); })}</tr>))}</tbody>

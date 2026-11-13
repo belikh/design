@@ -46,11 +46,11 @@ describe("view switcher", () => {
   it("shows the same filtered data in five views and keeps filters and selection across them", async () => {
     page("/tables/views"); const pressed = (n: string) => screen.getByRole("button", { name: n });
     await userEvent.click(screen.getByRole("button", { name: /Held/ })); const n = Number(/(\d+) of/.exec(document.body.textContent!)![1]); expect(n).toBe(SHIPMENTS.filter((s) => s.status === "Held").length);
-    await userEvent.click(pressed("Cards")); expect(document.querySelectorAll(".p2t-card").length).toBe(Math.min(48, n)); await userEvent.click(pressed("Calendar")); expect(screen.getByRole("grid", { name: "Deliveries by due date" })).toBeInTheDocument();
+    await userEvent.click(pressed("Cards")); expect(document.querySelectorAll(".tbl-card").length).toBe(Math.min(48, n)); await userEvent.click(pressed("Calendar")); expect(screen.getByRole("grid", { name: "Deliveries by due date" })).toBeInTheDocument();
     await userEvent.click(pressed("Map")); expect(screen.getByRole("img", { name: "Map of destinations" })).toBeInTheDocument(); const bubble = screen.getAllByRole("button", { name: /shipments$/ })[0]; await userEvent.click(bubble); expect(screen.getAllByRole("listitem").length).toBeGreaterThan(0);
     await userEvent.click(pressed("Timeline")); const bars = screen.getAllByRole("button", { name: /to .*Held/ }); expect(bars.length).toBe(Math.min(70, n)); await userEvent.click(bars[0]); expect(await screen.findByRole("dialog")).toBeInTheDocument(); expect(within(screen.getByRole("dialog")).getByText("Held")).toBeInTheDocument();
   });
-  it("starts on the view named in the URL", () => { page("/tables/views", "/tables/views?view=cards"); expect(document.querySelectorAll(".p2t-card").length).toBeGreaterThan(0); });
+  it("starts on the view named in the URL", () => { page("/tables/views", "/tables/views?view=cards"); expect(document.querySelectorAll(".tbl-card").length).toBeGreaterThan(0); });
   it("filters all views with the search box", async () => { page("/tables/views", "/tables/views?view=cards"); await userEvent.type(screen.getByLabelText("Search all views"), "zzzz-none"); expect(screen.getByText("No shipments match.")).toBeInTheDocument(); });
 });
 describe("reorder page", () => {
@@ -80,7 +80,7 @@ describe("live rows and diff", () => {
 });
 describe("nested tables", () => {
   it("expands a customer to a nested shipment table with its own paging", async () => {
-    page("/tables/nested"); const first = document.querySelector("tbody tr[data-row]") as HTMLElement; await userEvent.click(within(first).getByRole("button", { name: "Toggle details" })); const nested = document.querySelector(".p2t-nested")!; expect(nested.querySelector("table")).not.toBeNull(); expect(nested.querySelector(".adm-dt__foot")).not.toBeNull();
+    page("/tables/nested"); const first = document.querySelector("tbody tr[data-row]") as HTMLElement; await userEvent.click(within(first).getByRole("button", { name: "Toggle details" })); const nested = document.querySelector(".tbl-nested")!; expect(nested.querySelector("table")).not.toBeNull(); expect(nested.querySelector(".adm-dt__foot")).not.toBeNull();
     expect(document.querySelectorAll("th.adm-th--rot").length).toBe(12); expect(document.querySelectorAll("th.adm-th-group").length).toBe(2);
   });
 });

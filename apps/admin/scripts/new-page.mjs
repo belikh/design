@@ -6,7 +6,7 @@ import { join } from "node:path";
 const [area, name, label = name, kind = "list"] = process.argv.slice(2);
 if (!area || !name || !/^[A-Z][A-Za-z0-9]+$/.test(name) || !/^[a-z][a-z0-9-]+$/.test(area)) { console.error('Usage: new-page <area-kebab> <PascalName> "<Label>" [list|detail|form|dashboard|kiosk]'); process.exit(1); }
 if (!["list", "detail", "form", "dashboard", "kiosk"].includes(kind)) { console.error("kind must be list, detail, form, dashboard or kiosk"); process.exit(1); }
-const dir = new URL(`../src/p2/${area}/`, import.meta.url).pathname; mkdirSync(dir, { recursive: true });
+const dir = new URL(`../src/areas/${area}/`, import.meta.url).pathname; mkdirSync(dir, { recursive: true });
 const file = join(dir, `${name}.tsx`); if (existsSync(file)) { console.error(`${file} exists`); process.exit(1); }
 const slug = name.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
 const bodies = {
@@ -70,6 +70,6 @@ if (!bodies[kind]) { console.error("kind must be list, detail, form, dashboard o
 writeFileSync(file, `${imports[kind]}\n\n${bodies[kind]}`);
 writeFileSync(join(dir, `${name}.test.tsx`), `import { describe, expect, it } from "vitest";\nimport { render, screen } from "@testing-library/react";\nimport { MemoryRouter } from "react-router-dom";\nimport { PrefsProvider } from "@belikh/jupiter-ui/store.tsx";\nimport { ${name} } from "./${name}.tsx";\n\ndescribe("${name}", () => {\n  it("renders its heading", async () => {\n    render(<MemoryRouter><PrefsProvider><${name} /></PrefsProvider></MemoryRouter>);\n    expect(await screen.findByRole("heading", { level: 1 })).toBeInTheDocument();\n  });\n});\n`);
 const idx = join(dir, "index.tsx"); const entry = `  { path: "/${area}/${slug}", label: "${label}", icon: "database", group: "${area}", keywords: "${label.toLowerCase()}"${kind === "kiosk" ? ", bare: true" : ""}, element: <${name} /> },\n`;
-if (existsSync(idx)) { let s = readFileSync(idx, "utf8"); s = s.replace(/(export const routes: P2Route\[\] = \[\n)/, `$1${entry}`); s = s.replace(/^(import type \{ P2Route \}[^\n]*\n)/, `$1import { ${name} } from "./${name}.tsx";\n`); writeFileSync(idx, s); }
-else writeFileSync(idx, `import type { P2Route } from "../registry.ts";\nimport { ${name} } from "./${name}.tsx";\n\nexport const routes: P2Route[] = [\n${entry}];\n`);
+if (existsSync(idx)) { let s = readFileSync(idx, "utf8"); s = s.replace(/(export const routes: AreaRoute\[\] = \[\n)/, `$1${entry}`); s = s.replace(/^(import type \{ AreaRoute \}[^\n]*\n)/, `$1import { ${name} } from "./${name}.tsx";\n`); writeFileSync(idx, s); }
+else writeFileSync(idx, `import type { AreaRoute } from "../registry.ts";\nimport { ${name} } from "./${name}.tsx";\n\nexport const routes: AreaRoute[] = [\n${entry}];\n`);
 console.log(`Created ${area}/${name}.tsx, its test, and the route /${area}/${slug}. Now run: npm test && npm run lint:style`);

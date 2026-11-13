@@ -53,28 +53,28 @@ export function SpreadsheetGrid({ initial = DEMO_SHEET }: { initial?: Raw }) {
   return (
     <Stack>
       <Row>
-        <label className="p3-formulabar"><span className="p3-cellname">{activeKey}</span><span className="p3-sr">Formula bar</span>
-          <input className="jp-input p3-mono" aria-label="Formula bar" value={editKey ? draft : raw[activeKey] ?? ""} onFocus={() => !editKey && startEdit(activeKey)} onChange={(e) => { if (!editKey) setEditKey(activeKey); setDraft(e.target.value); }} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); finish(true, [1, 0]); } if (e.key === "Escape") finish(false); }} onBlur={() => editKey === activeKey && finish(true)} /></label>
+        <label className="lab-formulabar"><span className="lab-cellname">{activeKey}</span><span className="lab-sr">Formula bar</span>
+          <input className="jp-input lab-mono" aria-label="Formula bar" value={editKey ? draft : raw[activeKey] ?? ""} onFocus={() => !editKey && startEdit(activeKey)} onChange={(e) => { if (!editKey) setEditKey(activeKey); setDraft(e.target.value); }} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); finish(true, [1, 0]); } if (e.key === "Escape") finish(false); }} onBlur={() => editKey === activeKey && finish(true)} /></label>
         <Btn sm icon="undo" onClick={undo} disabled={!hist.length}>Undo</Btn><Btn sm onClick={redoIt} disabled={!redo.length}>Redo</Btn><Btn sm onClick={() => fill("down")}>Fill down</Btn><Btn sm onClick={() => fill("right")}>Fill right</Btn>
       </Row>
-      <div className="p3-sheetwrap">
-        <div ref={gridRef} className="p3-sheet" role="grid" aria-label="Spreadsheet" aria-rowcount={ROWS + 1} aria-colcount={COLS + 1} aria-multiselectable tabIndex={0} aria-activedescendant={`p3sh-${activeKey}`} onKeyDown={onKey} onPaste={onPaste} onCopy={onCopy} onCut={onCut} onMouseUp={() => undefined}>
-          <div role="row" className="p3-sheet__row"><span role="columnheader" className="p3-sheet__corner"><span className="p3-sr">Row</span></span>{Array.from({ length: COLS }, (_, c) => <span key={c} role="columnheader" className={`p3-sheet__h ${c >= rect.c0 && c <= rect.c1 ? "is-on" : ""}`}>{colName(c)}</span>)}</div>
+      <div className="lab-sheetwrap">
+        <div ref={gridRef} className="lab-sheet" role="grid" aria-label="Spreadsheet" aria-rowcount={ROWS + 1} aria-colcount={COLS + 1} aria-multiselectable tabIndex={0} aria-activedescendant={`devt-sh-${activeKey}`} onKeyDown={onKey} onPaste={onPaste} onCopy={onCopy} onCut={onCut} onMouseUp={() => undefined}>
+          <div role="row" className="lab-sheet__row"><span role="columnheader" className="lab-sheet__corner"><span className="lab-sr">Row</span></span>{Array.from({ length: COLS }, (_, c) => <span key={c} role="columnheader" className={`lab-sheet__h ${c >= rect.c0 && c <= rect.c1 ? "is-on" : ""}`}>{colName(c)}</span>)}</div>
           {Array.from({ length: ROWS }, (_, r) => (
-            <div role="row" key={r} className="p3-sheet__row" aria-rowindex={r + 2}>
-              <span role="rowheader" className={`p3-sheet__h ${r >= rect.r0 && r <= rect.r1 ? "is-on" : ""}`}>{r + 1}</span>
+            <div role="row" key={r} className="lab-sheet__row" aria-rowindex={r + 2}>
+              <span role="rowheader" className={`lab-sheet__h ${r >= rect.r0 && r <= rect.r1 ? "is-on" : ""}`}>{r + 1}</span>
               {Array.from({ length: COLS }, (_, c) => { const k = key(c, r); const v = computed[k]; const selected = inRect(r, c, rect); const isActive = r === focus.r && c === focus.c; const err = isErr(v); const text = show(v); const isNum = typeof v === "number";
                 return (
-                  <span key={k} id={`p3sh-${k}`} role="gridcell" aria-selected={selected} aria-colindex={c + 2} aria-label={`${k}${raw[k]?.startsWith("=") ? ", formula" : ""}`} className={`p3-cell ${selected ? "is-sel" : ""} ${isActive ? "is-active" : ""} ${err ? "is-err" : ""} ${isNum ? "is-num" : ""} ${fillTo && inRect(r, c, fillTo) && !selected ? "is-fill" : ""}`}
+                  <span key={k} id={`devt-sh-${k}`} role="gridcell" aria-selected={selected} aria-colindex={c + 2} aria-label={`${k}${raw[k]?.startsWith("=") ? ", formula" : ""}`} className={`lab-cell ${selected ? "is-sel" : ""} ${isActive ? "is-active" : ""} ${err ? "is-err" : ""} ${isNum ? "is-num" : ""} ${fillTo && inRect(r, c, fillTo) && !selected ? "is-fill" : ""}`}
                     onMouseDown={(e) => { if (editKey === k) return; if (editKey) finish(true); const f = { r, c }; setFocus(f); if (!e.shiftKey) setAnchor(f); begin("select"); gridRef.current?.focus(); }} onMouseEnter={() => enter(r, c)} onDoubleClick={() => startEdit(k)}>
-                    {editKey === k ? <input className="p3-cell__input" aria-label={`Edit ${k}`} autoFocus value={draft} onChange={(e) => setDraft(e.target.value)} onBlur={() => finish(true)} onKeyDown={(e) => { e.stopPropagation(); if (e.key === "Enter") { e.preventDefault(); finish(true, [1, 0]); } else if (e.key === "Tab") { e.preventDefault(); finish(true, [0, e.shiftKey ? -1 : 1]); } else if (e.key === "Escape") { e.preventDefault(); finish(false); } }} /> : <span className="p3-cell__v" title={err ? "Formula error" : undefined}>{text}</span>}
-                    {r === rect.r1 && c === rect.c1 && !editKey && <span className="p3-fill" aria-hidden onMouseDown={(e) => { e.stopPropagation(); begin("fill"); }} />}
+                    {editKey === k ? <input className="lab-cell__input" aria-label={`Edit ${k}`} autoFocus value={draft} onChange={(e) => setDraft(e.target.value)} onBlur={() => finish(true)} onKeyDown={(e) => { e.stopPropagation(); if (e.key === "Enter") { e.preventDefault(); finish(true, [1, 0]); } else if (e.key === "Tab") { e.preventDefault(); finish(true, [0, e.shiftKey ? -1 : 1]); } else if (e.key === "Escape") { e.preventDefault(); finish(false); } }} /> : <span className="lab-cell__v" title={err ? "Formula error" : undefined}>{text}</span>}
+                    {r === rect.r1 && c === rect.c1 && !editKey && <span className="lab-fill" aria-hidden onMouseDown={(e) => { e.stopPropagation(); begin("fill"); }} />}
                   </span>);
               })}
             </div>))}
         </div>
       </div>
-      <Row className="p3-sheetstat"><span className="p3-note" role="status">{msg || `Selected ${activeKey}${rect.r0 !== rect.r1 || rect.c0 !== rect.c1 ? `:${key(rect.c1, rect.r1)}` : ""}`}</span>{sel.length > 1 && <span className="p3-note">Sum {Math.round(sel.reduce((a, b) => a + b, 0) * 100) / 100} · Average {Math.round((sel.reduce((a, b) => a + b, 0) / sel.length) * 100) / 100} · Count {sel.length}</span>}{isErr(cellValue) && <span className="p3-bad">{cellValue.error}</span>}</Row>
+      <Row className="lab-sheetstat"><span className="lab-note" role="status">{msg || `Selected ${activeKey}${rect.r0 !== rect.r1 || rect.c0 !== rect.c1 ? `:${key(rect.c1, rect.r1)}` : ""}`}</span>{sel.length > 1 && <span className="lab-note">Sum {Math.round(sel.reduce((a, b) => a + b, 0) * 100) / 100} · Average {Math.round((sel.reduce((a, b) => a + b, 0) / sel.length) * 100) / 100} · Count {sel.length}</span>}{isErr(cellValue) && <span className="lab-bad">{cellValue.error}</span>}</Row>
       <Note>Click or drag to select; arrows (Shift extends), Enter or typing edits, Delete clears, Ctrl+C / X / V copy, cut and paste (formulas shift when pasted inside the grid; tab-separated text from other apps works), Ctrl+D / Ctrl+R fill, or drag the handle at the corner of the selection. Formulas: + - * / ^ &amp; comparisons, SUM AVERAGE MIN MAX COUNT ROUND IF and more.</Note>
     </Stack>
   );

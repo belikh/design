@@ -8,7 +8,7 @@ import { ProgressBar, StatTile } from "@belikh/jupiter-ui/Charts.tsx";
 import { useFieldErrors } from "@belikh/jupiter-ui/forms.tsx";
 import { usePrefs } from "@belikh/jupiter-ui/store.tsx";
 import { daysUntil, licenceCheck, sampleKey } from "./lib.ts";
-import "./p3a.css";
+import "./forms.css";
 
 type Ent = { id: string; rev: number; feature: string; source: "Plan" | "Add-on"; limit: number; used: number; unit: string; enabled: boolean };
 const seed = (): Ent[] => [

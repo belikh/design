@@ -13,11 +13,11 @@ export function SvPad({ h, s, v, onChange }: { h: number; s: number; v: number; 
     const dd = m[e.key]; if (dd) { e.preventDefault(); set(s + dd[0], v + dd[1]); }
   };
   return (
-    <div ref={box} className="p3-pad" role="slider" tabIndex={0} aria-label="Saturation and brightness" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(s)} aria-valuetext={`Saturation ${Math.round(s)}%, brightness ${Math.round(v)}%`} aria-describedby="p3-pad-help"
+    <div ref={box} className="lab-pad" role="slider" tabIndex={0} aria-label="Saturation and brightness" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(s)} aria-valuetext={`Saturation ${Math.round(s)}%, brightness ${Math.round(v)}%`} aria-describedby="lab-pad-help"
       style={{ backgroundImage: `linear-gradient(to top, ${BLACK}, transparent), linear-gradient(to right, ${WHITE}, ${hsvToHex({ h, s: 100, v: 100 })})` }}
       onKeyDown={key} onPointerDown={(e) => { box.current?.focus(); startDrag(e, box.current, (x, y, w, hh) => set((x / w) * 100, (1 - y / hh) * 100)); }}>
-      <span className="p3-pad__thumb" style={{ insetInlineStart: `${s}%`, insetBlockStart: `${100 - v}%`, background: hsvToHex({ h, s, v }) }} aria-hidden />
-      <span id="p3-pad-help" className="p3-sr">Arrow keys move one step, Shift with arrows moves ten, Home and End set saturation to 0 or 100, Page Up and Page Down change brightness.</span>
+      <span className="lab-pad__thumb" style={{ insetInlineStart: `${s}%`, insetBlockStart: `${100 - v}%`, background: hsvToHex({ h, s, v }) }} aria-hidden />
+      <span id="lab-pad-help" className="lab-sr">Arrow keys move one step, Shift with arrows moves ten, Home and End set saturation to 0 or 100, Page Up and Page Down change brightness.</span>
     </div>
   );
 }

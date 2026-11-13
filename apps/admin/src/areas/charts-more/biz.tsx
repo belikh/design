@@ -21,9 +21,9 @@ export function WaterfallChart({ title = "Waterfall", id = "D022", steps, unit =
         return (<>
           <YAxis ticks={nd.ticks} y={y} x0={M.l} x1={w - M.r} />
           {bars.map((b, i) => { const cx = M.l + bw * (i + 0.5), top = Math.min(y(b.start), y(b.end)), h = Math.max(1, Math.abs(y(b.start) - y(b.end))); return (<g key={i}>
-            {i > 0 && <line x1={cx - bw + bx / 2} x2={cx - bx / 2} y1={y(bars[i - 1].end)} y2={y(bars[i - 1].end)} className="p3-ref" />}
+            {i > 0 && <line x1={cx - bw + bx / 2} x2={cx - bx / 2} y1={y(bars[i - 1].end)} y2={y(bars[i - 1].end)} className="lab-ref" />}
             <rect {...pk.mark(i)} x={cx - bx / 2} width={bx} y={top} height={h} fill={b.total ? "var(--adm-c4)" : b.delta >= 0 ? "var(--adm-c1)" : "var(--adm-c2)"} />
-            <T x={cx} y={top - 5} cls="p3-tl">{b.total ? fmt(b.end) : sgn(b.delta)}</T>
+            <T x={cx} y={top - 5} cls="lab-tl">{b.total ? fmt(b.end) : sgn(b.delta)}</T>
             <T x={cx} y={height - 10}>{b.label}</T></g>); })}
         </>);
       }} />
@@ -44,9 +44,9 @@ export function ParetoChart({ title = "Pareto", id = "D022", items, unit = "", c
         return (<>
           <YAxis ticks={ticksTo(nd.hi)} y={y} x0={M.l} x1={w - 44} />
           {[0, 0.5, 1].map((p) => <T key={p} x={w - 40} y={yp(p) + 4} anchor="start">{pct(p)}</T>)}
-          <line x1={M.l} x2={w - 44} y1={yp(cut)} y2={yp(cut)} className="p3-ref" /><T x={w - 40} y={yp(cut) + 4} anchor="start">{pct(cut)}</T>
+          <line x1={M.l} x2={w - 44} y1={yp(cut)} y2={yp(cut)} className="lab-ref" /><T x={w - 40} y={yp(cut) + 4} anchor="start">{pct(cut)}</T>
           {rows.map((r, i) => <g key={i}><rect {...pk.mark(i)} x={cxs[i] - bx / 2} width={bx} y={y(r.value)} height={bot - y(r.value)} fill={i < vitalFew ? "var(--adm-c1)" : "var(--adm-c7)"} /><T x={cxs[i]} y={height - 10}>{r.label.length > bw / 7 ? r.label.slice(0, Math.max(3, Math.floor(bw / 7))) + "…" : r.label}</T></g>)}
-          <path d={linePath(cxs, rows.map((r) => yp(r.cum)))} className="p3-ink" strokeWidth={2} />
+          <path d={linePath(cxs, rows.map((r) => yp(r.cum)))} className="lab-ink" strokeWidth={2} />
           {rows.map((r, i) => <circle key={`c${i}`} cx={cxs[i]} cy={yp(r.cum)} r={pk.on(i) ? 5 : 3} fill="var(--jp-text)" />)}
         </>);
       }} />
@@ -65,8 +65,8 @@ export function FunnelChart({ title = "Funnel", id = "D022", steps, height, stat
         const max = f[0].value || 1, cx = (w - 150) / 2 + 4, W = w - 160, rh = (H - 8) / f.length;
         return (<>{f.map((s, i) => { const a = (s.value / max) * W, b = ((f[i + 1]?.value ?? s.value * 0.85) / max) * W, y0 = 4 + i * rh; return (<g key={i}>
           <path {...pk.mark(i)} d={`M${cx - a / 2},${y0}L${cx + a / 2},${y0}L${cx + b / 2},${y0 + rh - 4}L${cx - b / 2},${y0 + rh - 4}Z`} fill={C(i)} fillOpacity={0.88} />
-          <T x={cx} y={y0 + rh / 2 + 2} cls="p3-tw" pointerEvents="none">{s.label}</T>
-          <T x={w - 150 + 16} y={y0 + rh / 2 - 2} anchor="start" cls="p3-tl">{s.value.toLocaleString("en")}</T><T x={w - 150 + 16} y={y0 + rh / 2 + 14} anchor="start">{pct(s.ofFirst, 1)}{i ? ` · ${pct(s.ofPrev, 0)} of prev` : ""}</T></g>); })}</>);
+          <T x={cx} y={y0 + rh / 2 + 2} cls="lab-tw" pointerEvents="none">{s.label}</T>
+          <T x={w - 150 + 16} y={y0 + rh / 2 - 2} anchor="start" cls="lab-tl">{s.value.toLocaleString("en")}</T><T x={w - 150 + 16} y={y0 + rh / 2 + 14} anchor="start">{pct(s.ofFirst, 1)}{i ? ` · ${pct(s.ofPrev, 0)} of prev` : ""}</T></g>); })}</>);
       }} />
   );
 }
@@ -85,7 +85,7 @@ export function PyramidChart({ title = "Population pyramid", id = "D022", groups
           {ticksTo(mx).map((t) => <g key={t}>{[-1, 1].map((s) => <g key={s}><line x1={mid + s * sx(t)} x2={mid + s * sx(t)} y1={6} y2={H - 28} className="adm-gl" /><T x={mid + s * sx(t)} y={H - 12}>{t}</T></g>)}</g>)}
           {groups.map((g, i) => { const gy = 6 + (groups.length - 1 - i) * rh; return (<g key={g} {...pk.mark(i)}>
             <rect x={mid - sx(left.data[i])} width={sx(left.data[i])} y={gy + 2} height={rh - 4} fill="var(--adm-c1)" /><rect x={mid} width={sx(right.data[i])} y={gy + 2} height={rh - 4} fill="var(--adm-c2)" />
-            <T x={mid} y={gy + rh / 2 + 4} cls="p3-tw" pointerEvents="none">{g}</T></g>); })}
+            <T x={mid} y={gy + rh / 2 + 4} cls="lab-tw" pointerEvents="none">{g}</T></g>); })}
         </>);
       }} />
   );
@@ -105,8 +105,8 @@ export function BumpChart({ title = "Bump chart", id = "D024", labels, series, h
           {labels.map((lb, k) => <T key={lb} x={xs[k]} y={12}>{lb}</T>)}
           {series.map((s, i) => (<g key={s.name} {...pk.mark(i)}>
             <path d={linePath(xs, ranks[i].map(y), true)} stroke={C(i)} strokeWidth={pk.on(i) ? 5 : 3.5} fill="none" strokeLinecap="round" />
-            {ranks[i].map((rk, k) => <g key={k}><circle cx={xs[k]} cy={y(rk)} r={9} fill={C(i)} stroke="var(--jp-surface-raised)" strokeWidth={1.5} /><T x={xs[k]} y={y(rk) + 3.5} cls="p3-tw" pointerEvents="none">{rk}</T></g>)}
-            <T x={l - 18} y={y(ranks[i][0]) + 4} anchor="end" cls="p3-tl">{s.name}</T><T x={w - r + 18} y={y(ranks[i][labels.length - 1]) + 4} anchor="start" cls="p3-tl">{s.name}</T>
+            {ranks[i].map((rk, k) => <g key={k}><circle cx={xs[k]} cy={y(rk)} r={9} fill={C(i)} stroke="var(--jp-surface-raised)" strokeWidth={1.5} /><T x={xs[k]} y={y(rk) + 3.5} cls="lab-tw" pointerEvents="none">{rk}</T></g>)}
+            <T x={l - 18} y={y(ranks[i][0]) + 4} anchor="end" cls="lab-tl">{s.name}</T><T x={w - r + 18} y={y(ranks[i][labels.length - 1]) + 4} anchor="start" cls="lab-tl">{s.name}</T>
           </g>))}
         </>);
       }} />
@@ -124,10 +124,10 @@ export function MarimekkoChart({ title = "Marimekko", id = "D024", cols, unit = 
       build={(w, pk) => {
         const l = 4, top = 34, bw = w - l - 4, bh = height - top - 4;
         return (<>
-          {colWidths.map((cw, i) => { const x = l + cells.find((c) => c.col === cols[i].label)!.x * bw; return <T key={i} x={x + (cw * bw) / 2} y={14} cls="p3-tl">{cw * bw > 70 ? cols[i].label : ""}</T>; })}
+          {colWidths.map((cw, i) => { const x = l + cells.find((c) => c.col === cols[i].label)!.x * bw; return <T key={i} x={x + (cw * bw) / 2} y={14} cls="lab-tl">{cw * bw > 70 ? cols[i].label : ""}</T>; })}
           {colWidths.map((cw, i) => { const x = l + cells.find((c) => c.col === cols[i].label)!.x * bw; return <T key={`p${i}`} x={x + (cw * bw) / 2} y={28}>{pct(cw)}</T>; })}
           {cells.map((c, i) => <g key={i}><rect {...pk.mark(i)} x={l + c.x * bw} y={top + c.y * bh} width={Math.max(0, c.w * bw - 2)} height={Math.max(0, c.h * bh - 2)} fill={C(rowNames.indexOf(c.row))} fillOpacity={0.88} />
-            {c.w * bw > 64 && c.h * bh > 24 && <T x={l + c.x * bw + (c.w * bw) / 2 - 1} y={top + c.y * bh + (c.h * bh) / 2 + 3} cls="p3-tw" pointerEvents="none">{pct(c.h)}</T>}</g>)}
+            {c.w * bw > 64 && c.h * bh > 24 && <T x={l + c.x * bw + (c.w * bw) / 2 - 1} y={top + c.y * bh + (c.h * bh) / 2 + 3} cls="lab-tw" pointerEvents="none">{pct(c.h)}</T>}</g>)}
         </>);
       }} />
   );

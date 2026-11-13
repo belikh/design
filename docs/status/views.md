@@ -1,6 +1,6 @@
-# P2 status: `views` (spec A1, A2, A5)
+# Status: `views` (spec A1, A2, A5)
 
-Module: `apps/admin/src/p2/views/` · nav group "Views" · 36 routes under `/views/`.
+Module: `apps/admin/src/areas/views/` · nav group "Views" · 36 routes under `/views/`.
 Tests: `logic.test.ts` (19, pure logic) + `pages.test.tsx` (17, UI interactions); the `src/routes.test.tsx` smoke test renders every `/views/*` route.
 All data is fictional and deterministic. State that users change (files, trash, contacts, assets, favourites, saved dashboards, consent) persists in the browser's localStorage only; there is no server.
 

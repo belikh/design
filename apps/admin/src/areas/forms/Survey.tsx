@@ -4,7 +4,7 @@ import { Segmented } from "@belikh/jupiter-ui/inputs.tsx";
 import { BarChart, Donut, StatTile } from "@belikh/jupiter-ui/Charts.tsx";
 import { C } from "@belikh/jupiter-ui/Charts.tsx";
 import { QUESTIONS, avg, completion, makeResponses, nps, ratingDist, tally, type Response } from "./lib.ts";
-import "./p3a.css";
+import "./forms.css";
 
 type Seg = "All" | Response["segment"];
 const ALL = makeResponses(120);
@@ -33,8 +33,8 @@ export function SurveyResults() {
                 {(x.kind === "choice" || x.kind === "multi") && <BarChart horizontal labels={x.options!} series={[{ name: "Responses", data: tally(rs, x.id, x.options!), color: C(1) }]} height={30 + x.options!.length * 34} tools={false} title={x.title} />}
               </Panel>))}
           </div>
-          <Panel title={`Comments (${comments.length})`} actions={<input className="jp-input p3a-search" type="search" aria-label="Search comments" placeholder="Search comments" value={q} onChange={(e) => setQ(e.target.value)} />}>
-            {comments.length === 0 ? <p className="jp-muted">No comments match.</p> : <ul className="p3a-comments">{comments.slice(0, 12).map((r) => <li key={r.id}><q>{String(r.answers.say)}</q><small className="jp-muted">{r.segment}, {r.at}</small></li>)}</ul>}
+          <Panel title={`Comments (${comments.length})`} actions={<input className="jp-input frm-search" type="search" aria-label="Search comments" placeholder="Search comments" value={q} onChange={(e) => setQ(e.target.value)} />}>
+            {comments.length === 0 ? <p className="jp-muted">No comments match.</p> : <ul className="frm-comments">{comments.slice(0, 12).map((r) => <li key={r.id}><q>{String(r.answers.say)}</q><small className="jp-muted">{r.segment}, {r.at}</small></li>)}</ul>}
           </Panel>
         </>)}
       </div>

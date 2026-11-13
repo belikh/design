@@ -1,23 +1,23 @@
-/* P3d charts (tokens only). Prefix p3- avoids clashes with other areas. */
-.p3-chart { min-inline-size: 0; }
-.p3-svg { display: block; overflow: visible; }
-.p3-svg:focus-visible { outline: 2px solid var(--jp-accent); outline-offset: 2px; border-radius: var(--jp-radius-sm); }
-.p3-t { fill: var(--jp-text-muted); font-family: var(--jp-font-mono); font-size: var(--jp-fs-xs); }
-.p3-tl { fill: var(--jp-text); font-family: var(--jp-font-mono); font-size: var(--jp-fs-xs); }
-.p3-tc { fill: var(--jp-text); font-family: var(--jp-font-sans); font-size: var(--jp-fs-sm); font-weight: 700; }
-.p3-tw { fill: var(--jp-surface-raised); font-family: var(--jp-font-mono); font-size: var(--jp-fs-xs); }
-.p3-m { transition: opacity .12s var(--jp-ease); }
-.p3-m.is-dim { opacity: .45; }
-.p3-m.is-on { stroke: var(--jp-text); stroke-width: 2; }
-.p3-ink { stroke: var(--jp-text); fill: none; stroke-width: 1.5; }
-.p3-ref { stroke: var(--jp-text-muted); stroke-width: 1.5; stroke-dasharray: 5 4; fill: none; }
-.p3-edge { stroke: var(--jp-surface-raised); stroke-width: 1.5; }
-.p3-flat { fill: var(--jp-surface); stroke: var(--jp-border); }
-.p3-tabs { display: flex; gap: var(--jp-space-2); flex-wrap: wrap; align-items: center; margin-block-end: var(--jp-space-3); }
-.p3-note { color: var(--jp-text-muted); font-size: var(--jp-fs-xs); margin-block-start: var(--jp-space-2); }
-.p3-ids { font-family: var(--jp-font-mono); font-size: var(--jp-fs-xs); color: var(--jp-text-muted); }
-.p3-stack { display: grid; gap: var(--jp-space-4); margin-block-start: var(--jp-space-4); }
-.p3-pic { display: flex; flex-wrap: wrap; gap: var(--jp-space-1); }
-.p3-pic svg, .p3-waffle svg { display: block; }
-.p3-kpi { display: grid; gap: var(--jp-space-2); justify-items: center; text-align: center; }
-.p3-kpi b { font: 800 var(--jp-fs-xl) var(--jp-font-sans); }
+/* More charts (tokens only). Prefix lab- avoids clashes with other areas. */
+.lab-chart { min-inline-size: 0; }
+.lab-svg { display: block; overflow: visible; }
+.lab-svg:focus-visible { outline: 2px solid var(--jp-accent); outline-offset: 2px; border-radius: var(--jp-radius-sm); }
+.lab-t { fill: var(--jp-text-muted); font-family: var(--jp-font-mono); font-size: var(--jp-fs-xs); }
+.lab-tl { fill: var(--jp-text); font-family: var(--jp-font-mono); font-size: var(--jp-fs-xs); }
+.lab-tc { fill: var(--jp-text); font-family: var(--jp-font-sans); font-size: var(--jp-fs-sm); font-weight: 700; }
+.lab-tw { fill: var(--jp-surface-raised); font-family: var(--jp-font-mono); font-size: var(--jp-fs-xs); }
+.lab-m { transition: opacity .12s var(--jp-ease); }
+.lab-m.is-dim { opacity: .45; }
+.lab-m.is-on { stroke: var(--jp-text); stroke-width: 2; }
+.lab-ink { stroke: var(--jp-text); fill: none; stroke-width: 1.5; }
+.lab-ref { stroke: var(--jp-text-muted); stroke-width: 1.5; stroke-dasharray: 5 4; fill: none; }
+.lab-edge { stroke: var(--jp-surface-raised); stroke-width: 1.5; }
+.lab-flat { fill: var(--jp-surface); stroke: var(--jp-border); }
+.lab-tabs { display: flex; gap: var(--jp-space-2); flex-wrap: wrap; align-items: center; margin-block-end: var(--jp-space-3); }
+.lab-note { color: var(--jp-text-muted); font-size: var(--jp-fs-xs); margin-block-start: var(--jp-space-2); }
+.lab-ids { font-family: var(--jp-font-mono); font-size: var(--jp-fs-xs); color: var(--jp-text-muted); }
+.lab-stack { display: grid; gap: var(--jp-space-4); margin-block-start: var(--jp-space-4); }
+.lab-pic { display: flex; flex-wrap: wrap; gap: var(--jp-space-1); }
+.lab-pic svg, .lab-waffle svg { display: block; }
+.lab-kpi { display: grid; gap: var(--jp-space-2); justify-items: center; text-align: center; }
+.lab-kpi b { font: 800 var(--jp-fs-xl) var(--jp-font-sans); }

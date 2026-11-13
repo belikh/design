@@ -3,12 +3,12 @@ import { Link, useParams, useSearchParams } from "react-router-dom";
 import { CodeBlock, Alert, PageHeader, Panel } from "@belikh/jupiter-ui/kit.tsx";
 import { Field, Segmented, Select, Switch, TextInput } from "@belikh/jupiter-ui/inputs.tsx";
 import { Widget, WIDGETS, useTick } from "./Widgets.tsx";
-import "./p3a.css";
+import "./forms.css";
 
 type Theme = "auto" | "light" | "dark";
 export function embedUrl(origin: string, id: string, o: { theme: Theme; title: boolean; refresh: number }) {
   const q = new URLSearchParams(); if (o.theme !== "auto") q.set("theme", o.theme); if (!o.title) q.set("title", "0"); if (o.refresh) q.set("refresh", String(o.refresh));
-  const s = q.toString(); return `${origin}/p3/embed/view/${id}${s ? `?${s}` : ""}`;
+  const s = q.toString(); return `${origin}/embed/view/${id}${s ? `?${s}` : ""}`;
 }
 
 /** A1 (A019) The configurator: pick a widget, set options, copy the embed snippet. */
@@ -21,7 +21,7 @@ export function EmbedBuilder() {
   return (
     <>
       <PageHeader title="Embedded widget view" crumbs={["Embeds", "Single widget"]} desc="Share one widget on an intranet page or a wiki. The embedded view has no navigation, follows the host theme and can refresh itself." />
-      <div className="p3a-split">
+      <div className="frm-split">
         <Panel title="Options"><div className="adm-stack">
           <Field label="Widget">{(fid) => <Select id={fid} value={id} onChange={setId} options={WIDGETS.map((w) => ({ value: w.id, label: w.title }))} />}</Field>
           <Segmented label="Theme" value={theme} onChange={setTheme} options={[{ value: "auto", label: "Match host" }, { value: "light", label: "Light" }, { value: "dark", label: "Dark" }]} />
@@ -31,7 +31,7 @@ export function EmbedBuilder() {
         </div></Panel>
         <div className="adm-stack">
           <Panel title="Preview" actions={<Link className="jp-btn jp-btn--secondary jp-btn--sm" to={url.replace(origin, "")}>Open embedded view</Link>}>
-            <div className="p3a-frame" data-theme={theme === "auto" ? undefined : theme} role="group" aria-label="Embed preview"><Widget id={id} tick={tick} title={title} />{o.refresh > 0 && <small className="jp-muted">Updated {at.toLocaleTimeString("en-AU")}</small>}</div>
+            <div className="frm-frame" data-theme={theme === "auto" ? undefined : theme} role="group" aria-label="Embed preview"><Widget id={id} tick={tick} title={title} />{o.refresh > 0 && <small className="jp-muted">Updated {at.toLocaleTimeString("en-AU")}</small>}</div>
           </Panel>
           <Panel title="Embed code">
             <CodeBlock code={snippet} label="Embed code" />
@@ -48,7 +48,7 @@ export function EmbedView() {
   const { id = "" } = useParams(); const [q] = useSearchParams();
   const theme = q.get("theme"); const refresh = Math.max(0, Number(q.get("refresh")) || 0); const { tick, at } = useTick(refresh);
   return (
-    <main className="p3a-embed" data-theme={theme === "light" || theme === "dark" ? theme : undefined}>
+    <main className="frm-embed" data-theme={theme === "light" || theme === "dark" ? theme : undefined}>
       <Widget id={id} tick={tick} title={q.get("title") !== "0"} />
       {refresh > 0 && <small className="jp-muted" aria-live="off">Updated {at.toLocaleTimeString("en-AU")}</small>}
     </main>

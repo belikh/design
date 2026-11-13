@@ -1,4 +1,4 @@
-// Pure helpers for DataTable and the P2 table demos: aggregation, column statistics, conditional formatting, grouping, delimited parsing.
+// Pure helpers for DataTable and the table demos: aggregation, column statistics, conditional formatting, grouping, delimited parsing.
 
 export type Agg = "sum" | "avg" | "count" | "min" | "max" | "median" | "distinct";
 export const AGG_LABEL: Record<Agg, string> = { sum: "Sum", avg: "Average", count: "Count", min: "Min", max: "Max", median: "Median", distinct: "Distinct" };

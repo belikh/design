@@ -25,16 +25,16 @@ export function ShellPlayer({ rec }: { rec: Recording }) {
   const cast = useMemo(() => encodeCast(rec), [rec]);
   return (
     <div className="adm-stack">
-      <div className="p3-term" role="group" aria-label={`Replay of session on ${rec.host}`} tabIndex={0}><pre className="p3-term-body">{screen}</pre></div>
+      <div className="lab-term" role="group" aria-label={`Replay of session on ${rec.host}`} tabIndex={0}><pre className="lab-term-body">{screen}</pre></div>
       <div className="adm-row">
         <Btn variant="primary" onClick={() => { if (pos >= total) setPos(0); setPlaying(!playing); }}>{playing ? "Pause" : pos >= total && total > 0 ? "Replay" : "Play"}</Btn>
         <Segmented<Speed> label="Speed" value={speed} onChange={setSpeed} options={[{ value: "1", label: "1x" }, { value: "2", label: "2x" }, { value: "4", label: "4x" }, { value: "8", label: "8x" }]} />
         <span className="adm-num">{fmtClock(pos)} / {fmtClock(total)}</span>
-        <span className="p3-spacer" />
+        <span className="lab-spacer" />
         <Btn icon="download" onClick={() => download(`${rec.title.replace(/[^\w.-]+/g, "_")}-${rec.started.replace(/[^\d]/g, "")}.cast`, cast)}>Download .cast</Btn>
       </div>
       <Slider label="Position" value={pos} min={0} max={Math.max(Math.ceil(total / 50) * 50, 50)} step={50} onChange={(v) => { setPlaying(false); setPos(v >= total - 49 ? Math.max(v, total) : v); }} fmt={fmtClock} />
-      <dl className="p3-dl" aria-label="Recording summary">
+      <dl className="lab-dl" aria-label="Recording summary">
         <dt>Duration</dt><dd>{fmtClock(sum.durationMs)} ({(sum.durationMs / 1000).toFixed(1)} s)</dd>
         <dt>Events</dt><dd>{sum.events} ({sum.keystrokes} keystrokes in)</dd>
         <dt>Output</dt><dd>{fmtSize(sum.outputBytes)} of terminal output</dd>

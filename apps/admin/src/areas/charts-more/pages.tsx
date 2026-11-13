@@ -9,7 +9,7 @@ import { ClockChart, GaugeCluster, LikertChart, NestedDonut, NpsGauge, Pictogram
 
 const P = ({ children, title, id }: { children: ReactNode; title: string; id: string }) => <Panel title={`${title} · ${id}`} id={`${id.toLowerCase()}-${title.toLowerCase().replace(/\W+/g, "-")}`}>{children}</Panel>;
 const G = ({ children, cols = 2 }: { children: ReactNode; cols?: 1 | 2 | 3 }) => <div className={`adm-grid adm-grid--${cols}`} style={{ marginBlockStart: "var(--jp-space-4)" }}>{children}</div>;
-const Ids = ({ ids }: { ids: string }) => <p className="p3-note">Entries: <span className="p3-ids">{ids}</span></p>;
+const Ids = ({ ids }: { ids: string }) => <p className="lab-note">Entries: <span className="lab-ids">{ids}</span></p>;
 const crumbs = (s: string) => ["Charts (more)", s];
 
 export function AreaBandsPage() {

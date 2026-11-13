@@ -16,8 +16,8 @@ const wrap = (ui: React.ReactElement) => render(<MemoryRouter><PrefsProvider>{ui
 const noCrash = () => { expect(screen.queryByText("This view crashed")).not.toBeInTheDocument(); expect(document.body.textContent).not.toMatch(/NaN|undefined|Infinity/); };
 
 describe("routes and pages", () => {
-  it("registers six unprefixed /p3/signals routes in the domain group", () => {
-    expect(routes).toHaveLength(6); for (const r of routes) { expect(r.path).toMatch(/^\/p3\/signals\/[a-z]+$/); expect(r.group).toBe("Charts (domain)"); }
+  it("registers six unprefixed /signals routes in the domain group", () => {
+    expect(routes).toHaveLength(6); for (const r of routes) { expect(r.path).toMatch(/^\/signals\/[a-z]+$/); expect(r.group).toBe("Charts (domain)"); }
   });
   const pages: [string, React.ComponentType, string[]][] = [["finance", FinancePage, ["D060", "D066"]], ["polar", PolarPage, ["D061", "D062"]], ["energy", EnergyPage, ["D063", "D064"]], ["signal", SignalPage, ["D065", "D067"]], ["surface", SurfacePage, ["D068", "D069"]], ["features", FeaturesPage, ["D074"]]];
   for (const [name, Page, ids] of pages) it(`${name} page renders, labels its IDs, has no NaN`, () => {
@@ -43,8 +43,8 @@ describe("chart accessibility contract", () => {
     it(`${name}: role img + summary, data table toggle, inspector readout`, () => {
       const { container } = wrap(make()); noCrash();
       const svg = container.querySelector("svg[role=img]"); expect(svg).not.toBeNull(); expect(svg!.getAttribute("aria-label")!.length).toBeGreaterThan(20);
-      const slider = container.querySelector<HTMLInputElement>(".p3-inspect input[type=range]:not([disabled])"); expect(slider, "inspector slider").not.toBeNull();
-      fireEvent.change(slider!, { target: { value: "1" } }); const ro = container.querySelector(".p3-readout")!; expect(ro.textContent!.length).toBeGreaterThan(5); expect(ro.textContent).not.toMatch(/Hover the chart/); noCrash();
+      const slider = container.querySelector<HTMLInputElement>(".lab-inspect input[type=range]:not([disabled])"); expect(slider, "inspector slider").not.toBeNull();
+      fireEvent.change(slider!, { target: { value: "1" } }); const ro = container.querySelector(".lab-readout")!; expect(ro.textContent!.length).toBeGreaterThan(5); expect(ro.textContent).not.toMatch(/Hover the chart/); noCrash();
       fireEvent.click(screen.getAllByLabelText("Show data table")[0]); expect(container.querySelector("table")).not.toBeNull(); expect(container.querySelectorAll("tbody tr").length).toBeGreaterThan(0);
     });
   }
@@ -69,9 +69,9 @@ describe("empty states", () => {
 describe("interactions", () => {
   it("candlestick: OHLC mode swaps the glyphs; up candles are hollow, down are solid", () => {
     const { container } = wrap(<Candlestick candles={D.candles} />); const rects = () => container.querySelectorAll("g[data-up] rect").length;
-    const up = container.querySelectorAll('g[data-up="true"] rect:not(.p3-hi)'); expect(up.length).toBeGreaterThan(0); expect(up[0].getAttribute("fill")).toBe("var(--jp-surface-raised)");
+    const up = container.querySelectorAll('g[data-up="true"] rect:not(.lab-hi)'); expect(up.length).toBeGreaterThan(0); expect(up[0].getAttribute("fill")).toBe("var(--jp-surface-raised)");
     const dn = container.querySelector('g[data-up="false"] rect')!; expect(dn.getAttribute("fill")).toMatch(/--adm-c/);
-    expect(rects()).toBeGreaterThan(0); fireEvent.click(screen.getByRole("button", { name: "OHLC bars" })); expect(container.querySelectorAll("g[data-up] rect:not(.p3-hi)").length).toBe(0);
+    expect(rects()).toBeGreaterThan(0); fireEvent.click(screen.getByRole("button", { name: "OHLC bars" })); expect(container.querySelectorAll("g[data-up] rect:not(.lab-hi)").length).toBe(0);
   });
   it("control chart: signals are marked and the summary states the limits", () => {
     const { container } = wrap(<ControlChart values={D.controlData} baseline={26} />); expect(container.querySelector("svg[role=img]")!.getAttribute("aria-label")).toMatch(/control limits .* to .* \(mean ± 3 sigma\); [1-9]\d* signals?/);
@@ -90,15 +90,15 @@ describe("interactions", () => {
   it("synced charts share the crosshair and the zoom window through their group id", () => {
     const { container } = wrap(<SyncedCharts labels={D.demoSeries.map((_, i) => `t${i}`)} a={D.demoSeries} b={D.demoPrev} group="t-sync" />);
     fireEvent.change(screen.getByLabelText("Inspect Throughput"), { target: { value: "5" } });
-    const ro = [...container.querySelectorAll(".p3-readout")].map((e) => e.textContent); expect(ro[0]).toMatch(/^t5:/); expect(ro[1]).toMatch(/^t5:/);
+    const ro = [...container.querySelectorAll(".lab-readout")].map((e) => e.textContent); expect(ro[0]).toMatch(/^t5:/); expect(ro[1]).toMatch(/^t5:/);
     fireEvent.click(screen.getByRole("button", { name: "Zoom in" })); for (const svg of container.querySelectorAll("svg[role=img]")) expect(svg.getAttribute("aria-label")).toMatch(/31 of 60 points/);
     expect(screen.getAllByRole("button", { name: "Zoom in" }).length).toBe(1);
   });
   it("drag on the plot zooms to the dragged range; double-click resets", () => {
     const { container } = wrap(<TrendFig title="Drag" labels={D.demoSeries.map((_, i) => `t${i}`)} values={D.demoSeries} />);
     const rect = container.querySelector("svg[role=img] rect[fill=transparent]")!, x0 = +rect.getAttribute("x")!, wd = +rect.getAttribute("width")!, at = (f: number) => x0 + f * wd;
-    fireEvent.pointerDown(rect, { clientX: at(0.25), clientY: 50, pointerId: 1 }); fireEvent.pointerMove(rect, { clientX: at(0.75), clientY: 50, pointerId: 1 }); expect(container.querySelector(".p3-brush")).not.toBeNull(); fireEvent.pointerUp(rect, { clientX: at(0.75), clientY: 50, pointerId: 1 });
-    expect(container.querySelector("svg[role=img]")!.getAttribute("aria-label")).toMatch(/: 3\d of 60 points from t1\d to t4\d/); expect(container.querySelector("svg[role=img] .p3-brush")).toBeNull();
+    fireEvent.pointerDown(rect, { clientX: at(0.25), clientY: 50, pointerId: 1 }); fireEvent.pointerMove(rect, { clientX: at(0.75), clientY: 50, pointerId: 1 }); expect(container.querySelector(".lab-brush")).not.toBeNull(); fireEvent.pointerUp(rect, { clientX: at(0.75), clientY: 50, pointerId: 1 });
+    expect(container.querySelector("svg[role=img]")!.getAttribute("aria-label")).toMatch(/: 3\d of 60 points from t1\d to t4\d/); expect(container.querySelector("svg[role=img] .lab-brush")).toBeNull();
     fireEvent.doubleClick(container.querySelector("svg[role=img] rect[fill=transparent]")!); expect(container.querySelector("svg[role=img]")!.getAttribute("aria-label")).toMatch(/60 of 60 points/);
   });
   it("a click without a drag does not zoom", () => {
@@ -120,7 +120,7 @@ describe("interactions", () => {
     const { container } = wrap(<TrendFig title="Lasso" labels={D.demoSeries.map((_, i) => `t${i}`)} values={D.demoSeries} />); fireEvent.click(screen.getByRole("button", { name: "Lasso" }));
     const frame = screen.getByRole("group", { name: /^Lasso\. Lasso mode/ }), key = (k: string, n = 1, shift = false) => { for (let i = 0; i < n; i++) fireEvent.keyDown(frame, { key: k, shiftKey: shift }); };
     key("ArrowLeft", 8, true); key(" "); key("ArrowRight", 16, true); key(" "); key("ArrowDown", 6, true); key(" "); key("ArrowLeft", 16, true); key(" "); key("Enter");
-    expect(container.querySelector(".p3-stats")?.textContent).toMatch(/Lasso: \d+ in view of [1-9]\d* selected/); fireEvent.click(screen.getByRole("button", { name: "Clear lasso" })); expect(container.querySelector(".p3-stats")?.textContent ?? "").not.toMatch(/Lasso:/);
+    expect(container.querySelector(".lab-stats")?.textContent).toMatch(/Lasso: \d+ in view of [1-9]\d* selected/); fireEvent.click(screen.getByRole("button", { name: "Clear lasso" })); expect(container.querySelector(".lab-stats")?.textContent ?? "").not.toMatch(/Lasso:/);
   });
   it("lasso scatter: pointer polygon selects the points inside; Escape cancels a keyboard lasso", () => {
     const { container } = wrap(<LassoScatter rows={D.demoRows} />); const rect = container.querySelector("svg[role=img] rect[fill=transparent]")!, x0 = +rect.getAttribute("x")!, y0 = +rect.getAttribute("y")!, w = +rect.getAttribute("width")!, h = +rect.getAttribute("height")!;
@@ -129,7 +129,7 @@ describe("interactions", () => {
     const exp = D.demoRows.filter((r) => r.x >= 50 && r.y >= 50).length; expect(exp).toBeGreaterThan(5);
     const n = Number(/(\d+) selected/.exec(screen.getByRole("img").getAttribute("aria-label")!)![1]); expect(n).toBeGreaterThan(Math.floor(exp * 0.8)); expect(n).toBeLessThanOrEqual(exp + 2);
     fireEvent.click(screen.getByRole("button", { name: "Clear lasso" })); expect(screen.getByRole("img").getAttribute("aria-label")).toContain("0 selected");
-    const frame = screen.getByRole("group", { name: /^Orders: size vs value\. Lasso mode/ }); fireEvent.keyDown(frame, { key: " " }); fireEvent.keyDown(frame, { key: "Escape" }); expect(container.querySelector("svg[role=img] path.p3-brush")).toBeNull();
+    const frame = screen.getByRole("group", { name: /^Orders: size vs value\. Lasso mode/ }); fireEvent.keyDown(frame, { key: " " }); fireEvent.keyDown(frame, { key: "Escape" }); expect(container.querySelector("svg[role=img] path.lab-brush")).toBeNull();
   });
   it("scale toggles: log axis, then percent change (log is offered only for absolute values)", () => {
     wrap(<TrendFig title="Scales" labels={D.demoSeries.map((_, i) => `t${i}`)} values={D.demoSeries} prev={D.demoPrev} unit=" ms" />); const say = () => screen.getAllByRole("img")[0].getAttribute("aria-label")!;

@@ -1,4 +1,4 @@
-/** Pure logic and sample data for the P3a area (embeds, playlists, licence, forms, surveys, approvals, moderation). */
+/** Pure logic and sample data for the forms area (embeds, playlists, licence, forms, surveys, approvals, moderation). */
 
 /* ---------- Form builder ---------- */
 export type FieldType = "text" | "textarea" | "number" | "select" | "checkbox" | "date";

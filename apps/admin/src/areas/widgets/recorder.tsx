@@ -102,27 +102,27 @@ export function Recorder({ maxSeconds = 30, forceSimulated }: { maxSeconds?: num
         <Checkbox checked={sim} onChange={(v) => idle && setSim(v)} disabled={!supported || !idle} label="Simulated recording (no device access)" />
         <Badge s={sim ? "warn" : "ok"}>{sim ? "Simulated" : "Live device"}</Badge></Row>
       {!sim && <>
-        <Row className="p3-devices">
-          <label className="p3-field"><span className="jp-label">Microphone</span><Select value={micId} disabled={!idle} aria-label="Microphone" onChange={setMicId} options={[{ value: "", label: mics.length ? "Default microphone" : "Default (grant access to list devices)" }, ...mics.filter((d) => d.deviceId && d.deviceId !== "default").map((d, i) => ({ value: d.deviceId, label: d.label || `Microphone ${i + 1}` }))]} /></label>
-          {kind === "video" && <label className="p3-field"><span className="jp-label">Camera</span><Select value={camId} disabled={!idle} aria-label="Camera" onChange={setCamId} options={[{ value: "", label: cams.length ? "Default camera" : "Default (grant access to list devices)" }, ...cams.filter((d) => d.deviceId).map((d, i) => ({ value: d.deviceId, label: d.label || `Camera ${i + 1}` }))]} /></label>}
+        <Row className="lab-devices">
+          <label className="lab-field"><span className="jp-label">Microphone</span><Select value={micId} disabled={!idle} aria-label="Microphone" onChange={setMicId} options={[{ value: "", label: mics.length ? "Default microphone" : "Default (grant access to list devices)" }, ...mics.filter((d) => d.deviceId && d.deviceId !== "default").map((d, i) => ({ value: d.deviceId, label: d.label || `Microphone ${i + 1}` }))]} /></label>
+          {kind === "video" && <label className="lab-field"><span className="jp-label">Camera</span><Select value={camId} disabled={!idle} aria-label="Camera" onChange={setCamId} options={[{ value: "", label: cams.length ? "Default camera" : "Default (grant access to list devices)" }, ...cams.filter((d) => d.deviceId).map((d, i) => ({ value: d.deviceId, label: d.label || `Camera ${i + 1}` }))]} /></label>}
           <Btn sm onClick={() => void enable()} disabled={!idle}>Enable devices</Btn><Btn sm variant="ghost" onClick={() => void refreshDevices()} disabled={!idle}>Refresh devices</Btn>
         </Row>
-        <p className="p3-note" role="status">Microphone permission: {permBadge(perm.mic)}{kind === "video" && <> Camera permission: {permBadge(perm.cam)}</>} {perm.mic === "denied" && "Blocked in the browser: change it in the site settings, then press Enable devices."}</p></>}
-      {kind === "video" && !sim && <video ref={preview} className="p3-videoprev" muted playsInline aria-label="Camera preview" />}
-      {kind === "video" && sim && <div className="p3-videoprev p3-videoprev--sim" role="img" aria-label="Simulated camera preview">{state === "recording" ? "REC" : "Simulated camera"}</div>}
-      <div className="p3-rec">
-        <span className={`p3-rec__dot ${state === "recording" ? "is-live" : ""}`} aria-hidden /><b className="p3-mono" role="timer" aria-label="Recording time">{fmt(secs)}</b><span className="p3-note">/ {fmt(maxSeconds)}</span>
-        <div className="p3-meter" role="meter" aria-label="Input level" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(level * 100)}><i style={{ inlineSize: `${level * 100}%` }} /></div>
+        <p className="lab-note" role="status">Microphone permission: {permBadge(perm.mic)}{kind === "video" && <> Camera permission: {permBadge(perm.cam)}</>} {perm.mic === "denied" && "Blocked in the browser: change it in the site settings, then press Enable devices."}</p></>}
+      {kind === "video" && !sim && <video ref={preview} className="lab-videoprev" muted playsInline aria-label="Camera preview" />}
+      {kind === "video" && sim && <div className="lab-videoprev lab-videoprev--sim" role="img" aria-label="Simulated camera preview">{state === "recording" ? "REC" : "Simulated camera"}</div>}
+      <div className="lab-rec">
+        <span className={`lab-rec__dot ${state === "recording" ? "is-live" : ""}`} aria-hidden /><b className="lab-mono" role="timer" aria-label="Recording time">{fmt(secs)}</b><span className="lab-note">/ {fmt(maxSeconds)}</span>
+        <div className="lab-meter" role="meter" aria-label="Input level" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(level * 100)}><i style={{ inlineSize: `${level * 100}%` }} /></div>
       </div>
       <Row>
         {idle && <Btn variant="primary" icon="play" onClick={() => void start()}>Start recording</Btn>}
         {state === "recording" && <Btn onClick={pause}>Pause</Btn>}{state === "paused" && <Btn onClick={resume}>Resume</Btn>}
         {!idle && <Btn variant="primary" icon="stop" onClick={stop}>Stop and save</Btn>}
-        <span className="p3-note" role="status">{state === "recording" ? "Recording…" : state === "paused" ? "Paused" : clips.length ? `${clips.length} clip${clips.length === 1 ? "" : "s"} saved` : "Ready"}</span>
+        <span className="lab-note" role="status">{state === "recording" ? "Recording…" : state === "paused" ? "Paused" : clips.length ? `${clips.length} clip${clips.length === 1 ? "" : "s"} saved` : "Ready"}</span>
       </Row>
       {err && <Alert s="danger" title="Recording failed" onClose={() => setErr("")}>{err}{supported && !sim && <> <Btn sm variant="secondary" onClick={() => { setSim(true); setErr(""); }}>Use simulated recording</Btn></>}</Alert>}
-      {clips.length > 0 && <ul className="p3-clips" aria-label="Recordings">{clips.map((c) => <li key={c.id}><b>{c.kind === "audio" ? "Audio" : "Video"} clip {c.id}</b><span className="p3-note">{fmt(c.seconds)} · {fmtBytes(c.bytes)}{c.simulated ? " · simulated" : ""}</span>
-        {c.url && (c.kind === "audio" ? <audio controls src={c.url} aria-label={`Play clip ${c.id}`} /> : <video controls src={c.url} className="p3-videoprev" aria-label={`Play clip ${c.id}`} />)}
+      {clips.length > 0 && <ul className="lab-clips" aria-label="Recordings">{clips.map((c) => <li key={c.id}><b>{c.kind === "audio" ? "Audio" : "Video"} clip {c.id}</b><span className="lab-note">{fmt(c.seconds)} · {fmtBytes(c.bytes)}{c.simulated ? " · simulated" : ""}</span>
+        {c.url && (c.kind === "audio" ? <audio controls src={c.url} aria-label={`Play clip ${c.id}`} /> : <video controls src={c.url} className="lab-videoprev" aria-label={`Play clip ${c.id}`} />)}
         {c.url && <a className="jp-btn jp-btn--sm jp-btn--secondary" href={c.url} download={c.name} aria-label={`Download clip ${c.id}`}>Download</a>}
         <Btn sm variant="ghost" onClick={() => { if (c.url) URL.revokeObjectURL(c.url); if (c.shelfId) shelfRemove(c.shelfId); setClips((x) => x.filter((y) => y.id !== c.id)); }} aria-label={`Delete clip ${c.id}`}>Delete</Btn></li>)}</ul>}
       <Note>Nothing is uploaded: real recordings stay in this tab and are offered to the trim and thumbnail editors below. They are released when deleted or when you leave the page. The recording limit is {maxSeconds} seconds. Simulated mode captures nothing and is the fallback when the API is missing or you choose it.</Note>

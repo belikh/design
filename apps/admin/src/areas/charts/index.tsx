@@ -1,4 +1,4 @@
-import type { P2Route } from "../registry.ts";
+import type { AreaRoute } from "../registry.ts";
 import { lazy } from "react";
 const CompositionPage = lazy(() => import("./pages.tsx").then((m) => ({ default: m.CompositionPage })));
 const DeliveryPage = lazy(() => import("./pages.tsx").then((m) => ({ default: m.DeliveryPage })));
@@ -9,7 +9,7 @@ const MapsPage = lazy(() => import("./pages.tsx").then((m) => ({ default: m.Maps
 const TimelinesPage = lazy(() => import("./pages.tsx").then((m) => ({ default: m.TimelinesPage })));
 const TrendPage = lazy(() => import("./pages.tsx").then((m) => ({ default: m.TrendPage })));
 
-export const routes: P2Route[] = [
+export const routes: AreaRoute[] = [
   { path: "/charts/trend", label: "Trend and comparison", icon: "trend", group: "Charts", keywords: "lollipop dumbbell slope combo small multiples floating range table", element: <TrendPage /> },
   { path: "/charts/distribution", label: "Distribution", icon: "chart", group: "Charts", keywords: "scatter bubble hexbin matrix percentile latency heatmap", element: <DistributionPage /> },
   { path: "/charts/composition", label: "Composition and ranking", icon: "database", group: "Charts", keywords: "segmented top n other co-occurrence leaderboard race", element: <CompositionPage /> },

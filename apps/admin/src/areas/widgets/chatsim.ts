@@ -10,7 +10,7 @@ export function plan(prompt: string): Plan {
   const p = prompt.toLowerCase();
   if (/(fail|error|broken)/.test(p)) return { tool: { name: "search_logs", args: { query: prompt.slice(0, 40) }, result: "Upstream timed out after 5s", fail: true }, text: "I tried to search the logs but the tool timed out. I can retry, or you can narrow the time range. [1]", cites: [1] };
   if (/(colou?r|token|theme)/.test(p)) return { tool: { name: "search_docs", args: { query: "design tokens" }, result: "2 documents matched" }, text: "Colours are exposed as --jp-* custom properties [1]. Use status tokens only for status, and check pairs against the contrast table [2].", cites: [1, 2] };
-  if (/(release|change|new)/.test(p)) return { tool: { name: "get_release", args: { version: "2.4" }, result: "Release 2.4, 14 changes" }, text: "Version 2.4 added the P3 input set and fixed focus handling in dialogs [3].", cites: [3] };
+  if (/(release|change|new)/.test(p)) return { tool: { name: "get_release", args: { version: "2.4" }, result: "Release 2.4, 14 changes" }, text: "Version 2.4 added the specialised input set and fixed focus handling in dialogs [3].", cites: [3] };
   return { text: "I can look things up in the docs, summarise releases, and check contrast. Try asking about colour tokens or the latest release.", cites: [] };
 }
 /** Yields chunks with an optional delay between them (0 in tests). */

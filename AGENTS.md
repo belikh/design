@@ -31,16 +31,16 @@ Follow the patterns here instead of inventing new ones. If a need isn't covered,
 
 ## Where things live
 - `packages/tokens`: source of truth (`jupiter.tokens.json`) and generators. **Change a token here; every output regenerates.**
-- `packages/graphics`: SVG icons, spot illustrations. `packages/esphome`: ESPHome instrument widgets. `packages/latex`, `packages/rust`: other outputs.
+- `packages/graphics`: SVG icons, spot illustrations. `packages/esphome`: ESPHome instrument widgets. `packages/github`: README/profile/social-preview SVG kit + templates (generated from the tokens). `packages/latex`, `packages/rust`: other outputs.
 - `packages/ui` (`@belikh/jupiter-ui`): shared components (kit, inputs, DataTable, Editable, Charts), preferences (`store.tsx`), the mock data layer and undo. Import as `@belikh/jupiter-ui/kit.tsx`.
-- `apps/admin`: the ONE app, dev server on :3000 (`npm run dev`). It is both the design-system site (`/` overview, `/tokens`, `/fonts`, `/layout`, `/graphics`, `/components/html`, `/dashboard`, `/targets`, `/editor`; code in `src/docs`, routes in `p2/docs`) and the admin template (the admin dashboard is `/overview`; the React component gallery is `/components`).
-- `apps/admin/src/p2/<area>/index.tsx`: every page, first-wave included (`p2/core`), is registered by its area's exported `routes` and picked up automatically (`import.meta.glob`). `routePath` is the router pattern when it differs from the nav `path`; `nav: false` hides a route from nav and the palette.
+- `apps/admin`: the ONE app, dev server on :3000 (`npm run dev`). It is both the design-system site (`/` overview, `/tokens`, `/fonts`, `/layout`, `/graphics`, `/components/html`, `/dashboard`, `/targets`, `/editor`; code in `src/docs`, routes in `areas/docs`) and the admin template (the admin dashboard is `/overview`; the React component gallery is `/components`).
+- `apps/admin/src/areas/<area>/index.tsx`: every page, first-wave included (`areas/core`), is registered by its area's exported `routes` and picked up automatically (`import.meta.glob`). `routePath` is the router pattern when it differs from the nav `path`; `nav: false` hides a route from nav and the palette.
 - `packages/ui/src/store.tsx`: preferences (theme, density, contrast, language, `editCommit`) and `toast`.
 - `docs/`: specs and status (`modernisation.md` is the backlog).
 
 ## Recipes
 See `docs/recipes.md` for the five page shapes (list, detail, form, dashboard, kiosk) and the scaffold that generates each. Short version:
-**List page**: `PageHeader` → `Panel` → `DataTable` with `cols` (give editable columns an `editor`), `onCommit`, `facet`, `exports`. Copy `p2/tables/EditLab.tsx`.
+**List page**: `PageHeader` → `Panel` → `DataTable` with `cols` (give editable columns an `editor`), `onCommit`, `facet`, `exports`. Copy `areas/tables/EditLab.tsx`.
 **Detail page**: a column of `Editable` fields in a `Panel`; no Edit button. Titles are `Editable` too.
 **Form page**: `Field` + inputs, validation on blur, autosave for settings pages; an unsaved-changes guard for long forms.
 **Dashboard**: stat tiles + `Charts`; tokens for colour; every chart has a text alternative.
@@ -50,7 +50,7 @@ See `docs/recipes.md` for the five page shapes (list, detail, form, dashboard, k
 Fastest: `npm run new:page -w apps/admin -- <area> <PageName> "<Label>" list|detail|form` creates the component, a test and the route. Components are indexed in `packages/ui/src/components.manifest.json` (check it before writing UI; a test keeps it honest). Data comes from `@belikh/jupiter-ui/mock.ts` (`createCollection`, `useCollection`).
 
 By hand:
-1. Create `src/p2/<area>/<Page>.tsx` (or add to an area folder) and add `{ path, label, icon, group, keywords, element }` to that area's `routes` in `index.tsx`. Lazy-load with `React.lazy`.
+1. Create `src/areas/<area>/<Page>.tsx` (or add to an area folder) and add `{ path, label, icon, group, keywords, element }` to that area's `routes` in `index.tsx`. Lazy-load with `React.lazy`.
 2. Write `<Page>.test.tsx`. If you add a route, update any route-count assertions.
 3. Run `npm run typecheck`, `npm test`, `npm run lint:style -w apps/admin`.
 

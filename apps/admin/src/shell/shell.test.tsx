@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { PrefsProvider } from "@belikh/jupiter-ui/store.tsx";
 import { App } from "../App.tsx";
-import { parseChangelog, CHANGELOG } from "../p2/whatsnew/WhatsNew.tsx";
+import { parseChangelog, CHANGELOG } from "../areas/whatsnew/WhatsNew.tsx";
 import { recordVisit, resetRecents, togglePin } from "./recents.ts";
 
 const mount = (path = "/orders") => render(<MemoryRouter initialEntries={[path]}><PrefsProvider><App /></PrefsProvider></MemoryRouter>);

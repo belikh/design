@@ -3,7 +3,7 @@ import { createCollection, useCollection, type Collection } from "@belikh/jupite
 import { SyncStatus } from "@belikh/jupiter-ui/sync.tsx";
 import { Panel } from "@belikh/jupiter-ui/kit.tsx";
 import { DataTable, type Col } from "@belikh/jupiter-ui/DataTable.tsx";
-import "./p3g.css";
+import "./homelab.css";
 
 /** Fixed clock so sample data and tests are deterministic. */
 export const TODAY = "2026-11-12";

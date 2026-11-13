@@ -20,12 +20,12 @@ export function Sankey({ nodes, links, unit = "visits", title = "Sankey: traffic
           <>
             <Svg w={w} h={H} label={`${title}. ${links.length} flows between ${nodes.length} nodes; total ${fmt(sum(s.nodes.filter((n) => n.col === 0).map((n) => n.value)))} ${unit}. Use the data table for exact values.`}>
               <g transform={`translate(${padL},${top})`}>
-                {stageNames && Array.from({ length: last + 1 }, (_, c) => <text key={c} x={(s.nodes.find((n) => n.col === c)?.x0 ?? 0)} y={-8} className="p3e-mute">{stageNames[c]}</text>)}
-                {s.links.map((l, i) => <path key={i} className={`p3e-link${sel && !on(l) ? " p3e-dim" : ""}`} d={ribbon(l.x0, l.sy, l.x1, l.ty)} stroke={col(l.source)} strokeWidth={Math.max(1, l.width)} strokeOpacity={0.5} />)}
+                {stageNames && Array.from({ length: last + 1 }, (_, c) => <text key={c} x={(s.nodes.find((n) => n.col === c)?.x0 ?? 0)} y={-8} className="dg-mute">{stageNames[c]}</text>)}
+                {s.links.map((l, i) => <path key={i} className={`dg-link${sel && !on(l) ? " dg-dim" : ""}`} d={ribbon(l.x0, l.sy, l.x1, l.ty)} stroke={col(l.source)} strokeWidth={Math.max(1, l.width)} strokeOpacity={0.5} />)}
                 {s.nodes.map((n) => (
                   <g key={n.id} {...hit(n.id, `${n.label}: ${fmt(n.value)} ${unit}${n.in ? `, ${fmt(n.in)} in` : ""}${n.out ? `, ${fmt(n.out)} out` : ""}. ${s.links.filter((l) => l.source === n.id).map((l) => `${fmt(l.value)} to ${l.target}`).join(", ")}`)}>
                     <rect x={n.x0} y={n.y0} width={n.x1 - n.x0} height={Math.max(1, n.y1 - n.y0)} fill={col(n.id)} rx="2" />
-                    <text x={n.col === 0 ? n.x0 - 6 : n.x1 + 6} y={(n.y0 + n.y1) / 2} dy="0.35em" textAnchor={n.col === 0 ? "end" : "start"} className="p3e-halo">{n.label}</text>
+                    <text x={n.col === 0 ? n.x0 - 6 : n.x1 + 6} y={(n.y0 + n.y1) / 2} dy="0.35em" textAnchor={n.col === 0 ? "end" : "start"} className="dg-halo">{n.label}</text>
                   </g>))}
               </g>
             </Svg>
@@ -70,7 +70,7 @@ export function Chord({ names, matrix, unit = "k people", title = "Chord: moves 
                 {groups.map((g) => { const out = sum(matrix[g.index]), inn = sum(matrix.map((r) => r[g.index])); const mid = (g.start + g.end) / 2; const [lx, ly] = pol(R + 8, mid); return (
                   <g key={g.index} {...hit(g.index, `${names[g.index]}: ${fmt(out)} ${unit} out, ${fmt(inn)} in, net ${fmt(inn - out)}`)}>
                     <path d={arcP(r0, R, g.start, g.end)} fill={C(g.index)} />
-                    <text x={lx} y={ly} dy="0.35em" textAnchor={Math.sin(mid) >= 0 ? "start" : "end"} className="p3e-halo">{names[g.index]}</text>
+                    <text x={lx} y={ly} dy="0.35em" textAnchor={Math.sin(mid) >= 0 ? "start" : "end"} className="dg-halo">{names[g.index]}</text>
                   </g>); })}
               </g>
             </Svg>
@@ -95,11 +95,11 @@ export function ArcDiagram({ ids, links, title = "Arc diagram: service calls", s
         return (
           <>
             <Svg w={w} h={H} label={`${title}. ${ids.length} nodes, ${links.length} links. Use the data table for the links.`}>
-              {lay.arcs.map((a, i) => { const hot = !sel || a.source === sel || a.target === sel; return <path key={i} className="p3e-link" d={`M${a.x0},${baseY}A${a.r},${a.r * k} 0 0 1 ${a.x1},${baseY}`} stroke={C(ids.indexOf(a.source))} strokeWidth={1 + a.value * 0.5} strokeOpacity={hot ? 0.75 : 0.1} />; })}
+              {lay.arcs.map((a, i) => { const hot = !sel || a.source === sel || a.target === sel; return <path key={i} className="dg-link" d={`M${a.x0},${baseY}A${a.r},${a.r * k} 0 0 1 ${a.x1},${baseY}`} stroke={C(ids.indexOf(a.source))} strokeWidth={1 + a.value * 0.5} strokeOpacity={hot ? 0.75 : 0.1} />; })}
               {ids.map((id, i) => { const x = lay.x.get(id)!; return (
                 <g key={id} {...hit(id, `${id}: ${deg(id)} links. Calls ${links.filter((l) => l.source === id).map((l) => `${l.target} (${l.value})`).join(", ") || "nothing"}. Called by ${links.filter((l) => l.target === id).map((l) => `${l.source} (${l.value})`).join(", ") || "nothing"}`)}>
                   <circle cx={x} cy={baseY} r={5 + Math.min(5, deg(id) / 2)} fill={C(i)} stroke="var(--jp-surface-raised)" strokeWidth="1.5" />
-                  <text x={x} y={baseY + 14} transform={`rotate(60 ${x} ${baseY + 14})`} className="p3e-sm">{id}</text>
+                  <text x={x} y={baseY + 14} transform={`rotate(60 ${x} ${baseY + 14})`} className="dg-sm">{id}</text>
                 </g>); })}
             </Svg>
             <Readout>{text}</Readout>

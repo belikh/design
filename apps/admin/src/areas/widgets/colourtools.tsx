@@ -21,19 +21,19 @@ export function PaletteEditor({ initial = START_PALETTE }: { initial?: Swatch[] 
   const css = pal.map((s) => `  --${s.id}: ${s.hex};`).join("\n");
   return (
     <Stack>
-      <div className="p3-palette">
+      <div className="lab-palette">
         {pal.map((s) => (
-          <div key={s.id} className="p3-palette__row"><span className="p3-palette__sw" style={{ background: s.hex }} aria-hidden /><span className="p3-palette__n">{s.name}</span>
+          <div key={s.id} className="lab-palette__row"><span className="lab-palette__sw" style={{ background: s.hex }} aria-hidden /><span className="lab-palette__n">{s.name}</span>
             <input type="color" aria-label={`${s.name} picker`} value={s.hex} onChange={(e) => set(s.id, e.target.value)} />
-            <input className="jp-input p3-mono p3-narrow" aria-label={`${s.name} hex`} aria-invalid={drafts[s.id] !== undefined && !parseHex(drafts[s.id])} value={drafts[s.id] ?? s.hex} onChange={(e) => { setDrafts({ ...drafts, [s.id]: e.target.value }); if (parseHex(e.target.value)) set(s.id, toHex(parseHex(e.target.value)!)); }} onBlur={() => setDrafts(({ [s.id]: _x, ...rest }) => rest)} /></div>))}
+            <input className="jp-input lab-mono lab-narrow" aria-label={`${s.name} hex`} aria-invalid={drafts[s.id] !== undefined && !parseHex(drafts[s.id])} value={drafts[s.id] ?? s.hex} onChange={(e) => { setDrafts({ ...drafts, [s.id]: e.target.value }); if (parseHex(e.target.value)) set(s.id, toHex(parseHex(e.target.value)!)); }} onBlur={() => setDrafts(({ [s.id]: _x, ...rest }) => rest)} /></div>))}
       </div>
-      <table className="p3-table"><caption>Contrast checks (WCAG 2.2)</caption><thead><tr><th scope="col">Pair</th><th scope="col">Sample</th><th scope="col">Ratio</th><th scope="col">Result</th><th scope="col"><span className="p3-sr">Fix</span></th></tr></thead>
+      <table className="lab-table"><caption>Contrast checks (WCAG 2.2)</caption><thead><tr><th scope="col">Pair</th><th scope="col">Sample</th><th scope="col">Ratio</th><th scope="col">Result</th><th scope="col"><span className="lab-sr">Fix</span></th></tr></thead>
         <tbody>{rows.map((r) => { const pass = r.g && r.g.ratio >= r.need; return (
-          <tr key={r.label}><th scope="row">{r.label}</th><td><span className="p3-sample" style={{ color: hex(r.fg), background: hex(r.bg) }}>Aa sample</span></td><td className="p3-mono">{r.g ? r.g.ratio.toFixed(2) : "-"}:1</td>
+          <tr key={r.label}><th scope="row">{r.label}</th><td><span className="lab-sample" style={{ color: hex(r.fg), background: hex(r.bg) }}>Aa sample</span></td><td className="lab-mono">{r.g ? r.g.ratio.toFixed(2) : "-"}:1</td>
             <td>{r.g && <Badge s={pass ? "ok" : "danger"}>{pass ? (r.g.aaaNormal ? "AAA" : r.need === 3 ? "Pass 3:1" : "AA") : `Fails ${r.need}:1`}</Badge>}</td>
             <td>{!pass && <Btn sm onClick={() => fix(r.fg, r.bg, r.need)} aria-label={`Fix ${r.label}`}>Fix</Btn>}</td></tr>); })}</tbody></table>
-      <p className={failing ? "p3-bad" : "p3-ok"} role="status">{failing ? `${failing} pair${failing === 1 ? "" : "s"} below the target.` : "All pairs meet their targets."}</p>
-      <Row><CopyBtn text={`:root {\n${css}\n}`} label="Copy CSS variables" /><Btn sm variant="ghost" onClick={() => setPal(START_PALETTE)}>Reset</Btn><span className="p3-note">Lowest ratio {Math.min(...rows.map((r) => contrast(hex(r.fg), hex(r.bg)) ?? 21)).toFixed(2)}:1</span></Row>
+      <p className={failing ? "lab-bad" : "lab-ok"} role="status">{failing ? `${failing} pair${failing === 1 ? "" : "s"} below the target.` : "All pairs meet their targets."}</p>
+      <Row><CopyBtn text={`:root {\n${css}\n}`} label="Copy CSS variables" /><Btn sm variant="ghost" onClick={() => setPal(START_PALETTE)}>Reset</Btn><span className="lab-note">Lowest ratio {Math.min(...rows.map((r) => contrast(hex(r.fg), hex(r.bg)) ?? 21)).toFixed(2)}:1</span></Row>
       <Note>"Fix" nudges only the foreground lightness (keeping hue and saturation) until the pair passes.</Note>
     </Stack>
   );

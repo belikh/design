@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { ROUTES } from "./routes.ts";
 import { useDs } from "./docs/store.tsx";
-import { P2_ROUTES } from "./p2/registry.ts";
+import { AREA_ROUTES } from "./areas/registry.ts";
 import { usePrefs } from "@belikh/jupiter-ui/store.tsx";
 import { Icon } from "@belikh/jupiter-ui/Icon.tsx";
 import { Avatar, Badge, Btn, CrumbSiblings, Kbd, Menu, Modal } from "@belikh/jupiter-ui/kit.tsx";
@@ -12,11 +12,11 @@ import { recordVisit, useRecent, usePinned, togglePin } from "./shell/recents.ts
 import { clearUndo, inTextField, redo, undo, useUndoState } from "@belikh/jupiter-ui/undo.ts";
 import { ErrorBoundary } from "@belikh/jupiter-ui/ErrorBoundary.tsx";
 import { LANGS } from "@belikh/jupiter-ui/i18n.ts";
-import { SideNav } from "./p2/chrome/nav.tsx";
-import { Banners, ConsentBar, EnvBadge, HelpPanel, ShortcutSheet, StatusBar, WorkspaceMenu } from "./p2/chrome/shellparts.tsx";
-import { useShortcut } from "./p2/chrome/shortcuts.ts";
-import { system } from "./p2/chrome/system.ts";
-import { applyTouchMode, touchModeSaved } from "./p2/chrome/PagesScale.tsx";
+import { SideNav } from "./areas/chrome/nav.tsx";
+import { Banners, ConsentBar, EnvBadge, HelpPanel, ShortcutSheet, StatusBar, WorkspaceMenu } from "./areas/chrome/shellparts.tsx";
+import { useShortcut } from "./areas/chrome/shortcuts.ts";
+import { system } from "./areas/chrome/system.ts";
+import { applyTouchMode, touchModeSaved } from "./areas/chrome/PagesScale.tsx";
 
 function CommandPalette({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [q, setQ] = useState(""); const [hi, setHi] = useState(0); const nav = useNavigate(); const { setTheme, setDensity, toast } = usePrefs();
@@ -74,7 +74,7 @@ export function Shell() {
   useEffect(() => { applyTouchMode(touchModeSaved()); }, []);
   const togglePal = useCallback(() => setPal((p) => !p), []); const toggleKeys = useCallback(() => setKeys((k) => !k), []); const toggleHelp = useCallback(() => setHelp((h) => !h), []); const toggleRail = useCallback(() => setRail((r) => !r), []);
   useShortcut("pal", "mod+k", "Command palette", togglePal); useShortcut("keys", "?", "Keyboard shortcuts", toggleKeys); useShortcut("help", "f1", "Help for this page", toggleHelp); useShortcut("rail", "alt+b", "Collapse or expand the sidebar", toggleRail);
-  if (P2_ROUTES.some((r) => r.bare && r.path === loc.pathname) || ["/kiosk", "/wh/kiosk", "/wh/lobby"].includes(loc.pathname) || loc.pathname.startsWith("/auth") || loc.pathname.startsWith("/wh/ticket") || loc.pathname.startsWith("/wh/portal") || loc.pathname.startsWith("/wh/forklift")) return <Outlet />;
+  if (AREA_ROUTES.some((r) => r.bare && r.path === loc.pathname) || ["/kiosk", "/wh/kiosk", "/wh/lobby"].includes(loc.pathname) || loc.pathname.startsWith("/auth") || loc.pathname.startsWith("/wh/ticket") || loc.pathname.startsWith("/wh/portal") || loc.pathname.startsWith("/wh/forklift")) return <Outlet />;
   return (
     <CrumbSiblings.Provider value={crumbSiblings}>
     <div className={`adm-shell ${rail ? "is-rail" : ""} ${navOpen ? "is-nav-open" : ""}`} style={rail ? undefined : ({ "--adm-side": `${sideW}px` } as React.CSSProperties)}>

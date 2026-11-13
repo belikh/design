@@ -1,4 +1,4 @@
-// Deterministic sample data for the P3e diagram gallery. Same numbers on every load.
+// Deterministic sample data for the diagram gallery. Same numbers on every load.
 import { rng } from "../../data/fixtures.ts";
 import type { SLink, SNodeIn } from "./flow.ts";
 import type { TreeIn } from "./tree.ts";

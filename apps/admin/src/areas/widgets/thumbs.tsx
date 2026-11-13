@@ -62,22 +62,22 @@ export function ThumbnailPicker() {
   return (
     <Stack>
       <SourcePicker kind="video" current={meta?.name} onPick={(p) => void load(p)} />
-      <video ref={video} className="p3-sr" muted playsInline preload="auto" aria-hidden="true" tabIndex={-1} src={src ?? undefined} />
-      {status === "loading" && <p className="p3-note" role="status">Loading video…</p>}
+      <video ref={video} className="lab-sr" muted playsInline preload="auto" aria-hidden="true" tabIndex={-1} src={src ?? undefined} />
+      {status === "loading" && <p className="lab-note" role="status">Loading video…</p>}
       {status === "error" && <Alert s="danger" title="Could not load video" onClose={() => setStatus("idle")}>{err}</Alert>}
       {err && status !== "error" && <Alert s="danger" title="Something went wrong" onClose={() => setErr("")}>{err}</Alert>}
-      {!meta && status !== "loading" && <p className="p3-note">Load a video file, drop one on the area above, or pick a video recording from C043.</p>}
+      {!meta && status !== "loading" && <p className="lab-note">Load a video file, drop one on the area above, or pick a video recording from C043.</p>}
       {meta && <>
-        <canvas ref={main} className="p3-canvas" role="img" aria-label={`Video frame at ${fmtClock(t)}`} />
-        <label className="p3-slider"><span>Scrub</span><input type="range" min={0} max={Math.round(dur * 100) / 100} step={0.05} value={t} aria-label="Scrub through the video" disabled={capturing} aria-valuetext={`${fmtClock(t)} of ${fmtClock(dur)}`} onChange={(e) => void goTo(Number(e.target.value))} /><output>{fmtClock(t)}</output></label>
-        <Row><Badge s="info">{meta.w} × {meta.h}</Badge><Badge s="info">{fmtClock(dur)}</Badge>{capturing && <span className="p3-note" role="status">Capturing frames {progress} of {FRAMES}…</span>}</Row>
-        <div className="p3-thumbs" role="radiogroup" aria-label="Thumbnail frames">
+        <canvas ref={main} className="lab-canvas" role="img" aria-label={`Video frame at ${fmtClock(t)}`} />
+        <label className="lab-slider"><span>Scrub</span><input type="range" min={0} max={Math.round(dur * 100) / 100} step={0.05} value={t} aria-label="Scrub through the video" disabled={capturing} aria-valuetext={`${fmtClock(t)} of ${fmtClock(dur)}`} onChange={(e) => void goTo(Number(e.target.value))} /><output>{fmtClock(t)}</output></label>
+        <Row><Badge s="info">{meta.w} × {meta.h}</Badge><Badge s="info">{fmtClock(dur)}</Badge>{capturing && <span className="lab-note" role="status">Capturing frames {progress} of {FRAMES}…</span>}</Row>
+        <div className="lab-thumbs" role="radiogroup" aria-label="Thumbnail frames">
           {frames.map((f, k) => <button key={k} type="button" role="radio" aria-checked={cover === f.t} aria-label={`Frame ${k + 1} at ${fmtClock(f.t)}${k === best ? ", suggested" : ""}`} className={Math.abs(t - f.t) < 0.03 ? "is-cur" : ""} disabled={capturing} onClick={() => pickFrame(f)}><img src={f.url} alt="" />{k === best && <Badge s="info">Best</Badge>}</button>)}
         </div>
         <Row><Btn sm disabled={best < 0} onClick={() => frames[best] && pickFrame(frames[best])}>Suggest best frame</Btn><Btn sm disabled={capturing} onClick={() => setCover(t)}>Use current frame</Btn>
           <Btn sm variant="primary" disabled={cover === null || capturing} onClick={() => void exportPng()}>Export cover as PNG</Btn>
-          <span className="p3-note" role="status">{cover === null ? "No cover chosen" : `Cover: ${coverIsStrip ? `frame ${frames.findIndex((f) => f.t === cover) + 1}` : "custom frame"} at ${fmtClock(cover)}`}</span></Row>
-        {shot && <div className="p3-result"><img src={shot.url} alt={`Exported cover at ${fmtClock(shot.t)}`} className="p3-frame p3-frame--big" /><span className="p3-note">{shot.name} · {shot.w} × {shot.h} · {fmtBytes(shot.bytes)}</span><a className="jp-btn jp-btn--sm jp-btn--primary" href={shot.url} download={shot.name}>Download PNG</a></div>}
+          <span className="lab-note" role="status">{cover === null ? "No cover chosen" : `Cover: ${coverIsStrip ? `frame ${frames.findIndex((f) => f.t === cover) + 1}` : "custom frame"} at ${fmtClock(cover)}`}</span></Row>
+        {shot && <div className="lab-result"><img src={shot.url} alt={`Exported cover at ${fmtClock(shot.t)}`} className="lab-frame lab-frame--big" /><span className="lab-note">{shot.name} · {shot.w} × {shot.h} · {fmtBytes(shot.bytes)}</span><a className="jp-btn jp-btn--sm jp-btn--primary" href={shot.url} download={shot.name}>Download PNG</a></div>}
       </>}
       <Note>Frames are decoded in this tab: the video is sought to evenly spaced times, drawn to a canvas, and scored by detail, change from the previous frame and exposure to suggest a cover. The exported PNG is captured at the video's full resolution. Nothing is uploaded.</Note>
     </Stack>

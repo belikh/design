@@ -6,7 +6,7 @@ export type Loaders = Record<string, () => Promise<string>>;
 export type VaultSource = { notes: Loaders; runs: Loaders; queries: Loaders };
 export type VaultData = { mode: "vault" | "sample"; notes: Note[]; sources: Source[]; runs: Run[]; broken: Record<string, string[]>; skipped: string[]; note: string; failed: string[] };
 
-// Paths are relative to this file: src/p2/p3g -> repo root is five levels up. When the folder is absent the globs are empty and the page uses sample data.
+// Paths are relative to this file: src/areas/homelab -> repo root is five levels up. When the folder is absent the globs are empty and the page uses sample data.
 // Lazy (not eager): nothing is read or bundled into the initial chunk, and the files are only fetched when the page opens.
 const GLOB_NOTES = import.meta.glob("../../../../../research/notes/*.md", { query: "?raw", import: "default" }) as Loaders;
 const GLOB_RUNS = import.meta.glob("../../../../../research/runs/*/run.json", { query: "?raw", import: "default" }) as Loaders;

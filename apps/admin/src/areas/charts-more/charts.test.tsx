@@ -22,10 +22,10 @@ describe("gallery pages", () => {
   for (const [name, Page, ids] of pages) it(`${name} renders with every entry id labelled and no NaN text`, () => {
     const { container } = wrap(<Page />); clean();
     for (const id of ids) expect(screen.getAllByText(new RegExp(`· ${id}`)).length).toBeGreaterThan(0);
-    const svgs = [...container.querySelectorAll("svg.p3-svg")]; expect(svgs.length).toBeGreaterThan(1);
+    const svgs = [...container.querySelectorAll("svg.lab-svg")]; expect(svgs.length).toBeGreaterThan(1);
     for (const s of svgs) { expect(s.getAttribute("role")).toBe("img"); expect(s.getAttribute("aria-label")?.length).toBeGreaterThan(30); }
   });
-  it("registers five routes under /p3/charts in the Charts (more) group", () => { expect(routes.length).toBe(5); for (const r of routes) { expect(r.path).toMatch(/^\/p3\/charts\//); expect(r.group).toBe("Charts (more)"); } });
+  it("registers five routes under /charts in the Charts (more) group", () => { expect(routes.length).toBe(5); for (const r of routes) { expect(r.path).toMatch(/^\/charts\//); expect(r.group).toBe("Charts (more)"); } });
   it("covers every assigned entry", () => { const k = routes.map((r) => r.keywords).join(" "); for (const id of ["D002", "D009", "D010", "D013", "D018", "D021", "D022", "D024", "D025", "D026", "D027", "D028"]) expect(k).toContain(id); });
 });
 
@@ -46,7 +46,7 @@ describe("empty data shows the empty state", () => {
 describe("keyboard readout and data table", () => {
   it("arrow keys step through the readout of a histogram", () => {
     const { container } = wrap(<Histogram values={[1, 2, 2, 3, 3, 3, 4, 9]} bins={4} />);
-    const svg = container.querySelector("svg.p3-svg")!; svg.dispatchEvent(new Event("focus")); fireEvent.keyDown(svg, { key: "ArrowRight" });
+    const svg = container.querySelector("svg.lab-svg")!; svg.dispatchEvent(new Event("focus")); fireEvent.keyDown(svg, { key: "ArrowRight" });
     expect(screen.getByText("0 to 2.5 ms: 3 values (37.5%)")).toBeInTheDocument(); fireEvent.keyDown(svg, { key: "ArrowRight" }); expect(screen.getByText("2.5 to 5 ms: 4 values (50.0%)")).toBeInTheDocument();
     fireEvent.keyDown(svg, { key: "Escape" }); expect(screen.getByText(/Hover, or focus the chart/)).toBeInTheDocument();
   });

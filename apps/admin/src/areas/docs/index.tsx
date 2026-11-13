@@ -1,5 +1,5 @@
 import { lazy } from "react";
-import type { P2Route } from "../registry.ts";
+import type { AreaRoute } from "../registry.ts";
 
 // The design-system documentation pages (src/docs). They are the first nav groups and "/" is the landing page.
 const DsOverview = lazy(() => import("../../docs/Overview.tsx").then((m) => ({ default: m.DsOverview })));
@@ -12,7 +12,7 @@ const DsDashboard = lazy(() => import("../../docs/Dashboard.tsx").then((m) => ({
 const DsTargets = lazy(() => import("../../docs/Targets.tsx").then((m) => ({ default: m.DsTargets })));
 const DsEditor = lazy(() => import("../../docs/Editor.tsx").then((m) => ({ default: m.DsEditor })));
 
-export const routes: P2Route[] = [
+export const routes: AreaRoute[] = [
   { path: "/", label: "Overview", icon: "home", group: "Foundations", keywords: "design system principles pipeline landing", element: <DsOverview /> },
   { path: "/tokens", label: "Tokens", icon: "sliders", group: "Foundations", keywords: "colour contrast type space radii motion", element: <DsTokens /> },
   { path: "/fonts", label: "Type specimen", icon: "edit", group: "Foundations", keywords: "fonts sgi jetbrains typography", element: <DsFonts /> },

@@ -37,6 +37,13 @@ Rust, Go, Slint, GTK, Qt, KDE, LaTeX, ESPHome YAML, email, terminal and mobile c
 gitignored directory at build time (`gh release download --repo belikh/design --pattern <file> --dir <build-dir> --clobber`); never commit them.
 The list of files per target is in `packages/ui/skill/SKILL.md` and `README.md`.
 
+## GitHub (READMEs, profiles, social preview)
+`jupiter-github.tgz` (also `@belikh/jupiter-github`) carries light and dark SVGs generated from the tokens: banner, divider, stat tile, status badges and the
+1280x640 social preview, plus README, profile (`<user>/<user>`) and org profile (`.github/profile/README.md`) templates. Make a project's own with
+`node make.mjs --title "My project" --subtitle "What it does" --out .github/assets` (add `--logo` for the Jupiter logo, `--badge "build|passing|ok"`,
+`--tile "Uptime|99.98%|ok"`, `--png` for the social preview, `--palette` for a hex-chip colour table), then reference them with `<picture>` as the templates do.
+The social preview has no upload API: set it by hand under Settings > Social preview. Regenerate after a token change; nothing is hand-drawn.
+
 ## Agents
 `packages/ui/skill/SKILL.md` is the skill development agents use before building anything. New projects get it linked from
 `node_modules/@belikh/jupiter-ui/skill`, so it updates with the dependency. In this repo it is linked at `.claude/skills/jupiter-design-system`.

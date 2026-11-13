@@ -1,6 +1,6 @@
-# P2 status: Domain (spec section G)
+# Status: Domain (spec section G)
 
-All routes live under `/domain/…`, group "Domain", code in `apps/admin/src/p2/domain/`.
+All routes live under `/domain/…`, group "Domain", code in `apps/admin/src/areas/domain/`.
 Every page is driven by fictional fixtures with a fixed clock (`NOW` = 2026-11-12 17:00) so output is deterministic. There is no backend: writes (role changes, DNS publish, OTA rollout, restore, invoice save) mutate in-memory state and show a toast. Derived numbers (uptime, error budget, DORA, GST totals, queue waits, contrast ratios) are computed by pure functions covered by `domain.logic.test.ts`; page interactions are covered by `domain.pages.test.tsx` (61 tests total, all passing).
 
 | ID | Status | Route | Note |
@@ -24,10 +24,10 @@ Every page is driven by fictional fixtures with a fixed clock (`NOW` = 2026-11-1
 
 ## Verification
 
-- `tsc --noEmit`: no errors in `src/p2/domain`.
-- `vitest run src/p2/domain`: 61 passed.
+- `tsc --noEmit`: no errors in `src/areas/domain`.
+- `vitest run src/areas/domain`: 61 passed.
 - Visual: screenshots of all 16 pages reviewed at 1440px (light, some dark), plus service-health at 390px dark. Fixed after review: Access status switch label said "active" next to an off switch; invoice preview table overflowed its card. Known cosmetic gaps: ESP firmware donut legend has no colour swatches, the shared chart toolbar's Export button clips slightly, and long tables/kanban scroll horizontally. Only one mobile page was captured.
 
 ## Note
 
-During this run the dev server intermittently rendered a blank page (`Cannot access 'P2_ROUTES' before initialization`, `src/routes.ts:39`) from a circular import: `routes.ts` -> `p2/registry.ts` -> every area, while `p2/tools/pages/SystemInfo.tsx`, `p2/tools/pages/Diagnostics.tsx` and `p2/chrome/nav.tsx` import `routes.ts` back. No domain file imports `routes.ts`. It was flaky (some loads fine, some blank) and still present in the dev log at last check, so it belongs to those areas to fix (read `ROUTES` lazily or move the shared types out of `routes.ts`).
+During this run the dev server intermittently rendered a blank page (`Cannot access 'AREA_ROUTES' before initialization`, `src/routes.ts:39`) from a circular import: `routes.ts` -> `areas/registry.ts` -> every area, while `areas/tools/pages/SystemInfo.tsx`, `areas/tools/pages/Diagnostics.tsx` and `areas/chrome/nav.tsx` import `routes.ts` back. No domain file imports `routes.ts`. It was flaky (some loads fine, some blank) and still present in the dev log at last check, so it belongs to those areas to fix (read `ROUTES` lazily or move the shared types out of `routes.ts`).

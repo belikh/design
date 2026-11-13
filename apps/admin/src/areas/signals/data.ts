@@ -1,4 +1,4 @@
-// Deterministic fictional data for the P3 domain charts (seeded; identical on every load).
+// Deterministic fictional data for the signal charts (seeded; identical on every load).
 import { rng } from "../../data/fixtures.ts";
 import type { Candle, BudgetRow, Invoice, BridgeStep } from "./finance.ts";
 import type { Band } from "./energy.ts";

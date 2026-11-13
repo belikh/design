@@ -13,12 +13,12 @@ export function IconPicker({ value, onChange, icons = ICON_NAMES, cols = 8 }: { 
   const shown = icons.filter((n) => n.includes(q.trim().toLowerCase().replace(/\s+/g, "-")));
   return (
     <Stack>
-      <label className="p3-field"><span className="jp-label">Search icons</span><input className="jp-input" type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="e.g. wifi" /></label>
-      <div className="p3-iconpick" role="radiogroup" aria-label="Icon" style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }} onKeyDown={rovingKeys(cols)}>
+      <label className="lab-field"><span className="jp-label">Search icons</span><input className="jp-input" type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="e.g. wifi" /></label>
+      <div className="lab-iconpick" role="radiogroup" aria-label="Icon" style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }} onKeyDown={rovingKeys(cols)}>
         {shown.map((n, i) => <button key={n} type="button" role="radio" aria-checked={v === n} aria-label={n} title={n} data-roving tabIndex={v === n || (!shown.includes(v) && i === 0) ? 0 : -1} className={v === n ? "is-on" : ""} onClick={() => set(n)}><Icon name={n} size={20} /></button>)}
-        {!shown.length && <p className="p3-note p3-span">No icon matches "{q}".</p>}
+        {!shown.length && <p className="lab-note lab-span">No icon matches "{q}".</p>}
       </div>
-      <Row><span className="p3-note" aria-live="polite">{v ? <>Selected: <Icon name={v} size={16} /> <code>{v}</code></> : "Nothing selected"}</span>{v && <><CopyBtn text={v} label="Copy name" /><Btn sm variant="ghost" onClick={() => set("")}>Clear</Btn></>}</Row>
+      <Row><span className="lab-note" aria-live="polite">{v ? <>Selected: <Icon name={v} size={16} /> <code>{v}</code></> : "Nothing selected"}</span>{v && <><CopyBtn text={v} label="Copy name" /><Btn sm variant="ghost" onClick={() => set("")}>Clear</Btn></>}</Row>
     </Stack>
   );
 }
@@ -43,14 +43,14 @@ export function EmojiPicker({ onPick }: { onPick?: (c: string) => void }) {
   const toned = (c: string, g2: string) => (tone && g2 === "People" && ["👍", "👎", "👏", "🙏", "👋", "💪"].includes(c) ? c + tone : c);
   return (
     <Stack>
-      <label className="p3-field"><span className="jp-label">Search emoji</span><input className="jp-input" type="search" value={q} onChange={(ev) => setQ(ev.target.value)} placeholder="e.g. party" /></label>
+      <label className="lab-field"><span className="jp-label">Search emoji</span><input className="jp-input" type="search" value={q} onChange={(ev) => setQ(ev.target.value)} placeholder="e.g. party" /></label>
       <Row><Select value={g} onChange={setG} options={EMOJI_GROUPS} aria-label="Category" disabled={!!q} /><Select value={tone} onChange={setTone} options={TONES.map(([v, l]) => ({ value: v, label: `Skin tone: ${l}` }))} aria-label="Skin tone" /></Row>
-      {recent.length > 0 && <div><span className="p3-note">Recent</span><div className="p3-emoji" role="group" aria-label="Recent emoji">{recent.map((c) => <button key={c} type="button" aria-label={c} onClick={() => pick(c)}>{c}</button>)}</div></div>}
-      <div className="p3-emoji" role="group" aria-label={q ? "Search results" : g} onKeyDown={rovingKeys(8)}>
+      {recent.length > 0 && <div><span className="lab-note">Recent</span><div className="lab-emoji" role="group" aria-label="Recent emoji">{recent.map((c) => <button key={c} type="button" aria-label={c} onClick={() => pick(c)}>{c}</button>)}</div></div>}
+      <div className="lab-emoji" role="group" aria-label={q ? "Search results" : g} onKeyDown={rovingKeys(8)}>
         {list.map((x, i) => <button key={x.n} type="button" data-roving tabIndex={i === 0 ? 0 : -1} aria-label={x.n} title={x.n} onClick={() => pick(toned(x.c, x.g))}>{toned(x.c, x.g)}</button>)}
-        {!list.length && <p className="p3-note p3-span">No emoji found.</p>}
+        {!list.length && <p className="lab-note lab-span">No emoji found.</p>}
       </div>
-      <label className="p3-field"><span className="jp-label">Message</span><input className="jp-input" value={text} onChange={(ev) => setText(ev.target.value)} placeholder="Picked emoji are inserted here" /></label>
+      <label className="lab-field"><span className="jp-label">Message</span><input className="jp-input" value={text} onChange={(ev) => setText(ev.target.value)} placeholder="Picked emoji are inserted here" /></label>
     </Stack>
   );
 }
@@ -72,15 +72,15 @@ export function EntityPicker({ multi = true }: { multi?: boolean }) {
   return (
     <Stack>
       <Row>
-        <label className="p3-field p3-grow"><span className="jp-label">Search devices and entities</span><input className="jp-input" type="search" value={q} onChange={(ev) => setQ(ev.target.value)} placeholder="name, area or entity id" /></label>
-        <label className="p3-field"><span className="jp-label">Domain</span><Select value={domain} onChange={setDomain} options={[{ value: "", label: "All domains" }, ...domains.map((d) => ({ value: d, label: d }))]} aria-label="Domain" /></label>
-        <label className="p3-field"><span className="jp-label">Area</span><Select value={area} onChange={setArea} options={[{ value: "", label: "All areas" }, ...areas]} aria-label="Area" /></label>
+        <label className="lab-field lab-grow"><span className="jp-label">Search devices and entities</span><input className="jp-input" type="search" value={q} onChange={(ev) => setQ(ev.target.value)} placeholder="name, area or entity id" /></label>
+        <label className="lab-field"><span className="jp-label">Domain</span><Select value={domain} onChange={setDomain} options={[{ value: "", label: "All domains" }, ...domains.map((d) => ({ value: d, label: d }))]} aria-label="Domain" /></label>
+        <label className="lab-field"><span className="jp-label">Area</span><Select value={area} onChange={setArea} options={[{ value: "", label: "All areas" }, ...areas]} aria-label="Area" /></label>
       </Row>
-      <ul className="p3-entlist" aria-label="Entities">
-        {shown.map((x) => <li key={x.id}><Checkbox checked={sel.includes(x.id)} onChange={() => toggle(x.id)} label={<span className="p3-ent"><b>{x.name}</b> <code className="p3-note">{x.id}</code><span className="p3-note">{x.area} · {x.state}</span>{x.battery !== undefined && x.battery < 20 && <Badge s="warn">Battery {x.battery}%</Badge>}</span>} /></li>)}
-        {!shown.length && <li className="p3-note">No entity matches.</li>}
+      <ul className="lab-entlist" aria-label="Entities">
+        {shown.map((x) => <li key={x.id}><Checkbox checked={sel.includes(x.id)} onChange={() => toggle(x.id)} label={<span className="lab-ent"><b>{x.name}</b> <code className="lab-note">{x.id}</code><span className="lab-note">{x.area} · {x.state}</span>{x.battery !== undefined && x.battery < 20 && <Badge s="warn">Battery {x.battery}%</Badge>}</span>} /></li>)}
+        {!shown.length && <li className="lab-note">No entity matches.</li>}
       </ul>
-      <Row><span className="p3-note" aria-live="polite">{sel.length} selected</span>{sel.map((id) => <span key={id} className="p3-chip">{id}<button type="button" aria-label={`Remove ${id}`} onClick={() => toggle(id)}>×</button></span>)}</Row>
+      <Row><span className="lab-note" aria-live="polite">{sel.length} selected</span>{sel.map((id) => <span key={id} className="lab-chip">{id}<button type="button" aria-label={`Remove ${id}`} onClick={() => toggle(id)}>×</button></span>)}</Row>
     </Stack>
   );
 }
@@ -94,12 +94,12 @@ export function GpioPicker() {
   const detail = PINS.find((p) => p.n === hover);
   return (
     <Stack>
-      <Row><label className="p3-field"><span className="jp-label">Role to assign</span><input className="jp-input" value={role} onChange={(ev) => setRole(ev.target.value)} /></label><div className="p3-field"><span className="jp-label" id="gpio-need">Needs</span><Segmented label="Pin capability needed" options={NEEDS} value={need} onChange={setNeed} /></div><Checkbox checked={wifi} onChange={setWifi} label="Wi-Fi enabled" /></Row>
-      <div className="p3-gpio" role="group" aria-label="GPIO pins">
+      <Row><label className="lab-field"><span className="jp-label">Role to assign</span><input className="jp-input" value={role} onChange={(ev) => setRole(ev.target.value)} /></label><div className="lab-field"><span className="jp-label" id="gpio-need">Needs</span><Segmented label="Pin capability needed" options={NEEDS} value={need} onChange={setNeed} /></div><Checkbox checked={wifi} onChange={setWifi} label="Wi-Fi enabled" /></Row>
+      <div className="lab-gpio" role="group" aria-label="GPIO pins">
         {PINS.map((p) => { const s = states[p.n]; const mine = used[p.n] === role; return (
-          <button key={p.n} type="button" className={`p3-gpio__pin is-${s.level} ${used[p.n] ? "is-used" : ""} ${mine ? "is-mine" : ""}`} aria-disabled={!s.ok && !mine} aria-pressed={mine} aria-label={`GPIO${p.n}: ${used[p.n] ? `${used[p.n]}. ` : ""}${s.reason}`} onMouseEnter={() => setHover(p.n)} onFocus={() => setHover(p.n)} onClick={() => (s.ok || mine) && (mine ? setUsed((u) => { const x = { ...u }; delete x[p.n]; return x; }) : assign(p.n))}><b>{p.n}</b><span>{used[p.n] ?? ""}</span></button>); })}
+          <button key={p.n} type="button" className={`lab-gpio__pin is-${s.level} ${used[p.n] ? "is-used" : ""} ${mine ? "is-mine" : ""}`} aria-disabled={!s.ok && !mine} aria-pressed={mine} aria-label={`GPIO${p.n}: ${used[p.n] ? `${used[p.n]}. ` : ""}${s.reason}`} onMouseEnter={() => setHover(p.n)} onFocus={() => setHover(p.n)} onClick={() => (s.ok || mine) && (mine ? setUsed((u) => { const x = { ...u }; delete x[p.n]; return x; }) : assign(p.n))}><b>{p.n}</b><span>{used[p.n] ?? ""}</span></button>); })}
       </div>
-      <p className="p3-note" aria-live="polite">{detail ? `GPIO${detail.n}: ${states[detail.n].reason}${detail.flags.length ? ` (${detail.flags.join(", ")})` : ""}` : "Hover or focus a pin for details. Click to assign it to the role above; click again to release."}</p>
+      <p className="lab-note" aria-live="polite">{detail ? `GPIO${detail.n}: ${states[detail.n].reason}${detail.flags.length ? ` (${detail.flags.join(", ")})` : ""}` : "Hover or focus a pin for details. Click to assign it to the role above; click again to release."}</p>
       <Note>Legend: plain = available, amber = usable with a caution, struck = unavailable for this need.</Note>
     </Stack>
   );
@@ -113,17 +113,17 @@ export function SunOffsets() {
   const ro = parseOffset(rise), so = parseOffset(set); const local = (m: number) => m + p.tz * 60;
   const bar = (m: number) => `${(((m % 1440) + 1440) % 1440) / 14.4}%`;
   const Off = ({ label, text, setText, off }: { label: string; text: string; setText: (s: string) => void; off: number | null }) => (
-    <div className="p3-field"><label className="jp-label" htmlFor={`off-${label}`}>{label} offset</label>
-      <Row><Btn sm aria-label={`${label} 15 minutes earlier`} onClick={() => setText(fmtOffset((off ?? 0) - 15))}>−15</Btn><input id={`off-${label}`} className="jp-input p3-narrow" value={text} aria-invalid={off === null} onChange={(ev) => setText(ev.target.value)} /><Btn sm aria-label={`${label} 15 minutes later`} onClick={() => setText(fmtOffset((off ?? 0) + 15))}>+15</Btn></Row>
-      {off === null && <span className="p3-bad" role="alert">Use a form like -30, +1h 15m or 45m.</span>}</div>);
+    <div className="lab-field"><label className="jp-label" htmlFor={`off-${label}`}>{label} offset</label>
+      <Row><Btn sm aria-label={`${label} 15 minutes earlier`} onClick={() => setText(fmtOffset((off ?? 0) - 15))}>−15</Btn><input id={`off-${label}`} className="jp-input lab-narrow" value={text} aria-invalid={off === null} onChange={(ev) => setText(ev.target.value)} /><Btn sm aria-label={`${label} 15 minutes later`} onClick={() => setText(fmtOffset((off ?? 0) + 15))}>+15</Btn></Row>
+      {off === null && <span className="lab-bad" role="alert">Use a form like -30, +1h 15m or 45m.</span>}</div>);
   return (
     <Stack>
-      <Row><label className="p3-field"><span className="jp-label">Place</span><Select value={place} onChange={setPlace} options={Object.keys(PLACES)} aria-label="Place" /></label><label className="p3-field"><span className="jp-label">Date</span><input className="jp-input" type="date" value={date} onChange={(ev) => setDate(ev.target.value)} /></label></Row>
+      <Row><label className="lab-field"><span className="jp-label">Place</span><Select value={place} onChange={setPlace} options={Object.keys(PLACES)} aria-label="Place" /></label><label className="lab-field"><span className="jp-label">Date</span><input className="jp-input" type="date" value={date} onChange={(ev) => setDate(ev.target.value)} /></label></Row>
       <Row><Off label="Sunrise" text={rise} setText={setRise} off={ro} /><Off label="Sunset" text={set} setText={setSet} off={so} /></Row>
       {sun ? <>
-        <svg className="p3-sunbar" viewBox="0 0 100 12" role="img" aria-label={`Daylight from ${hhmm(local(sun.sunrise))} to ${hhmm(local(sun.sunset))}`} preserveAspectRatio="none"><rect x="0" y="3" width="100" height="6" className="p3-sunbar__night" /><rect x={Number.parseFloat(bar(local(sun.sunrise)))} y="3" width={Math.max(0, Number.parseFloat(bar(local(sun.sunset))) - Number.parseFloat(bar(local(sun.sunrise))))} height="6" className="p3-sunbar__day" />{ro !== null && <rect x={Number.parseFloat(bar(local(sun.sunrise + ro)))} y="0" width="0.8" height="12" className="p3-sunbar__mark" />}{so !== null && <rect x={Number.parseFloat(bar(local(sun.sunset + so)))} y="0" width="0.8" height="12" className="p3-sunbar__mark" />}</svg>
-        <dl className="p3-kv" aria-live="polite"><dt>Sunrise</dt><dd>{hhmm(local(sun.sunrise))}</dd><dt>Sunrise trigger</dt><dd>{ro === null ? "invalid offset" : `${hhmm(local(sun.sunrise + ro))} (${fmtOffset(ro)})`}</dd><dt>Sunset</dt><dd>{hhmm(local(sun.sunset))}</dd><dt>Sunset trigger</dt><dd>{so === null ? "invalid offset" : `${hhmm(local(sun.sunset + so))} (${fmtOffset(so)})`}</dd></dl></>
-        : <p className="p3-warn" role="status">No sunrise or sunset on this date at this latitude (polar day or night).</p>}
+        <svg className="lab-sunbar" viewBox="0 0 100 12" role="img" aria-label={`Daylight from ${hhmm(local(sun.sunrise))} to ${hhmm(local(sun.sunset))}`} preserveAspectRatio="none"><rect x="0" y="3" width="100" height="6" className="lab-sunbar__night" /><rect x={Number.parseFloat(bar(local(sun.sunrise)))} y="3" width={Math.max(0, Number.parseFloat(bar(local(sun.sunset))) - Number.parseFloat(bar(local(sun.sunrise))))} height="6" className="lab-sunbar__day" />{ro !== null && <rect x={Number.parseFloat(bar(local(sun.sunrise + ro)))} y="0" width="0.8" height="12" className="lab-sunbar__mark" />}{so !== null && <rect x={Number.parseFloat(bar(local(sun.sunset + so)))} y="0" width="0.8" height="12" className="lab-sunbar__mark" />}</svg>
+        <dl className="lab-kv" aria-live="polite"><dt>Sunrise</dt><dd>{hhmm(local(sun.sunrise))}</dd><dt>Sunrise trigger</dt><dd>{ro === null ? "invalid offset" : `${hhmm(local(sun.sunrise + ro))} (${fmtOffset(ro)})`}</dd><dt>Sunset</dt><dd>{hhmm(local(sun.sunset))}</dd><dt>Sunset trigger</dt><dd>{so === null ? "invalid offset" : `${hhmm(local(sun.sunset + so))} (${fmtOffset(so)})`}</dd></dl></>
+        : <p className="lab-warn" role="status">No sunrise or sunset on this date at this latitude (polar day or night).</p>}
       <Note>Times are standard time for the place (no daylight-saving adjustment) from an approximate solar model, good to a couple of minutes.</Note>
     </Stack>
   );

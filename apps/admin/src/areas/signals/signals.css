@@ -1,39 +1,39 @@
-/* P3 domain charts (p3f). Tokens only; prefix p3- avoids clashes with other areas. */
-.p3-fig svg text, .p3-ax { font-family: var(--jp-font-mono); }
-.p3-ax { fill: var(--jp-text-muted); font-size: var(--jp-fs-xs); }
-.p3-ax--strong { fill: var(--jp-text); }
-.p3-gl { stroke: var(--jp-border); stroke-width: 1; stroke-dasharray: 2 3; fill: none; }
-.p3-line { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
-.p3-ink { stroke: var(--jp-text); fill: none; stroke-width: 1; }
-.p3-hi { stroke: var(--jp-text); stroke-width: 2; }
-.p3-cross { stroke: var(--jp-text-muted); stroke-width: 1; }
-.p3-soft { fill: var(--jp-surface); }
-.p3-inspect { display: flex; align-items: center; gap: var(--jp-space-2); margin-block-start: var(--jp-space-2); font-size: var(--jp-fs-xs); color: var(--jp-text-muted); }
-.p3-inspect input[type="range"] { flex: 1; min-inline-size: 0; accent-color: var(--jp-accent); }
-.p3-readout { min-block-size: 1.4em; margin: var(--jp-space-1) 0 0; font-family: var(--jp-font-mono); font-size: var(--jp-fs-sm); color: var(--jp-text-muted); }
-.p3-grid { display: grid; gap: var(--jp-space-4); grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); margin-block-start: var(--jp-space-4); }
-.p3-grid--1 { grid-template-columns: 1fr; }
-.p3-id { font-family: var(--jp-font-mono); font-size: var(--jp-fs-xs); color: var(--jp-text-muted); margin-inline-start: var(--jp-space-2); }
-.p3-note { color: var(--jp-text-muted); font-size: var(--jp-fs-xs); margin-block-start: var(--jp-space-2); }
-.p3-controls { display: flex; gap: var(--jp-space-3); flex-wrap: wrap; align-items: center; margin-block-end: var(--jp-space-3); }
-.p3-stats { display: flex; gap: var(--jp-space-4); flex-wrap: wrap; margin-block-start: var(--jp-space-2); font-size: var(--jp-fs-sm); }
-.p3-stats b { font-family: var(--jp-font-mono); }
-.p3-tags { display: flex; flex-wrap: wrap; gap: var(--jp-space-2) var(--jp-space-3); align-items: baseline; line-height: 1.1; padding: var(--jp-space-2); }
-.p3-tag { background: none; border: 0; padding: 0 var(--jp-space-1); color: var(--jp-text); cursor: pointer; border-radius: var(--jp-radius-sm); }
-.p3-tag:hover, .p3-tag:focus-visible, .p3-tag[aria-pressed="true"] { outline: 2px solid var(--jp-accent); outline-offset: 1px; }
-.p3-word { cursor: default; font-weight: 700; }
-.p3-word:hover { text-decoration: underline; }
-.p3-pre { margin: 0; padding: var(--jp-space-3); background: var(--jp-surface); border: 1px solid var(--jp-border); border-radius: var(--jp-radius-md); font-family: var(--jp-font-mono); font-size: var(--jp-fs-sm); line-height: 1.15; overflow-x: auto; white-space: pre; }
-.p3-stamp { display: inline-flex; gap: var(--jp-space-2); align-items: center; font-family: var(--jp-font-mono); font-size: var(--jp-fs-xs); color: var(--jp-text-muted); }
-.p3-query { margin: 0; padding: var(--jp-space-2) var(--jp-space-3); background: var(--jp-surface); border: 1px solid var(--jp-border); border-radius: var(--jp-radius-md); font-family: var(--jp-font-mono); font-size: var(--jp-fs-xs); white-space: pre-wrap; word-break: break-word; }
-.p3-disk { display: flex; flex-direction: column; gap: 2px; padding: var(--jp-space-2); border: 1px solid var(--jp-border); border-radius: var(--jp-radius-md); background: var(--jp-surface-raised); font-family: var(--jp-font-mono); font-size: var(--jp-fs-xs); }
-.p3-disk.is-warn { border-color: var(--jp-warn); }
-.p3-disks { display: grid; gap: var(--jp-space-2); grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr)); }
-.p3-brush { fill: color-mix(in oklab, var(--jp-accent) 18%, transparent); stroke: var(--jp-accent); stroke-dasharray: 4 3; }
-.p3-sel { stroke: var(--jp-text); stroke-width: 2; }
-.p3-dim { opacity: .25; }
-.p3-frame { outline: none; border-radius: var(--jp-radius-md); }
-.p3-frame:focus-visible { outline: 2px solid var(--jp-accent); outline-offset: 2px; }
-.p3-ix { margin-block-start: var(--jp-space-2); }
-.p3-ixbtns { display: inline-flex; gap: var(--jp-space-1); }
-.p3-range { font-family: var(--jp-font-mono); font-size: var(--jp-fs-xs); color: var(--jp-text-muted); }
+/* Signal charts. Tokens only; prefix lab- avoids clashes with other areas. */
+.lab-fig svg text, .lab-ax { font-family: var(--jp-font-mono); }
+.lab-ax { fill: var(--jp-text-muted); font-size: var(--jp-fs-xs); }
+.lab-ax--strong { fill: var(--jp-text); }
+.lab-gl { stroke: var(--jp-border); stroke-width: 1; stroke-dasharray: 2 3; fill: none; }
+.lab-line { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.lab-ink { stroke: var(--jp-text); fill: none; stroke-width: 1; }
+.lab-hi { stroke: var(--jp-text); stroke-width: 2; }
+.lab-cross { stroke: var(--jp-text-muted); stroke-width: 1; }
+.lab-soft { fill: var(--jp-surface); }
+.lab-inspect { display: flex; align-items: center; gap: var(--jp-space-2); margin-block-start: var(--jp-space-2); font-size: var(--jp-fs-xs); color: var(--jp-text-muted); }
+.lab-inspect input[type="range"] { flex: 1; min-inline-size: 0; accent-color: var(--jp-accent); }
+.lab-readout { min-block-size: 1.4em; margin: var(--jp-space-1) 0 0; font-family: var(--jp-font-mono); font-size: var(--jp-fs-sm); color: var(--jp-text-muted); }
+.lab-grid { display: grid; gap: var(--jp-space-4); grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); margin-block-start: var(--jp-space-4); }
+.lab-grid--1 { grid-template-columns: 1fr; }
+.lab-id { font-family: var(--jp-font-mono); font-size: var(--jp-fs-xs); color: var(--jp-text-muted); margin-inline-start: var(--jp-space-2); }
+.lab-note { color: var(--jp-text-muted); font-size: var(--jp-fs-xs); margin-block-start: var(--jp-space-2); }
+.lab-controls { display: flex; gap: var(--jp-space-3); flex-wrap: wrap; align-items: center; margin-block-end: var(--jp-space-3); }
+.lab-stats { display: flex; gap: var(--jp-space-4); flex-wrap: wrap; margin-block-start: var(--jp-space-2); font-size: var(--jp-fs-sm); }
+.lab-stats b { font-family: var(--jp-font-mono); }
+.lab-tags { display: flex; flex-wrap: wrap; gap: var(--jp-space-2) var(--jp-space-3); align-items: baseline; line-height: 1.1; padding: var(--jp-space-2); }
+.lab-tag { background: none; border: 0; padding: 0 var(--jp-space-1); color: var(--jp-text); cursor: pointer; border-radius: var(--jp-radius-sm); }
+.lab-tag:hover, .lab-tag:focus-visible, .lab-tag[aria-pressed="true"] { outline: 2px solid var(--jp-accent); outline-offset: 1px; }
+.lab-word { cursor: default; font-weight: 700; }
+.lab-word:hover { text-decoration: underline; }
+.lab-pre { margin: 0; padding: var(--jp-space-3); background: var(--jp-surface); border: 1px solid var(--jp-border); border-radius: var(--jp-radius-md); font-family: var(--jp-font-mono); font-size: var(--jp-fs-sm); line-height: 1.15; overflow-x: auto; white-space: pre; }
+.lab-stamp { display: inline-flex; gap: var(--jp-space-2); align-items: center; font-family: var(--jp-font-mono); font-size: var(--jp-fs-xs); color: var(--jp-text-muted); }
+.lab-query { margin: 0; padding: var(--jp-space-2) var(--jp-space-3); background: var(--jp-surface); border: 1px solid var(--jp-border); border-radius: var(--jp-radius-md); font-family: var(--jp-font-mono); font-size: var(--jp-fs-xs); white-space: pre-wrap; word-break: break-word; }
+.lab-disk { display: flex; flex-direction: column; gap: 2px; padding: var(--jp-space-2); border: 1px solid var(--jp-border); border-radius: var(--jp-radius-md); background: var(--jp-surface-raised); font-family: var(--jp-font-mono); font-size: var(--jp-fs-xs); }
+.lab-disk.is-warn { border-color: var(--jp-warn); }
+.lab-disks { display: grid; gap: var(--jp-space-2); grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr)); }
+.lab-brush { fill: color-mix(in oklab, var(--jp-accent) 18%, transparent); stroke: var(--jp-accent); stroke-dasharray: 4 3; }
+.lab-sel { stroke: var(--jp-text); stroke-width: 2; }
+.lab-dim { opacity: .25; }
+.lab-frame { outline: none; border-radius: var(--jp-radius-md); }
+.lab-frame:focus-visible { outline: 2px solid var(--jp-accent); outline-offset: 2px; }
+.lab-ix { margin-block-start: var(--jp-space-2); }
+.lab-ixbtns { display: inline-flex; gap: var(--jp-space-1); }
+.lab-range { font-family: var(--jp-font-mono); font-size: var(--jp-fs-xs); color: var(--jp-text-muted); }

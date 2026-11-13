@@ -5,7 +5,7 @@ import { useWidth } from "@belikh/jupiter-ui/Charts.tsx";
 import { usePrefs } from "@belikh/jupiter-ui/store.tsx";
 import { NODE_H, NODE_W, SEED, TYPE_LABEL, addEdge, simulate, validate, type Graph, type NodeType, type WfNode } from "./lib/workflow.ts";
 import { clamp } from "./common.ts";
-import "./p3b.css";
+import "./devtools.css";
 
 const H = 400;
 const TYPES = Object.keys(TYPE_LABEL) as NodeType[];
@@ -49,26 +49,26 @@ export function WorkflowBuilder() {
       <PageHeader title="Workflow builder" crumbs={["Builders", "Workflow builder"]} desc="Compose an automation from triggers, actions, conditions and delays. Drag steps, or select one and use the arrow keys; connect by dragging from the round port or with the inspector."
         status={errors ? <Badge s="danger">{errors} error{errors === 1 ? "" : "s"}</Badge> : issues.length ? <Badge s="warn">{issues.length} warning{issues.length === 1 ? "" : "s"}</Badge> : <Badge s="ok">valid</Badge>}
         actions={<><Btn icon="bolt" disabled={errors > 0} onClick={() => { const p = simulate(g); setRun(p); toast({ kind: "info", title: `Dry run visited ${p.length} step${p.length === 1 ? "" : "s"}` }); }}>Dry run</Btn><Btn variant="ghost" onClick={() => { setG(SEED); setSel(null); setRun([]); }}>Reset</Btn></>} />
-      <div className="p3-split">
+      <div className="lab-split">
         <Panel title="Canvas" actions={<div className="adm-row"><Select aria-label="Step type to add" value={addType} onChange={(v) => setAddType(v as NodeType)} options={TYPES.map((t) => ({ value: t, label: TYPE_LABEL[t] }))} /><Btn sm icon="plus" onClick={add}>Add step</Btn></div>}>
-          <div ref={wrap} className="p3-canvas" style={{ overflowX: "auto" }}>
+          <div ref={wrap} className="lab-canvas" style={{ overflowX: "auto" }}>
             <svg ref={svg} width={world} height={H} viewBox={`0 0 ${world} ${H}`} role="group" aria-label="Workflow canvas"
               onPointerMove={(e) => { const p = pt(e); if (drag) move(drag.id, p.x - drag.dx, p.y - drag.dy); else if (link) setLink({ ...link, x: p.x, y: p.y }); }}
               onPointerUp={(e) => { if (link) { const p = pt(e); const hit = g.nodes.find((n) => n.id !== link.from && p.x >= n.x && p.x <= n.x + NODE_W && p.y >= n.y && p.y <= n.y + NODE_H); if (hit) connect(link.from, hit.id); setLink(null); } setDrag(null); }}>
-              <defs><marker id="wf-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" className="p3-arrowhead" /></marker></defs>
+              <defs><marker id="wf-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" className="lab-arrowhead" /></marker></defs>
               {g.edges.map((e) => { const a = byId(e.from), b = byId(e.to); const on = runSet.has(e.from) && runSet.has(e.to);
-                return <g key={e.id}><path d={edgePath(a, b)} className={`p3-edge ${on ? "is-run" : ""}`} markerEnd="url(#wf-arrow)" />{e.branch && <text className="p3-edge-label" x={a.x + NODE_W + 12} y={a.y + NODE_H / 2 + (e.branch === "yes" ? -6 : 14)}>{e.branch}</text>}</g>; })}
-              {link && (() => { const a = byId(link.from); return <path d={`M${a.x + NODE_W},${a.y + NODE_H / 2} L${link.x},${link.y}`} className="p3-edge is-temp" />; })()}
+                return <g key={e.id}><path d={edgePath(a, b)} className={`lab-edge ${on ? "is-run" : ""}`} markerEnd="url(#wf-arrow)" />{e.branch && <text className="lab-edge-label" x={a.x + NODE_W + 12} y={a.y + NODE_H / 2 + (e.branch === "yes" ? -6 : 14)}>{e.branch}</text>}</g>; })}
+              {link && (() => { const a = byId(link.from); return <path d={`M${a.x + NODE_W},${a.y + NODE_H / 2} L${link.x},${link.y}`} className="lab-edge is-temp" />; })()}
               {g.nodes.map((n) => (
-                <g key={n.id} className={`p3-node p3-node--${n.type} ${sel === n.id ? "is-sel" : ""} ${runSet.has(n.id) ? "is-run" : ""}`} transform={`translate(${n.x},${n.y})`} role="button" tabIndex={0}
+                <g key={n.id} className={`lab-node lab-node--${n.type} ${sel === n.id ? "is-sel" : ""} ${runSet.has(n.id) ? "is-run" : ""}`} transform={`translate(${n.x},${n.y})`} role="button" tabIndex={0}
                   aria-label={`${TYPE_LABEL[n.type]}: ${n.label}. Arrow keys move, Delete removes.`} aria-pressed={sel === n.id} onKeyDown={(e) => key(e, n)} onFocus={() => setSel(n.id)}
                   onPointerDown={(e) => { const p = pt(e); setSel(n.id); setDrag({ id: n.id, dx: p.x - n.x, dy: p.y - n.y }); }}>
-                  <rect width={NODE_W} height={NODE_H} rx="10" /><text x="12" y="19" className="p3-node-kind">{TYPE_LABEL[n.type]}</text><text x="12" y="36" className="p3-node-label">{n.label.length > 19 ? `${n.label.slice(0, 18)}…` : n.label}</text>
-                  {n.type !== "end" && <circle className="p3-port" cx={NODE_W} cy={NODE_H / 2} r="7" onPointerDown={(e) => { e.stopPropagation(); const p = pt(e); setSel(n.id); setLink({ from: n.id, x: p.x, y: p.y }); }} />}
+                  <rect width={NODE_W} height={NODE_H} rx="10" /><text x="12" y="19" className="lab-node-kind">{TYPE_LABEL[n.type]}</text><text x="12" y="36" className="lab-node-label">{n.label.length > 19 ? `${n.label.slice(0, 18)}…` : n.label}</text>
+                  {n.type !== "end" && <circle className="lab-port" cx={NODE_W} cy={NODE_H / 2} r="7" onPointerDown={(e) => { e.stopPropagation(); const p = pt(e); setSel(n.id); setLink({ from: n.id, x: p.x, y: p.y }); }} />}
                 </g>))}
             </svg>
           </div>
-          {run.length > 0 && <p className="p3-note" role="status">Dry run: {run.map((id) => byId(id).label).join(" → ")}</p>}
+          {run.length > 0 && <p className="lab-note" role="status">Dry run: {run.map((id) => byId(id).label).join(" → ")}</p>}
         </Panel>
         <div className="adm-stack">
           <Panel title="Inspector">
@@ -88,7 +88,7 @@ export function WorkflowBuilder() {
         </div>
       </div>
       <Panel title="Connections" flush>
-        <table className="jp-table"><caption className="p3-sr">Connections between steps</caption><thead><tr><th scope="col">From</th><th scope="col">Branch</th><th scope="col">To</th><th scope="col"><span className="p3-sr">Actions</span></th></tr></thead><tbody>
+        <table className="jp-table"><caption className="lab-sr">Connections between steps</caption><thead><tr><th scope="col">From</th><th scope="col">Branch</th><th scope="col">To</th><th scope="col"><span className="lab-sr">Actions</span></th></tr></thead><tbody>
           {g.edges.map((e) => <tr key={e.id}><td>{byId(e.from).label}</td><td>{e.branch ?? "always"}</td><td>{byId(e.to).label}</td><td style={{ textAlign: "end" }}><button className="adm-x" aria-label={`Remove connection from ${byId(e.from).label} to ${byId(e.to).label}`} onClick={() => removeEdge(e.id)}>×</button></td></tr>)}
           {g.edges.length === 0 && <tr><td colSpan={4} className="jp-muted">No connections yet.</td></tr>}
         </tbody></table>

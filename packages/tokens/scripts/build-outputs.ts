@@ -24,3 +24,11 @@ if (existsSync(rustSrc)) {
   writeFileSync(join(rustSrc, "generated.rs"), rust.build(DEFAULT_TOKENS));
   console.log("packages/rust/src/generated.rs");
 }
+
+// The GitHub kit renders its SVGs from a committed copy of the theme slice; `npm run build -w @belikh/jupiter-github` turns it into assets/.
+const githubSrc = join(dist, "..", "..", "github", "src");
+if (existsSync(githubSrc)) {
+  const gh = OUTPUTS.find((o) => o.id === "github")!;
+  writeFileSync(join(githubSrc, "theme.json"), gh.build(DEFAULT_TOKENS));
+  console.log("packages/github/src/theme.json");
+}

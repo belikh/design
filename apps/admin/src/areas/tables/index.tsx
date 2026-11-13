@@ -1,4 +1,4 @@
-import type { P2Route } from "../registry.ts";
+import type { AreaRoute } from "../registry.ts";
 import { Pivot } from "./Pivot.tsx";
 import { Reorder } from "./Reorder.tsx";
 import { Live } from "./Live.tsx";
@@ -10,7 +10,7 @@ const EditLab = lazy(() => import("./EditLab.tsx").then((m) => ({ default: m.Edi
 const BulkPaste = lazy(() => import("./BulkPaste.tsx").then((m) => ({ default: m.BulkPaste })));
 const Views = lazy(() => import("./Views.tsx").then((m) => ({ default: m.Views })));
 
-export const routes: P2Route[] = [
+export const routes: AreaRoute[] = [
   { path: "/tables/grid", label: "Grid lab", icon: "database", group: "Grids", keywords: "table grouping aggregate pin range find export conditional format", element: <GridLab /> },
   { path: "/tables/edit", label: "Edit and bulk edit", icon: "edit", group: "Grids", keywords: "inline edit in place bulk edit fill down undo validation commit blur", element: <EditLab /> },
   { path: "/tables/pivot", label: "Pivot table", icon: "chart", group: "Grids", keywords: "cross-tab crosstab heat pivot", element: <Pivot /> },

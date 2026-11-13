@@ -1,4 +1,4 @@
-/* P2 "views" pages. Tokens only. */
+/* "Views" pages. Tokens only. */
 .vw-score { display: grid; grid-template-columns: 1.4fr 90px 120px 1fr 90px; align-items: center; gap: var(--jp-space-3); padding: var(--jp-space-3) var(--jp-space-4); border-top: 1px solid var(--jp-border); } .vw-score:first-child { border-top: 0; } @media (max-width: 800px) { .vw-score { grid-template-columns: 1fr 1fr; } }
 .vw-narr { max-width: 70ch; font-size: var(--jp-fs-md); line-height: 1.65; } .vw-narr b { background: color-mix(in oklab, var(--jp-accent) 14%, transparent); padding: 0 3px; border-radius: 3px; } .vw-big { font: 800 58px/1 var(--jp-font-sans); letter-spacing: -.02em; } .vw-big small { font: 400 var(--jp-fs-md) var(--jp-font-sans); color: var(--jp-text-muted); }
 .vw-budget { height: 14px; border-radius: 7px; background: var(--jp-surface); border: 1px solid var(--jp-border); overflow: hidden; display: flex; } .vw-budget i { display: block; height: 100%; } .vw-budget .is-ok { background: var(--jp-ok); } .vw-budget .is-warn { background: var(--jp-warn); } .vw-budget .is-danger { background: var(--jp-danger); }

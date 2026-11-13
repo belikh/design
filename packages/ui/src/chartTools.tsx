@@ -51,7 +51,7 @@ export function ChartTools({ plot, name, labels, series, table, onTable }: { plo
   );
 }
 
-/** Generic tabular data behind a chart: header + rows. Used by every P2 chart for export and the accessible table view. */
+/** Generic tabular data behind a chart: header + rows. Used by every chart for export and the accessible table view. */
 export type ChartTableData = { head: string[]; rows: (string | number)[][] };
 export function tableToCsv(t: ChartTableData) {
   const esc = (v: string | number) => `"${String(v).replace(/"/g, '""')}"`;

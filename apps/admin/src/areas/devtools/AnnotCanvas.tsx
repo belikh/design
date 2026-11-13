@@ -24,7 +24,7 @@ const nudge = (e: React.KeyboardEvent): Pt | null => {
 /** The "photo": a line drawing of a rack front, so the page needs no image asset. */
 function Rack() {
   return (
-    <g className="p3-rack" aria-hidden>
+    <g className="lab-rack" aria-hidden>
       <rect x="40" y="20" width="300" height="360" rx="6" />
       {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => <g key={i}><rect x="56" y={36 + i * 42} width="268" height="34" rx="3" />{Array.from({ length: i === 0 ? 24 : 6 }, (_, k) => <rect key={k} x={66 + k * (i === 0 ? 10 : 22)} y={46 + i * 42} width="6" height="8" />)}<circle cx="308" cy={53 + i * 42} r="4" /></g>)}
       <path d="M340,150 C420,150 420,230 500,230 S560,300 600,300" /><path d="M340,170 C400,170 440,260 520,260 S580,330 620,330" /><rect x="470" y="40" width="130" height="80" rx="6" /><path d="M485,60 H585 M485,80 H560 M485,100 H575" />
@@ -140,39 +140,39 @@ export function AnnotCanvas(p: Props) {
   const fs = { fontSize: `calc(var(--jp-fs-xs) * ${k})` };
   const drawing = tool !== "select" && tool !== "pan";
   return (
-    <div ref={wrap} className="p3-imgwrap" role="group" tabIndex={0} aria-label={`Image canvas, ${doc.image.name}, ${doc.image.w} by ${doc.image.h}. Arrow keys pan, plus and minus zoom, 0 fits.`}
+    <div ref={wrap} className="lab-imgwrap" role="group" tabIndex={0} aria-label={`Image canvas, ${doc.image.name}, ${doc.image.w} by ${doc.image.h}. Arrow keys pan, plus and minus zoom, 0 fits.`}
       onKeyDown={wrapKey} onKeyUp={(e) => { if (e.key === " ") space.current = false; }} onDoubleClick={() => { const q = polyRef.current; if (q && (tool === "polygon" || tool === "polyline")) finishPoly(q.pts, tool); }}>
-      <svg ref={svg} className={`p3-img ${drawing ? "is-draw" : ""} ${tool === "pan" ? "is-pan" : ""}`} style={{ aspectRatio: `${W} / ${H}` }} viewBox={`${vb.x} ${vb.y} ${vb.w} ${vb.h}`} data-testid="annot-svg"
+      <svg ref={svg} className={`lab-img ${drawing ? "is-draw" : ""} ${tool === "pan" ? "is-pan" : ""}`} style={{ aspectRatio: `${W} / ${H}` }} viewBox={`${vb.x} ${vb.y} ${vb.w} ${vb.h}`} data-testid="annot-svg"
         onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={cancel}>
-        <rect width={W} height={H} className="p3-img-bg" />
+        <rect width={W} height={H} className="lab-img-bg" />
         {doc.image.url ? <image href={doc.image.url} width={W} height={H} preserveAspectRatio="none" /> : <Rack />}
         {doc.anns.map((a) => {
           const col = C(classIndex(doc.classes, a.cls)); const bb = bbox(a); const on = sel === a.id;
           return (
-            <g key={a.id} data-annid={a.id} className={`p3-ann p3-ann--${a.kind} ${on ? "is-sel" : ""}`} style={{ color: col }} tabIndex={0} role="button" aria-pressed={on} aria-label={describe(a)}
+            <g key={a.id} data-annid={a.id} className={`lab-ann lab-ann--${a.kind} ${on ? "is-sel" : ""}`} style={{ color: col }} tabIndex={0} role="button" aria-pressed={on} aria-label={describe(a)}
               onFocus={() => p.onSelect(a.id)} onKeyDown={(e) => annKey(e, a)}
               onPointerDown={(e) => { if (tool !== "select" || e.button !== 0) return; e.stopPropagation(); capture(e); p.onSelect(a.id); drag.current = { t: "move", orig: a, start: at(e) }; }}
               onDoubleClick={(e) => { if (tool !== "select") return; e.stopPropagation(); const r = insertOnNearestEdge(a, at(e), bounds); if (r) { p.onChange(r.ann, "Add vertex"); p.onEnd(); } }}>
               {a.kind === "box" && <rect x={a.pts[0][0]} y={a.pts[0][1]} width={bb.w} height={bb.h} rx="3" {...strokeW} />}
-              {a.kind === "point" && <><circle cx={a.pts[0][0]} cy={a.pts[0][1]} r={9 * k} /><circle cx={a.pts[0][0]} cy={a.pts[0][1]} r={2 * k} className="p3-dot" /></>}
+              {a.kind === "point" && <><circle cx={a.pts[0][0]} cy={a.pts[0][1]} r={9 * k} /><circle cx={a.pts[0][0]} cy={a.pts[0][1]} r={2 * k} className="lab-dot" /></>}
               {a.kind === "polygon" && <polygon points={pts(a)} {...strokeW} />}
-              {a.kind === "polyline" && <><polyline points={pts(a)} fill="none" {...strokeW} /><polyline points={pts(a)} className="p3-hit" fill="none" {...strokeW} /></>}
+              {a.kind === "polyline" && <><polyline points={pts(a)} fill="none" {...strokeW} /><polyline points={pts(a)} className="lab-hit" fill="none" {...strokeW} /></>}
               <text x={bb.x + (a.kind === "point" ? 12 * k : 4 * k)} y={bb.y + (a.kind === "point" ? 4 * k : -5 * k)} style={fs}>{a.cls}</text>
             </g>
           );
         })}
-        {box && <rect className="p3-draft" x={Math.min(box.a[0], box.b[0])} y={Math.min(box.a[1], box.b[1])} width={Math.abs(box.b[0] - box.a[0])} height={Math.abs(box.b[1] - box.a[1])} {...strokeW} />}
-        {poly && <g className="p3-draft-g" aria-hidden><polyline points={[...poly.pts, poly.cur].map((q) => q.join(",")).join(" ")} className="p3-draft" fill="none" {...strokeW} />{poly.pts.map((q, i) => <circle key={i} cx={q[0]} cy={q[1]} r={(i === 0 && tool === "polygon" ? 6 : 3.5) * k} className="p3-vtx-dot" />)}</g>}
-        {selAnn && tool === "select" && <g className="p3-vtxs" style={{ color: C(classIndex(doc.classes, selAnn.cls)) }}>
+        {box && <rect className="lab-draft" x={Math.min(box.a[0], box.b[0])} y={Math.min(box.a[1], box.b[1])} width={Math.abs(box.b[0] - box.a[0])} height={Math.abs(box.b[1] - box.a[1])} {...strokeW} />}
+        {poly && <g className="lab-draft-g" aria-hidden><polyline points={[...poly.pts, poly.cur].map((q) => q.join(",")).join(" ")} className="lab-draft" fill="none" {...strokeW} />{poly.pts.map((q, i) => <circle key={i} cx={q[0]} cy={q[1]} r={(i === 0 && tool === "polygon" ? 6 : 3.5) * k} className="lab-vtx-dot" />)}</g>}
+        {selAnn && tool === "select" && <g className="lab-vtxs" style={{ color: C(classIndex(doc.classes, selAnn.cls)) }}>
           {selAnn.kind !== "point" && selAnn.pts.map((q, i) => (
-            <g key={i} className="p3-vtx" data-ann={selAnn.id} data-v={i} tabIndex={-1} role="button" aria-label={`Vertex ${i + 1} of ${selAnn.pts.length} at ${Math.round(q[0])}, ${Math.round(q[1])}. Arrows move, Insert adds, Delete removes, Escape returns.`}
+            <g key={i} className="lab-vtx" data-ann={selAnn.id} data-v={i} tabIndex={-1} role="button" aria-label={`Vertex ${i + 1} of ${selAnn.pts.length} at ${Math.round(q[0])}, ${Math.round(q[1])}. Arrows move, Insert adds, Delete removes, Escape returns.`}
               onKeyDown={(e) => vtxKey(e, selAnn, i)}
               onPointerDown={(e) => { if (e.button !== 0) return; e.stopPropagation(); capture(e); (e.currentTarget as SVGElement).focus(); drag.current = { t: "vertex", orig: selAnn, i }; }}>
-              <circle cx={q[0]} cy={q[1]} r={12 * k} className="p3-vtx-hit" /><circle cx={q[0]} cy={q[1]} r={5 * k} className="p3-vtx-dot" />
+              <circle cx={q[0]} cy={q[1]} r={12 * k} className="lab-vtx-hit" /><circle cx={q[0]} cy={q[1]} r={5 * k} className="lab-vtx-dot" />
             </g>))}
         </g>}
       </svg>
-      <span className="p3-sr" aria-live="polite">{poly ? `${poly.pts.length} points placed. Enter finishes, Escape cancels.` : ""}</span>
+      <span className="lab-sr" aria-live="polite">{poly ? `${poly.pts.length} points placed. Enter finishes, Escape cancels.` : ""}</span>
     </div>
   );
 }

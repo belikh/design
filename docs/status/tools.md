@@ -1,4 +1,4 @@
-# P2 status: Tools (A4)
+# Status: Tools (A4)
 
 | ID | Entry | Status | Route | Note |
 |---|---|---|---|---|
@@ -23,10 +23,10 @@
 | A123 | System info and about | Done | `/tools/system-info` | Env, storage, licences, support bundle; licence list is static. |
 | A125 | Print / PDF preview | Done | `/tools/print-preview` | Auto-pagination with keep-with-next; PDF via browser print, no server PDF generation. |
 
-## Not in P2 scope
+## Not in scope
 - A096, A107, A124: pre-existing P1 pages (untouched).
-- A104, A110, A112, A114–A119: P3, Skipped.
+- A104, A110, A112, A114–A119: specialised tier, Skipped.
 
 ## Verification
-- `src/p2/tools/lib.test.ts` + `pages.test.tsx`: 72 tests passing; every route renders.
+- `src/areas/tools/lib.test.ts` + `pages.test.tsx`: 72 tests passing; every route renders.
 - Screenshots reviewed for a sample of pages (light/dark, desktop/390px); not every page at every size.

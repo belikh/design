@@ -48,7 +48,7 @@ one tab elected leader (Web Locks) to run the clock, so open `/wh/kiosk` and `/w
 `npm test -w @belikh/jupiter-admin` (Vitest + Testing Library, 67 tests). `npm run check:palette` gates the chart colours for
 colour-vision safety. Append `?step=4` to `/wh/kiosk` to jump to a kiosk step.
 
-## Not in scope here (see the spec's P2/P3 tiers)
+## Not in scope here (see the spec's Common and Specialised tiers)
 
 Server integration, auth, real data fetching, charts' brush/zoom and export, RTL, print styles, and the long tail of
 specialised views. Sample data is fictional.

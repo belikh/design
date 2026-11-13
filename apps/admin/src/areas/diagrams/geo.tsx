@@ -19,7 +19,7 @@ export function HexTileMap({ rows, names, population, internet, title = "Hex til
   const groups = [...new Set(tiles.map((x) => x.ch))];
   return (
     <>
-      <div className="p3e-controls"><Segmented label="Colour by" value={metric} onChange={setMetric} options={[{ value: "net", label: "Internet access" }, { value: "pop", label: "Population" }]} /></div>
+      <div className="dg-controls"><Segmented label="Colour by" value={metric} onChange={setMetric} options={[{ value: "net", label: "Internet access" }, { value: "pop", label: "Population" }]} /></div>
       <Chart title={title} n={tiles.length} state={state} height={300} table={{ head: ["State", "Hex tiles", "Population (M)", "Households online (%)"], rows: groups.map((g) => [names[g], tiles.filter((x) => x.ch === g).length, population[names[g]], internet[names[g]]]) }}>
         {(w) => {
           const size = Math.max(14, Math.min(34, (w - 20) / 7 / Math.sqrt(3))); const px = tiles.map((x) => ({ ...x, ...hexToPixel(x, size) })); const minX = Math.min(...px.map((x) => x.x)) - size, minY = Math.min(...px.map((x) => x.y)) - size; const W = Math.max(...px.map((x) => x.x)) - minX + size, H = Math.max(...px.map((x) => x.y)) - minY + size;
@@ -30,12 +30,12 @@ export function HexTileMap({ rows, names, population, internet, title = "Hex til
                   {groups.map((g) => { const nm = names[g]; const mine = px.filter((x) => x.ch === g); const lead = mine[0]; return (
                     <g key={g} {...hit(nm, `${nm}: ${vals[nm]} ${unit}; ${mine.length} tile${mine.length > 1 ? "s" : ""}`)}>
                       <g>{mine.map((x) => <path key={`${x.q},${x.r}`} d={"M" + hexCorners(x, size - 1.5).map((c) => c.map((v) => v.toFixed(1)).join(",")).join("L") + "Z"} fill={heat(0.1 + 0.9 * t(nm))} stroke={sel === nm ? "var(--jp-text)" : "var(--jp-surface-raised)"} strokeWidth={sel === nm ? 3 : 1.5} />)}</g>
-                      <text x={lead.x} y={lead.y} dy="0.35em" textAnchor="middle" className="p3e-b" style={{ fill: onHeat(0.1 + 0.9 * t(nm)) }}>{nm}</text>
+                      <text x={lead.x} y={lead.y} dy="0.35em" textAnchor="middle" className="dg-b" style={{ fill: onHeat(0.1 + 0.9 * t(nm)) }}>{nm}</text>
                     </g>); })}
                 </g>
               </Svg>
               <Readout>{text}</Readout>
-              <div className="p3e-controls"><HeatScale lo={`${lo}`} hi={`${hi} ${unit}`} /></div>
+              <div className="dg-controls"><HeatScale lo={`${lo}`} hi={`${hi} ${unit}`} /></div>
             </>
           );
         }}
@@ -63,11 +63,11 @@ export function RoadIsochrone({ originId = "bne", bands = [3, 6, 12, 18], title 
   const bandOfH = (h: number) => { const b = bands.findIndex((x) => h <= x); return b < 0 ? bands.length : b; };
   return (
     <>
-      <div className="p3e-controls">
+      <div className="dg-controls">
         <label>Start <Select value={origin} onChange={(v) => { setOrigin(v); setDest(""); }} options={g.towns.map((t) => ({ value: t.id, label: t.name }))} aria-label="Start town" /></label>
         <Segmented label="Highlight reach within" value={limit} onChange={setLimit} options={bands.map((b) => ({ value: String(b), label: `${b} h` }))} />
         <label>Route to <Select value={dest} onChange={setDest} options={[{ value: "", label: "(none)" }, ...g.towns.filter((t) => t.id !== origin).map((t) => ({ value: t.id, label: t.name }))]} aria-label="Route to town" /></label>
-        {qld.length > 0 && <span className="p3e-badge">{pct(lt.filter((v) => v <= lim).length / qld.length, 0)} of {qld.length} council areas within {lim} h</span>}
+        {qld.length > 0 && <span className="dg-badge">{pct(lt.filter((v) => v <= lim).length / qld.length, 0)} of {qld.length} council areas within {lim} h</span>}
       </div>
       {!lgas && state !== "empty" ? <p role="status" className="pc-note">Loading council boundaries…</p> : <Chart title={title} n={g.towns.length} state={state} height={520} table={{ head: ["Town", "Drive time", "Km on route", "Route"], rows: g.towns.map((t, i) => [t.name, dur(sp.dist[i]), Math.round(sp.km[i]), routeTo(sp.prev, i).map((r) => g.towns[r].name).join(" > ")]) }}>
         {(w) => {
@@ -81,7 +81,7 @@ export function RoadIsochrone({ originId = "bne", bands = [3, 6, 12, 18], title 
                   <g key={t.id} onPointerEnter={() => setDest(t.id === origin ? "" : t.id)} style={{ cursor: "pointer" }}>
                     <circle cx={x} cy={y} r={i === oi ? 7 : big ? 5 : 3.5} fill={i === oi ? "var(--jp-surface-raised)" : "var(--jp-text)"} stroke="var(--jp-surface-raised)" strokeWidth={i === oi ? 3 : 1.5} />
                     {i === oi && <circle cx={x} cy={y} r={7} fill="none" stroke="var(--jp-text)" strokeWidth={3} />}
-                    {(t.size === "city" || i === oi || t.id === dest || route.includes(i)) && <text x={i === oi ? x - 11 : x + 9} y={y} textAnchor={i === oi ? "end" : "start"} dy="0.35em" className="p3e-halo">{t.name}{Number.isFinite(sp.dist[i]) && i !== oi ? ` ${Math.round(sp.dist[i] / 60)} h` : ""}</text>}
+                    {(t.size === "city" || i === oi || t.id === dest || route.includes(i)) && <text x={i === oi ? x - 11 : x + 9} y={y} textAnchor={i === oi ? "end" : "start"} dy="0.35em" className="dg-halo">{t.name}{Number.isFinite(sp.dist[i]) && i !== oi ? ` ${Math.round(sp.dist[i] / 60)} h` : ""}</text>}
                   </g>); })}
               </Svg>
               <Readout>{readout}</Readout>
@@ -89,7 +89,7 @@ export function RoadIsochrone({ originId = "bne", bands = [3, 6, 12, 18], title 
           );
         }}
       </Chart>}
-      <Legend items={[...bands.map((b, i) => ({ label: `within ${b} h`, color: heat(0.95 - 0.28 * i) })), { label: "slower than that", color: "var(--jp-surface)", cls: "p3e-outline" }, { label: "route to chosen town", color: "var(--adm-c3)" }]} />
+      <Legend items={[...bands.map((b, i) => ({ label: `within ${b} h`, color: heat(0.95 - 0.28 * i) })), { label: "slower than that", color: "var(--jp-surface)", cls: "dg-outline" }, { label: "route to chosen town", color: "var(--adm-c3)" }]} />
       <Note>Dijkstra over {g.towns.length} towns and {g.roads.length} highway links (explicit sample graph, approximate coordinates). Cost model: straight-line km x winding factor (1.10 motorway, 1.12 highway, 1.18 rural) at 110, 100 and 90 km/h, plus 8, 4 or 2 minutes each time a trip passes through a city, regional centre or town. No traffic, rest stops or ferries. Council areas are shaded by time to their centroid: nearest town plus an off-road leg at 60 km/h x 1.25 detour. Boundaries: ABS 2021 LGAs, simplified.</Note>
     </>
   );
@@ -101,8 +101,8 @@ export function GpsTrack({ track, title = "GPS track with elevation", state }: C
   const ptxt = `${(s.cum[i] / 1000).toFixed(2)} km, ${p.ele.toFixed(0)} m, ${hhmm(p.t / 60)} elapsed`;
   return (
     <>
-      <div className="p3e-stats"><div><b>{(s.distance / 1000).toFixed(1)} km</b><span>distance</span></div><div><b>+{s.gain.toFixed(0)} m</b><span>climb</span></div><div><b>-{s.loss.toFixed(0)} m</b><span>descent</span></div><div><b>{(s.maxGrade * 100).toFixed(1)}%</b><span>steepest segment</span></div><div><b>{Math.round(s.seconds / 60)} min</b><span>elapsed</span></div></div>
-      <div className="p3e-controls"><label>Position <input type="range" min={0} max={track.length - 1} value={i} onChange={(e) => setI(+e.target.value)} aria-valuetext={ptxt} /></label><span className="p3e-badge">{ptxt}</span></div>
+      <div className="dg-stats"><div><b>{(s.distance / 1000).toFixed(1)} km</b><span>distance</span></div><div><b>+{s.gain.toFixed(0)} m</b><span>climb</span></div><div><b>-{s.loss.toFixed(0)} m</b><span>descent</span></div><div><b>{(s.maxGrade * 100).toFixed(1)}%</b><span>steepest segment</span></div><div><b>{Math.round(s.seconds / 60)} min</b><span>elapsed</span></div></div>
+      <div className="dg-controls"><label>Position <input type="range" min={0} max={track.length - 1} value={i} onChange={(e) => setI(+e.target.value)} aria-valuetext={ptxt} /></label><span className="dg-badge">{ptxt}</span></div>
       <Chart title={title} n={track.length} state={state} height={380} table={{ head: ["Fix", "Distance (km)", "Elevation (m)", "Elapsed (min)"], rows: track.filter((_, k) => k % 10 === 0).map((q, k) => [k * 10, +(s.cum[k * 10] / 1000).toFixed(2), Math.round(q.ele), Math.round(q.t / 60)]) }}>
         {(w) => {
           const b: Box = { minX: Math.min(...track.map((q) => q.lon)), maxX: Math.max(...track.map((q) => q.lon)), minY: Math.min(...track.map((q) => q.lat)), maxY: Math.max(...track.map((q) => q.lat)) }; const { p: P, h: mapH } = projection(b, w, 14); const hm = Math.min(mapH, 300);
@@ -113,12 +113,12 @@ export function GpsTrack({ track, title = "GPS track with elevation", state }: C
                 <g {...hit("map", `Map of the track: ${(s.distance / 1000).toFixed(1)} km loop`)}>
                   <path d={poly(track.map((q) => [q.lon, q.lat]), P).replace(/Z$/, "")} fill="none" stroke="var(--adm-c1)" strokeWidth="3.5" strokeLinejoin="round" />
                 </g>
-                <circle cx={P([track[0].lon, track[0].lat])[0]} cy={P([track[0].lon, track[0].lat])[1]} r="6" fill="var(--jp-surface-raised)" stroke="var(--jp-text)" strokeWidth="2.5" /><text x={P([track[0].lon, track[0].lat])[0] + 9} y={P([track[0].lon, track[0].lat])[1]} className="p3e-halo">start / finish</text>
+                <circle cx={P([track[0].lon, track[0].lat])[0]} cy={P([track[0].lon, track[0].lat])[1]} r="6" fill="var(--jp-surface-raised)" stroke="var(--jp-text)" strokeWidth="2.5" /><text x={P([track[0].lon, track[0].lat])[0] + 9} y={P([track[0].lon, track[0].lat])[1]} className="dg-halo">start / finish</text>
                 <circle cx={P([p.lon, p.lat])[0]} cy={P([p.lon, p.lat])[1]} r="8" fill="var(--adm-c2)" stroke="var(--jp-text)" strokeWidth="2.5" />
                 <g transform={`translate(0,${hm + 14})`}>
                   <path d={`M${X(0)},${Y(s.min) + 12}` + track.map((q, k) => `L${X(s.cum[k]).toFixed(1)},${Y(q.ele).toFixed(1)}`).join("") + `L${X(s.distance)},${Y(s.min) + 12}Z`} fill="var(--adm-c1)" fillOpacity="0.22" stroke="var(--adm-c1)" strokeWidth="2" />
                   <line x1={X(s.cum[i])} x2={X(s.cum[i])} y1="0" y2={pe} stroke="var(--jp-text)" strokeWidth="2" strokeDasharray="4 3" />
-                  {[s.min, s.max].map((e) => <text key={e} x={L - 4} y={Y(e)} dy="0.35em" textAnchor="end" className="p3e-mute">{Math.round(e)} m</text>)}<text x={w - 8} y={pe + 26} textAnchor="end" className="p3e-mute">distance along track (km): 0 to {(s.distance / 1000).toFixed(1)}</text>
+                  {[s.min, s.max].map((e) => <text key={e} x={L - 4} y={Y(e)} dy="0.35em" textAnchor="end" className="dg-mute">{Math.round(e)} m</text>)}<text x={w - 8} y={pe + 26} textAnchor="end" className="dg-mute">distance along track (km): 0 to {(s.distance / 1000).toFixed(1)}</text>
                 </g>
               </Svg>
               <Readout>{text || ptxt}</Readout>
@@ -138,8 +138,8 @@ export function Geofences({ track, fences, dwell = 180, title = "Geofence states
   const res = useMemo(() => fenceTrack(path.slice(0, i + 1), fences, dwell), [path, fences, dwell, i]); const full = useMemo(() => fenceTrack(path, fences, dwell), [path, fences, dwell]);
   return (
     <>
-      <div className="p3e-controls"><label>Time <input type="range" min={0} max={track.length - 1} value={i} onChange={(e) => setI(+e.target.value)} aria-valuetext={`${hhmm(track[i].t / 60)} elapsed`} /></label><span className="p3e-badge">{hhmm(track[i].t / 60)} elapsed</span>
-        {fences.map((f) => <span key={f.id} className={`p3e-badge ${res.state[f.id] === "dwelling" ? "is-warn" : res.state[f.id] === "inside" ? "is-ok" : ""}`}>{f.name}: {FSTATE[res.state[f.id]]}</span>)}</div>
+      <div className="dg-controls"><label>Time <input type="range" min={0} max={track.length - 1} value={i} onChange={(e) => setI(+e.target.value)} aria-valuetext={`${hhmm(track[i].t / 60)} elapsed`} /></label><span className="dg-badge">{hhmm(track[i].t / 60)} elapsed</span>
+        {fences.map((f) => <span key={f.id} className={`dg-badge ${res.state[f.id] === "dwelling" ? "is-warn" : res.state[f.id] === "inside" ? "is-ok" : ""}`}>{f.name}: {FSTATE[res.state[f.id]]}</span>)}</div>
       <Chart title={title} n={track.length} state={state} height={340} table={{ head: ["Time (min)", "Fence", "Event"], rows: full.events.map((e) => [Math.round(e.t / 60), fences.find((f) => f.id === e.fence)?.name ?? e.fence, e.kind]) }}>
         {(w) => {
           const all = [...track.map((q): Pt => [q.lon, q.lat]), ...fences.flatMap((f) => f.poly)]; const b: Box = { minX: Math.min(...all.map((q) => q[0])), maxX: Math.max(...all.map((q) => q[0])), minY: Math.min(...all.map((q) => q[1])), maxY: Math.max(...all.map((q) => q[1])) }; const { p: P, h } = projection(b, w, 16); const cur = P([track[i].lon, track[i].lat]);
@@ -149,7 +149,7 @@ export function Geofences({ track, fences, dwell = 180, title = "Geofence states
                 {fences.map((f, k) => { const st = res.state[f.id]; const c = P([sum(f.poly.map((q) => q[0])) / f.poly.length, sum(f.poly.map((q) => q[1])) / f.poly.length]); return (
                   <g key={f.id} {...hit(f.id, `${f.name}: ${FSTATE[st].toLowerCase()} now; ${full.events.filter((e) => e.fence === f.id).length} enter/exit events in the whole track`)}>
                     <path d={poly(f.poly, P)} fill={C(k + 2)} fillOpacity={st === "outside" ? 0.1 : st === "inside" ? 0.35 : 0.6} stroke={C(k + 2)} strokeWidth={st === "dwelling" ? 4 : 2} strokeDasharray={st === "outside" ? "6 4" : undefined} />
-                    <text x={c[0]} y={c[1]} dy="0.35em" textAnchor="middle" className="p3e-halo p3e-b">{f.name}</text>
+                    <text x={c[0]} y={c[1]} dy="0.35em" textAnchor="middle" className="dg-halo dg-b">{f.name}</text>
                   </g>); })}
                 <path d={poly(track.map((q) => [q.lon, q.lat]), P).replace(/Z$/, "")} fill="none" stroke="var(--jp-text-muted)" strokeWidth="2" />
                 <path d={poly(track.slice(0, i + 1).map((q) => [q.lon, q.lat]), P).replace(/Z$/, "")} fill="none" stroke="var(--adm-c1)" strokeWidth="4" />
@@ -160,7 +160,7 @@ export function Geofences({ track, fences, dwell = 180, title = "Geofence states
           );
         }}
       </Chart>
-      <Legend items={[{ label: "Outside: dashed, faint", cls: "p3e-ring" }, { label: "Inside: solid, light fill" }, { label: `Dwelling (inside ${hhmm(dwell / 60)} or more): heavy outline, dark fill` }]} />
+      <Legend items={[{ label: "Outside: dashed, faint", cls: "dg-ring" }, { label: "Inside: solid, light fill" }, { label: `Dwelling (inside ${hhmm(dwell / 60)} or more): heavy outline, dark fill` }]} />
       <Note>{`Events so far: ${res.events.map((e) => `${fences.find((f) => f.id === e.fence)?.name} ${e.kind} at ${hhmm(e.t / 60)}`).join("; ") || "none"}.`}</Note>
     </>
   );
@@ -181,7 +181,7 @@ export function AuChoropleth({ states, unit = "% online", title = "Choropleth: s
   const onKey = (e: React.KeyboardEvent) => { if (e.key === "ArrowRight" || e.key === "ArrowDown") step(1); else if (e.key === "ArrowLeft" || e.key === "ArrowUp") step(-1); else if (e.key === "Home") { if (shown.length) set(shown[0].code, lgaText(shown[0])); } else if (e.key === "End") { if (shown.length) { const n = shown[shown.length - 1]; set(n.code, lgaText(n)); } } else if (e.key === "Escape") clear(); else return; e.preventDefault(); };
   return (
     <>
-      <div className="p3e-controls">
+      <div className="dg-controls">
         <Segmented label="Level" value={lvl} onChange={(v) => { setLvl(v); clear(); }} options={[{ value: "state", label: "States and territories" }, { value: "council", label: "Council areas (LGAs)" }]} />
         {lvl === "council" && <label>Zoom to <Select value={zoom} onChange={(v) => { setZoom(v); clear(); }} options={[{ value: "ALL", label: "All of Australia" }, ...STATE_ORDER.filter((k) => k !== "ACT").concat("ACT").map((k) => ({ value: k, label: STATE_NAMES[k] }))]} aria-label="Zoom to state" /></label>}
         {lvl === "council" && <label>Find council <Select value={sel ?? ""} onChange={(v) => { const l = shown.find((x) => x.code === v); if (l) set(l.code, lgaText(l)); else clear(); }} options={[{ value: "", label: "(none)" }, ...shown.map((l) => ({ value: l.code, label: l.name }))]} aria-label="Find council" /></label>}
@@ -197,8 +197,8 @@ export function AuChoropleth({ states, unit = "% online", title = "Choropleth: s
                 <Svg w={W} h={h} label={`Choropleth of ${STATE_ORDER.length} states and territories. ${STATE_ORDER.map((k) => `${STATE_NAMES[k]} ${states[k]}${unit}`).join("; ")}.`}>
                   {shapes.filter((s) => s.code !== "ACT").map((s) => <g key={s.code} {...hit(s.code, `${STATE_NAMES[s.code]}: ${states[s.code]}${unit}`)}><path d={s.rings.map((r) => poly(r, P)).join("")} fill={heat(t(states[s.code]))} stroke={sel === s.code ? "var(--jp-text)" : "var(--jp-surface-raised)"} strokeWidth={sel === s.code ? 3 : 1.2} strokeLinejoin="round" /></g>)}
                   <g {...hit("ACT", `${STATE_NAMES.ACT}: ${states.ACT}${unit}. Real outline is about 8 pixels wide here, so an enlarged marker is added.`)}><path d={shapes.find((s) => s.code === "ACT")!.rings.map((r) => poly(r, P)).join("")} fill={heat(t(states.ACT))} stroke="var(--jp-text)" strokeWidth={1} /><circle cx={acti[0] + 22} cy={acti[1] + 8} r="9" fill={heat(t(states.ACT))} stroke="var(--jp-text)" strokeWidth="2" /><path d={`M${acti[0] + 13},${acti[1] + 5}L${acti[0] + 3},${acti[1]}`} stroke="var(--jp-text)" /></g>
-                  {STATE_ORDER.filter((k) => k !== "ACT").map((k) => { const [x, y] = P(lbl(k)); return <text key={k} x={x} y={y} textAnchor="middle" dy="0.35em" className="p3e-b" style={{ fill: onHeat(t(states[k])), pointerEvents: "none" }}>{k}</text>; })}
-                  <text x={acti[0] + 36} y={acti[1] + 8} dy="0.35em" className="p3e-halo">ACT</text>
+                  {STATE_ORDER.filter((k) => k !== "ACT").map((k) => { const [x, y] = P(lbl(k)); return <text key={k} x={x} y={y} textAnchor="middle" dy="0.35em" className="dg-b" style={{ fill: onHeat(t(states[k])), pointerEvents: "none" }}>{k}</text>; })}
+                  <text x={acti[0] + 36} y={acti[1] + 8} dy="0.35em" className="dg-halo">ACT</text>
                 </Svg>
                 <Readout>{text}</Readout>
               </>
@@ -206,7 +206,7 @@ export function AuChoropleth({ states, unit = "% online", title = "Choropleth: s
           }
           return (
             <>
-              <div className="p3e-focus-grid" tabIndex={0} role="group" aria-label={`Council areas map, ${shown.length} areas. Arrow keys step through councils in name order, Home and End jump, Escape clears.`} onKeyDown={onKey} onBlur={clear}>
+              <div className="dg-focus-grid" tabIndex={0} role="group" aria-label={`Council areas map, ${shown.length} areas. Arrow keys step through councils in name order, Home and End jump, Escape clears.`} onKeyDown={onKey} onBlur={clear}>
                 <Svg w={W} h={h} label={`Council areas in ${zoom === "ALL" ? "Australia" : STATE_NAMES[zoom]}: ${shown.length} local government areas shaded by a sample value.`}>
                   {shown.map((l) => { const v = byCode.get(l.code)!; return <path key={l.code} d={l.rings.map((r) => poly(r, P)).join("")} fill={heat(t(v))} stroke={sel === l.code ? "var(--jp-text)" : "var(--jp-surface-raised)"} strokeWidth={sel === l.code ? 2.5 : 0.5} strokeLinejoin="round" onPointerEnter={() => set(l.code, lgaText(l))} onPointerLeave={clear} />; })}
                   {cur && <path d={cur.rings.map((r) => poly(r, P)).join("")} fill="none" stroke="var(--jp-text)" strokeWidth={2.5} strokeLinejoin="round" pointerEvents="none" />}
@@ -217,7 +217,7 @@ export function AuChoropleth({ states, unit = "% online", title = "Choropleth: s
           );
         }}
       </Chart>}
-      {Number.isFinite(lo) && <div className="p3e-controls"><HeatScale lo={`${lo}`} hi={`${hi}${unit}`} /></div>}
+      {Number.isFinite(lo) && <div className="dg-controls"><HeatScale lo={`${lo}`} hi={`${hi}${unit}`} /></div>}
       <Note>{lvl === "state" ? "Boundaries: Natural Earth 1:10m admin-1 (public domain), simplified to 0.02 degrees (about 2 km). Jervis Bay, Lord Howe and Macquarie Islands are omitted. Values are sample data. The ACT is outlined and also marked with an enlarged circle." : "Boundaries: ABS ASGS 2021 local government areas (CC BY 4.0), simplified to 0.01 degree (about 1 km); a few tiny councils are drawn as boxes. The value is a sample figure modelled from council area, not a statistic."}</Note>
     </>
   );

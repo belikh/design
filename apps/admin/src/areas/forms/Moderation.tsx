@@ -5,7 +5,7 @@ import { Field, Select, TextArea, Segmented } from "@belikh/jupiter-ui/inputs.ts
 import { useFieldErrors } from "@belikh/jupiter-ui/forms.tsx";
 import { usePrefs } from "@belikh/jupiter-ui/store.tsx";
 import { REJECT_REASONS, SEED_ITEMS, type Item } from "./lib.ts";
-import "./p3a.css";
+import "./forms.css";
 
 type Filter = "pending" | "approved" | "rejected";
 export function Moderation() {
@@ -23,18 +23,18 @@ export function Moderation() {
   return (
     <>
       <PageHeader title="Moderation" crumbs={["Workflows", "Moderation"]} desc="Review flagged content. Rejecting needs a reason, which is sent to the author." status={<Badge s={counts("pending") ? "warn" : "ok"}>{counts("pending")} waiting</Badge>} />
-      <div className="p3a-mod">
+      <div className="frm-mod">
         <Panel title="Queue" flush>
-          <div className="p3a-pad"><Segmented label="Status" value={filter} onChange={(v) => { setFilter(v); }} options={(["pending", "approved", "rejected"] as Filter[]).map((v) => ({ value: v, label: `${v[0].toUpperCase()}${v.slice(1)} (${counts(v)})` }))} /></div>
+          <div className="frm-pad"><Segmented label="Status" value={filter} onChange={(v) => { setFilter(v); }} options={(["pending", "approved", "rejected"] as Filter[]).map((v) => ({ value: v, label: `${v[0].toUpperCase()}${v.slice(1)} (${counts(v)})` }))} /></div>
           {list.length === 0 ? <EmptyState title={filter === "pending" ? "Queue cleared" : "Nothing here"}>{filter === "pending" ? "All flagged items have been reviewed." : "No items with this status."}</EmptyState> : (
-            <ul className="p3a-queue" aria-label={`${filter} items`}>{list.map((r) => <li key={r.id}><button aria-pressed={cur?.id === r.id} onClick={() => setSelId(r.id)}><span><b>{r.id}</b> {r.kind} by {r.author}</span><span className="adm-row">{r.priority === "high" && <Badge s="danger">High</Badge>}<Badge s="warn">{r.flags.length} flag{r.flags.length > 1 ? "s" : ""}</Badge></span></button></li>)}</ul>)}
+            <ul className="frm-queue" aria-label={`${filter} items`}>{list.map((r) => <li key={r.id}><button aria-pressed={cur?.id === r.id} onClick={() => setSelId(r.id)}><span><b>{r.id}</b> {r.kind} by {r.author}</span><span className="adm-row">{r.priority === "high" && <Badge s="danger">High</Badge>}<Badge s="warn">{r.flags.length} flag{r.flags.length > 1 ? "s" : ""}</Badge></span></button></li>)}</ul>)}
         </Panel>
         {!cur ? <Panel title="Item"><EmptyState title="Select an item" /></Panel> : (
           <Panel title={`${cur.id}: ${cur.kind}`} actions={<Badge s={cur.status === "approved" ? "ok" : cur.status === "rejected" ? "danger" : "warn"}>{cur.status}</Badge>}>
             <div className="adm-stack">
               <div className="adm-row"><Avatar name={cur.author} /><b>{cur.author}</b><span className="jp-muted">{cur.priorRejects} earlier rejection{cur.priorRejects === 1 ? "" : "s"} · posted {cur.at}</span></div>
-              <blockquote className="p3a-content">{cur.body}</blockquote>
-              <section aria-label="Flags"><h3>Why it was flagged</h3><ul className="p3a-flags">{cur.flags.map((f, i) => <li key={i}><Badge s="warn">{f.reason}</Badge><span className="jp-muted">reported by {f.by}</span></li>)}</ul></section>
+              <blockquote className="frm-content">{cur.body}</blockquote>
+              <section aria-label="Flags"><h3>Why it was flagged</h3><ul className="frm-flags">{cur.flags.map((f, i) => <li key={i}><Badge s="warn">{f.reason}</Badge><span className="jp-muted">reported by {f.by}</span></li>)}</ul></section>
               {cur.priorRejects >= 3 && <Alert s="warn" title="Repeat offender">This author has had {cur.priorRejects} items rejected. Consider restricting their account.</Alert>}
               {cur.status === "pending" ? <div className="adm-row"><Btn variant="primary" onClick={() => void decide(cur, "approved", "")}>Approve</Btn><Btn onClick={() => setRejecting(true)}>Reject…</Btn></div> :
                 <Alert s={cur.status === "approved" ? "ok" : "danger"} title={`${cur.status === "approved" ? "Approved" : "Rejected"} by ${cur.decidedBy || "someone"}`}>{cur.reason || "No reason recorded."}<div><Btn sm onClick={() => { const prev = { status: cur.status, reason: cur.reason, decidedBy: cur.decidedBy }; void items.update(cur.id, { status: "pending", reason: "", decidedBy: "" }); toast({ kind: "info", title: `${cur.id} returned to the queue`, undo: () => { void items.update(cur.id, prev); } }); setFilter("pending"); }}>Reopen</Btn></div></Alert>}

@@ -59,7 +59,7 @@ export function Ridgeline({ title = "Ridgeline", id = "D013", names, groups, uni
         const l = 84, x = (v: number) => l + ((v - nd.lo) / (nd.hi - nd.lo)) * (w - l - M.r);
         return (<>
           {names.map((n, i) => { const base = M.t + (i + 1) * rowH - 4, k = ks[i], xs = k.map((p) => x(p.x)), ys = k.map((p) => base - (p.y / peak) * rowH * overlap); return (<g key={n} {...pk.mark(i)}>
-            <line x1={l} x2={w - M.r} y1={base} y2={base} className="adm-gl" /><T x={l - 8} y={base} anchor="end" cls="p3-tl">{n}</T>
+            <line x1={l} x2={w - M.r} y1={base} y2={base} className="adm-gl" /><T x={l - 8} y={base} anchor="end" cls="lab-tl">{n}</T>
             <path d={areaPath(xs, k.map(() => base), ys)} fill={C(i)} fillOpacity={0.55} stroke="var(--jp-surface-raised)" strokeWidth={1.5} />
           </g>); })}
           <XTicks ticks={nd.ticks} x={x} y={height - 10} />
@@ -87,8 +87,8 @@ export function BoxPlot({ title = "Box plot", id = "D013", names, groups, unit =
         return (<>
           <YAxis ticks={nd.ticks} y={y} x0={M.l} x1={w - M.r} />
           {st.map((s, i) => (<g key={i} {...pk.mark(i)}>
-            <line x1={cx(i)} x2={cx(i)} y1={y(s.whiskerLo)} y2={y(s.q1)} className="p3-ink" /><line x1={cx(i)} x2={cx(i)} y1={y(s.q3)} y2={y(s.whiskerHi)} className="p3-ink" />
-            <line x1={cx(i) - bx / 4} x2={cx(i) + bx / 4} y1={y(s.whiskerLo)} y2={y(s.whiskerLo)} className="p3-ink" /><line x1={cx(i) - bx / 4} x2={cx(i) + bx / 4} y1={y(s.whiskerHi)} y2={y(s.whiskerHi)} className="p3-ink" />
+            <line x1={cx(i)} x2={cx(i)} y1={y(s.whiskerLo)} y2={y(s.q1)} className="lab-ink" /><line x1={cx(i)} x2={cx(i)} y1={y(s.q3)} y2={y(s.whiskerHi)} className="lab-ink" />
+            <line x1={cx(i) - bx / 4} x2={cx(i) + bx / 4} y1={y(s.whiskerLo)} y2={y(s.whiskerLo)} className="lab-ink" /><line x1={cx(i) - bx / 4} x2={cx(i) + bx / 4} y1={y(s.whiskerHi)} y2={y(s.whiskerHi)} className="lab-ink" />
             <rect x={cx(i) - bx / 2} width={bx} y={y(s.q3)} height={Math.max(1, y(s.q1) - y(s.q3))} fill={C(i)} fillOpacity={0.55} stroke="var(--jp-text)" strokeWidth={1.5} />
             <line x1={cx(i) - bx / 2} x2={cx(i) + bx / 2} y1={y(s.median)} y2={y(s.median)} stroke="var(--jp-text)" strokeWidth={3} />
             {s.outliers.map((o, k) => <circle key={k} cx={cx(i)} cy={y(o)} r={3.5} fill="none" stroke="var(--jp-text)" strokeWidth={1.5} />)}
@@ -156,8 +156,8 @@ export function EcdfChart({ title = "Cumulative distribution", id = "D018", name
         const x = (v: number) => M.l + ((v - nd.lo) / (nd.hi - nd.lo)) * (w - M.l - M.r), bot = height - M.b, y = (p: number) => bot - p * (bot - M.t);
         return (<>
           <YAxis ticks={[0, 0.25, 0.5, 0.75, 1]} y={y} x0={M.l} x1={w - M.r} fmtT={(v) => `${Math.round(v * 100)}%`} />
-          <line x1={M.l} x2={w - M.r} y1={y(mark)} y2={y(mark)} className="p3-ref" />
-          {es.map((e, i) => { const d = e.map((p, k) => `${k ? `L${x(p.x)},${y(e[k - 1].p)}` : `M${x(p.x)},${y(0)}`}L${x(p.x)},${y(p.p)}`).join(""); return (<g key={i} {...pk.mark(i)}><path d={d} stroke={C(i)} strokeWidth={2.5} fill="none" />{pk.on(i) && <><line x1={x(at(i))} x2={x(at(i))} y1={y(mark)} y2={bot} className="p3-ink" /><circle cx={x(at(i))} cy={y(mark)} r={5} fill={C(i)} stroke="var(--jp-text)" /></>}</g>); })}
+          <line x1={M.l} x2={w - M.r} y1={y(mark)} y2={y(mark)} className="lab-ref" />
+          {es.map((e, i) => { const d = e.map((p, k) => `${k ? `L${x(p.x)},${y(e[k - 1].p)}` : `M${x(p.x)},${y(0)}`}L${x(p.x)},${y(p.p)}`).join(""); return (<g key={i} {...pk.mark(i)}><path d={d} stroke={C(i)} strokeWidth={2.5} fill="none" />{pk.on(i) && <><line x1={x(at(i))} x2={x(at(i))} y1={y(mark)} y2={bot} className="lab-ink" /><circle cx={x(at(i))} cy={y(mark)} r={5} fill={C(i)} stroke="var(--jp-text)" /></>}</g>); })}
           <XTicks ticks={nd.ticks} x={x} y={height - 10} />
         </>);
       }} />
@@ -178,7 +178,7 @@ export function QQPlot({ title = "Normal QQ plot", id = "D018", values, unit = "
         const zmax = n ? Math.ceil(Math.max(Math.abs(q[0].z), Math.abs(q[n - 1].z))) : 3, x = (z: number) => M.l + ((z + zmax) / (2 * zmax)) * (w - M.l - M.r), bot = height - M.b, y = (v: number) => bot - ((v - nd.lo) / (nd.hi - nd.lo)) * (bot - M.t);
         return (<>
           <YAxis ticks={nd.ticks} y={y} x0={M.l} x1={w - M.r} />
-          <line x1={x(-zmax)} y1={y(line.intercept - line.slope * zmax)} x2={x(zmax)} y2={y(line.intercept + line.slope * zmax)} className="p3-ref" />
+          <line x1={x(-zmax)} y1={y(line.intercept - line.slope * zmax)} x2={x(zmax)} y2={y(line.intercept + line.slope * zmax)} className="lab-ref" />
           {q.map((p, i) => <circle key={i} cx={x(p.z)} cy={y(p.v)} r={2.8} fill="var(--adm-c1)" fillOpacity={0.55} />)}
           {deciles.map((k, d) => <circle key={`d${d}`} {...pk.mark(d)} cx={x(q[k].z)} cy={y(q[k].v)} r={6} fill="none" stroke="var(--jp-text)" strokeWidth={1.5} />)}
           {Array.from({ length: 2 * zmax + 1 }, (_, i) => i - zmax).map((z) => <T key={z} x={x(z)} y={height - 14}>{z}</T>)}

@@ -1,4 +1,4 @@
-/* P2 chart styles (tokens only). Prefix pc- avoids clashes with other areas. */
+/* Chart styles (tokens only). Prefix pc- avoids clashes with other areas. */
 .pc-frame svg text { font-family: var(--jp-font-mono); }
 .pc-readout { min-height: 1.4em; margin: 6px 0 0; font: 14px var(--jp-font-mono); color: var(--jp-text-muted); }
 .pc-pt { cursor: pointer; outline: none; } .pc-pt:focus-visible, .pc-pt:hover { stroke: var(--jp-text); stroke-width: 2; }

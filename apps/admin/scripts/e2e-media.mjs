@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Real-browser tests for the media and colour tools (C042, C043, C048) on /p3/*: fake camera and microphone, real MediaRecorder,
+// Real-browser tests for the media and colour tools (C042, C043, C048) on /*: fake camera and microphone, real MediaRecorder,
 // real decodeAudioData, real video seeking and canvas capture.
 //   E2E_URL=http://127.0.0.1:3000 npm run e2e:media     reuse a running server
 //   npm run e2e:media                                    starts one on :3102
@@ -27,7 +27,7 @@ const test = async (name, fn) => { const page = await ctx.newPage(); const errs 
 const ok = (c, m) => { if (!c) throw new Error(m); };
 const near = (a, b, tol, m) => ok(Math.abs(a - b) <= tol, `${m}: got ${a}, want ${b} +/- ${tol}`);
 const go = async (page, path) => { await page.goto(base + path); await page.waitForSelector("main, .adm-main", { timeout: 15000 }); await page.waitForFunction(() => !document.querySelector('[data-testid="route-loading"]'), null, { timeout: 15000 }); };
-const entry = (page, title) => page.locator(".p3-entry", { has: page.locator(".jp-panel__title, h2, h3", { hasText: title }) }).first();
+const entry = (page, title) => page.locator(".lab-entry", { has: page.locator(".jp-panel__title, h2, h3", { hasText: title }) }).first();
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 /* a 16-bit mono WAV written here, independent of the app's encoder */
@@ -36,12 +36,12 @@ writeFileSync(toneFile, makeWav(48000, 4, 440, 0.5));
 const parseWav = (buf) => { ok(buf.toString("ascii", 0, 4) === "RIFF" && buf.toString("ascii", 8, 12) === "WAVE" && buf.toString("ascii", 12, 16) === "fmt " && buf.toString("ascii", 36, 40) === "data", "not a RIFF/WAVE/fmt/data file"); const ch = buf.readUInt16LE(22), sr = buf.readUInt32LE(24), bits = buf.readUInt16LE(34), bytes = buf.readUInt32LE(40); ok(buf.readUInt32LE(4) === buf.length - 8, "RIFF size field"); ok(bytes === buf.length - 44, "data size field"); ok(buf.readUInt16LE(20) === 1, "PCM"); const frames = bytes / (ch * bits / 8); let peak = 0; for (let i = 0; i < bytes / 2; i++) peak = Math.max(peak, Math.abs(buf.readInt16LE(44 + i * 2)) / 32768); return { ch, sr, bits, frames, seconds: frames / sr, peak }; };
 const fetchBlob = async (page, href) => Buffer.from(await page.evaluate(async (u) => { const b = await (await fetch(u)).arrayBuffer(); let s = ""; const a = new Uint8Array(b); for (let i = 0; i < a.length; i += 8192) s += String.fromCharCode(...a.subarray(i, i + 8192)); return btoa(s); }, href), "base64");
 const handleVal = async (page, name) => Number(await page.getByRole("slider", { name, exact: true }).getAttribute("aria-valuenow"));
-const MEDIA = "/p3/audio-video-media";
+const MEDIA = "/audio-video-media";
 
 console.log(`e2e-media against ${base}`);
 
 await test("C042 colour pad: keyboard, hex/RGB/HSL/alpha sync, eyedropper feature check", async (p) => {
-  await go(p, "/p3/design-tools"); const cp = entry(p, "Colour picker"); const pad = cp.getByRole("slider", { name: "Saturation and brightness" }); await pad.scrollIntoViewIfNeeded();
+  await go(p, "/design-tools"); const cp = entry(p, "Colour picker"); const pad = cp.getByRole("slider", { name: "Saturation and brightness" }); await pad.scrollIntoViewIfNeeded();
   const hex = cp.getByRole("textbox", { name: "Hex" }); await hex.fill("#ff0000"); await hex.blur();
   ok((await pad.getAttribute("aria-valuetext")) === "Saturation 100%, brightness 100%", "pad reflects hex");
   await pad.focus(); await p.keyboard.press("ArrowLeft"); await p.keyboard.press("Shift+ArrowDown"); ok((await pad.getAttribute("aria-valuetext")) === "Saturation 99%, brightness 90%", "arrow keys");
@@ -53,7 +53,7 @@ await test("C042 colour pad: keyboard, hex/RGB/HSL/alpha sync, eyedropper featur
 });
 
 await test("C042 font picker: shipped families with real availability and live preview", async (p) => {
-  await go(p, "/p3/design-tools"); const grp = p.getByRole("radiogroup", { name: "Font family" }); await grp.scrollIntoViewIfNeeded();
+  await go(p, "/design-tools"); const grp = p.getByRole("radiogroup", { name: "Font family" }); await grp.scrollIntoViewIfNeeded();
   await p.waitForFunction(() => [...document.querySelectorAll('[aria-label="Font family"] [role=radio]')].every((r) => !/Checking/.test(r.textContent)), null, { timeout: 15000 });
   const jb = grp.getByRole("radio", { name: /JetBrains Mono/ }); ok(/Available/.test(await jb.textContent()), "JetBrains Mono ships and loads");
   const sgiThere = existsSync(new URL("../public/fonts/sgi-text-400.woff2", import.meta.url).pathname); const sgi = grp.getByRole("radio", { name: /SGI Text/ });
@@ -128,7 +128,7 @@ await test("C048 video: load a generated file, seek, capture frames, thumbnail s
   const imgs = await vt.getByRole("radiogroup", { name: "Thumbnail frames" }).locator("img").evaluateAll(async (is) => { const out = []; for (const i of is) { const b = await (await fetch(i.src)).blob(); out.push(b.size); } return out; }); ok(imgs.length === 12 && imgs.every((s) => s > 200), `12 thumbnails with content: ${imgs}`);
   const colours = await vt.getByRole("radiogroup", { name: "Thumbnail frames" }).locator("img").evaluateAll(async (is) => { const out = []; for (const i of is) { await i.decode(); const c = document.createElement("canvas"); c.width = c.height = 8; const g = c.getContext("2d"); g.drawImage(i, 0, 0, 8, 8); const d = g.getImageData(0, 0, 8, 8).data; out.push([d[0], d[1], d[2]].map((x) => x >> 4).join(",")); } return out; }); ok(new Set(colours).size >= 5, `frames really differ over time: ${colours}`);
   ok((await vt.getByText("Best", { exact: true }).count()) === 1, "one suggested frame");
-  const canvasHash = () => vt.locator("canvas.p3-canvas").evaluate((c) => c.toDataURL().length + ":" + c.toDataURL().slice(-80));
+  const canvasHash = () => vt.locator("canvas.lab-canvas").evaluate((c) => c.toDataURL().length + ":" + c.toDataURL().slice(-80));
   const h0 = await canvasHash(); const sl = vt.getByLabel("Scrub through the video"); await sl.focus(); for (let i = 0; i < 20; i++) await p.keyboard.press("ArrowRight"); await p.waitForFunction((x) => !!x, 1); await sleep(600); const h1 = await canvasHash(); ok(h0 !== h1, "scrubbing with the keyboard changes the captured frame"); ok(/0:01\.00/.test(await vt.locator("output").first().textContent()), "scrub position 1.00 s");
   const radios = vt.getByRole("radio"); await radios.nth(9).click(); ok((await radios.nth(9).getAttribute("aria-checked")) === "true", "picked frame 10"); const status = await vt.getByText(/^Cover:/).textContent(); ok(/frame 10/.test(status), status);
   await vt.getByRole("button", { name: "Suggest best frame" }).click(); ok(/suggested/.test(await vt.locator('[role=radio][aria-checked=true]').getAttribute("aria-label")), "suggest selects the best frame");
@@ -165,8 +165,8 @@ await test("axe: the loaded states (waveform with handles, exported WAV, thumbna
   await vt.getByRole("button", { name: "Export cover as PNG" }).click(); await vt.getByRole("link", { name: "Download PNG" }).waitFor();
   const res = await p.evaluate(async () => (await window.axe.run(document.querySelector("main") ?? document, { resultTypes: ["violations"] })).violations.map((v) => `${v.id}: ${v.nodes.slice(0, 2).map((n) => n.target.join(" ")).join(" | ")}`));
   ok(res.length === 0, `axe violations: ${res.join(" ;; ")}`);
-  await go(p, "/p3/design-tools"); await p.addScriptTag({ path: createRequire(import.meta.url).resolve("axe-core/axe.min.js") }); await p.waitForFunction(() => [...document.querySelectorAll('[aria-label="Font family"] [role=radio]')].every((r) => !/Checking/.test(r.textContent)), null, { timeout: 15000 });
-  const res2 = await p.evaluate(async () => (await window.axe.run({ include: [...document.querySelectorAll(".p3-entry")].filter((e) => /C042/.test(e.textContent.slice(0, 40)))}, { resultTypes: ["violations"] })).violations.map((v) => `${v.id}: ${v.nodes.slice(0, 2).map((n) => n.target.join(" ")).join(" | ")}`)); ok(res2.length === 0, `axe violations in the C042 entries: ${res2.join(" ;; ")}`);
+  await go(p, "/design-tools"); await p.addScriptTag({ path: createRequire(import.meta.url).resolve("axe-core/axe.min.js") }); await p.waitForFunction(() => [...document.querySelectorAll('[aria-label="Font family"] [role=radio]')].every((r) => !/Checking/.test(r.textContent)), null, { timeout: 15000 });
+  const res2 = await p.evaluate(async () => (await window.axe.run({ include: [...document.querySelectorAll(".lab-entry")].filter((e) => /C042/.test(e.textContent.slice(0, 40)))}, { resultTypes: ["violations"] })).violations.map((v) => `${v.id}: ${v.nodes.slice(0, 2).map((n) => n.target.join(" ")).join(" | ")}`)); ok(res2.length === 0, `axe violations in the C042 entries: ${res2.join(" ;; ")}`);
 });
 
 await browser.close(); server?.kill();

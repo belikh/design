@@ -9,7 +9,7 @@ import { Constellation, ImageHistogram, Spectrogram, VideoMarkers, Waterfall, Wa
 import { CapacityForecast, ContourPlot, PoolLayout, SmartTrend, SurfacePlot, demoField } from "./surf.tsx";
 import { AsciiPreview, CrossFilter, LassoScatter, PatternBars, ScaleSwitch, SyncedCharts, TrendFig } from "./feat.tsx";
 
-const G = ({ children, cols }: { children: React.ReactNode; cols?: 1 }) => <div className={`p3-grid${cols ? " p3-grid--1" : ""}`}>{children}</div>;
+const G = ({ children, cols }: { children: React.ReactNode; cols?: 1 }) => <div className={`lab-grid${cols ? " lab-grid--1" : ""}`}>{children}</div>;
 const crumbs = (s: string) => ["Charts (domain)", s];
 const labels60 = Array.from({ length: 60 }, (_, i) => `h${i + 1}`);
 
@@ -32,7 +32,7 @@ export function PolarPage() {
       <PageHeader title="Polar, parallel and word clouds" crumbs={crumbs("Polar")} desc="Radar, polar area and parallel coordinates; a packed word cloud and an accessible tag cloud." />
       <G><P id="D061" title="Radar / spider"><Radar axes={D.radarAxes} series={D.radarSeries} /></P><P id="D061" title="Polar area"><PolarArea labels={D.MONTHS} values={D.polarMonths} /></P></G>
       <G cols={1}><P id="D061" title="Parallel coordinates"><ParallelCoords dims={D.parallelDims} rows={D.parallelRows} groups={D.parallelGroups} invert={[false, true, false, true, true]} /></P></G>
-      <G><P id="D062" title="Word cloud"><WordCloud words={D.words} /></P><P id="D062" title="Tag cloud"><TagCloud words={D.words.slice(0, 30)} onPick={setTag} />{tag && <p className="p3-note">Parent page received filter: {tag}</p>}</P></G>
+      <G><P id="D062" title="Word cloud"><WordCloud words={D.words} /></P><P id="D062" title="Tag cloud"><TagCloud words={D.words.slice(0, 30)} onPick={setTag} />{tag && <p className="lab-note">Parent page received filter: {tag}</p>}</P></G>
     </>
   );
 }

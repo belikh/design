@@ -5,11 +5,11 @@ import { Editable } from "@belikh/jupiter-ui/editable.tsx";
 import { FormSummary, useDraft } from "@belikh/jupiter-ui/forms.tsx";
 import { usePrefs } from "@belikh/jupiter-ui/store.tsx";
 import { COND_OPS, FIELD_TYPES, SEED_FIELDS, condError, isVisible, move, newField, validateForm, type BField, type CondOp, type FieldType, type FormValues } from "./lib.ts";
-import "./p3a.css";
+import "./forms.css";
 
 export function FormBuilder() {
   const { toast } = usePrefs();
-  const draft = useDraft<BField[]>("p3a-form-fields", SEED_FIELDS); const fields = draft.value, setFields = draft.setValue; const [sel, setSel] = useState<string | null>(fields[0]?.id ?? null);
+  const draft = useDraft<BField[]>("frm-form-fields", SEED_FIELDS); const fields = draft.value, setFields = draft.setValue; const [sel, setSel] = useState<string | null>(fields[0]?.id ?? null);
   const [tab, setTab] = useState("build"); const [title, setTitle] = useState("Equipment request"); const drag = useRef<{ kind: "new"; type: FieldType } | { kind: "move"; from: number } | null>(null); const [over, setOver] = useState<number | null>(null);
   const idx = fields.findIndex((f) => f.id === sel); const cur = fields[idx];
   const errs = fields.map((_, i) => condError(fields, i)); const bad = errs.filter(Boolean).length;
@@ -27,19 +27,19 @@ export function FormBuilder() {
         tabs={<Tabs tabs={[{ id: "build", label: "Build" }, { id: "preview", label: "Preview" }]} value={tab} onChange={setTab} />} />
       {draft.restored && <Alert s="info" title="Restored your unsaved draft"><Btn sm onClick={() => { draft.discard(); setSel(SEED_FIELDS[0].id); }}>Start over</Btn></Alert>}
       {tab === "preview" ? <Preview fields={fields} title={title} /> : (
-        <div className="p3a-builder">
-          <Panel title="Field types"><ul className="p3a-palette" aria-label="Field types">{FIELD_TYPES.map((t) => (
+        <div className="frm-builder">
+          <Panel title="Field types"><ul className="frm-palette" aria-label="Field types">{FIELD_TYPES.map((t) => (
             <li key={t.type} draggable onDragStart={(e) => { drag.current = { kind: "new", type: t.type }; e.dataTransfer.effectAllowed = "copy"; }} onDragEnd={() => { drag.current = null; setOver(null); }}>
               <span>{t.label}</span><Btn sm variant="ghost" aria-label={`Add ${t.label} field`} onClick={() => insert(t.type, idx >= 0 ? idx + 1 : fields.length)}>Add</Btn></li>))}</ul></Panel>
           <Panel title="Canvas">
             {fields.length === 0 ? <EmptyState title="No fields yet" action={<Btn variant="primary" onClick={() => insert("text")}>Add a text field</Btn>}>Drag a field type here or use its Add button.</EmptyState> :
-              <ol className="p3a-canvas" onDragOver={(e) => e.preventDefault()}>{fields.map((f, i) => (
+              <ol className="frm-canvas" onDragOver={(e) => e.preventDefault()}>{fields.map((f, i) => (
                 <li key={f.id} className={`${f.id === sel ? "is-sel" : ""} ${over === i ? "is-over" : ""}`} draggable onDragStart={(e) => { drag.current = { kind: "move", from: i }; e.dataTransfer.effectAllowed = "move"; }} onDragOver={(e) => { e.preventDefault(); setOver(i); }} onDrop={(e) => { e.preventDefault(); drop(i); }} onDragEnd={() => setOver(null)}>
-                  <button className="p3a-pick" aria-pressed={f.id === sel} onClick={() => setSel(f.id)}><b>{f.label || "Untitled"}</b>{f.required && <span aria-hidden> *</span>}<small className="jp-muted">{FIELD_TYPES.find((t) => t.type === f.type)!.label}{f.cond ? " · conditional" : ""}</small></button>
+                  <button className="frm-pick" aria-pressed={f.id === sel} onClick={() => setSel(f.id)}><b>{f.label || "Untitled"}</b>{f.required && <span aria-hidden> *</span>}<small className="jp-muted">{FIELD_TYPES.find((t) => t.type === f.type)!.label}{f.cond ? " · conditional" : ""}</small></button>
                   {errs[i] && <Badge s="danger">{errs[i]}</Badge>}
                   <span className="adm-row"><Btn sm variant="ghost" aria-label={`Move ${f.label} up`} disabled={i === 0} onClick={() => setFields(move(fields, i, i - 1))}>Up</Btn><Btn sm variant="ghost" aria-label={`Move ${f.label} down`} disabled={i === fields.length - 1} onClick={() => setFields(move(fields, i, i + 1))}>Down</Btn><Btn sm variant="ghost" aria-label={`Delete ${f.label}`} onClick={() => remove(i)}>Delete</Btn></span>
                 </li>))}
-                <li className={`p3a-end ${over === fields.length ? "is-over" : ""}`} onDragOver={(e) => { e.preventDefault(); setOver(fields.length); }} onDrop={(e) => { e.preventDefault(); drop(fields.length); }}>Drop here to add at the end</li></ol>}
+                <li className={`frm-end ${over === fields.length ? "is-over" : ""}`} onDragOver={(e) => { e.preventDefault(); setOver(fields.length); }} onDrop={(e) => { e.preventDefault(); drop(fields.length); }}>Drop here to add at the end</li></ol>}
           </Panel>
           <Panel title="Field settings">
             {!cur ? <p className="jp-muted">Select a field to edit it.</p> : (
@@ -49,7 +49,7 @@ export function FormBuilder() {
                 <Checkbox checked={cur.required} onChange={(v) => patch(cur.id, { required: v })} label="Required" />
                 {cur.type === "select" && <Field label="Options (one per line)">{(id) => <TextArea id={id} rows={4} value={cur.options.join("\n")} onChange={(v) => patch(cur.id, { options: v.split("\n") })} />}</Field>}
                 {cur.type === "number" && <div className="adm-row"><Field label="Minimum">{(id) => <TextInput id={id} inputMode="numeric" value={cur.min?.toString() ?? ""} onChange={(v) => patch(cur.id, { min: v === "" ? undefined : Number(v) })} />}</Field><Field label="Maximum">{(id) => <TextInput id={id} inputMode="numeric" value={cur.max?.toString() ?? ""} onChange={(v) => patch(cur.id, { max: v === "" ? undefined : Number(v) })} />}</Field></div>}
-                <fieldset className="p3a-logic"><legend>Conditional logic</legend>
+                <fieldset className="frm-logic"><legend>Conditional logic</legend>
                   <Checkbox checked={!!cur.cond} disabled={!priorFields.length} onChange={(on) => patch(cur.id, { cond: on ? { field: priorFields[priorFields.length - 1].id, op: "eq", value: "" } : null })} label="Only show this field when…" />
                   {!priorFields.length && <p className="jp-muted">Move this field below another to use it as a condition.</p>}
                   {cur.cond && (<>
@@ -76,7 +76,7 @@ function Preview({ fields, title }: { fields: BField[]; title: string }) {
   return (
     <Panel title={`Preview: ${title}`}>
       {sent ? <Alert s="ok" title="Thanks, your response was recorded"><Btn sm onClick={() => { setSent(false); setVals({}); setShown({}); }}>Fill in again</Btn></Alert> : (
-        <form className="p3a-preview adm-stack" onSubmit={submit} noValidate aria-label={title}>
+        <form className="frm-preview adm-stack" onSubmit={submit} noValidate aria-label={title}>
           {Object.keys(shown).length > 0 && <FormSummary items={Object.entries(shown)} />}
           {visible.map((x) => (
             <Field key={x.id} label={x.label} required={x.required} error={shown[x.id]}>{(id, d) => {

@@ -1,4 +1,4 @@
-import type { P2Route } from "../registry.ts";
+import type { AreaRoute } from "../registry.ts";
 import { Capacity, Security } from "./Dash1.tsx";
 import { Compare } from "./Dash2.tsx";
 import { Media, Roadmap } from "./Explore.tsx";
@@ -30,7 +30,7 @@ const Changelog = lazy(() => import("./System.tsx").then((m) => ({ default: m.Ch
 const Legal = lazy(() => import("./System.tsx").then((m) => ({ default: m.Legal })));
 
 const G = "Views"; const P = "/views";
-export const routes: P2Route[] = [
+export const routes: AreaRoute[] = [
   { path: `${P}/scorecard`, label: "KPI scorecard + executive summary", icon: "chart", group: G, keywords: "kpi targets owners exec narrative", element: <Scorecard /> },
   { path: `${P}/slo`, label: "SLO and error budget", icon: "pulse", group: G, keywords: "burn rate availability nines", element: <SloPage /> },
   { path: `${P}/capacity`, label: "Capacity planning", icon: "trend", group: G, keywords: "forecast disk cpu growth", element: <Capacity /> },

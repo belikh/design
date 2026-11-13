@@ -1,4 +1,4 @@
-import type { P2Route } from "../registry.ts";
+import type { AreaRoute } from "../registry.ts";
 import { lazy } from "react";
 const AccessPage = lazy(() => import("./PagesSystem.tsx").then((m) => ({ default: m.AccessPage })));
 const BannersPage = lazy(() => import("./PagesSystem.tsx").then((m) => ({ default: m.BannersPage })));
@@ -24,7 +24,7 @@ const ScalePage = lazy(() => import("./PagesScale.tsx").then((m) => ({ default: 
 const TouchPage = lazy(() => import("./PagesScale.tsx").then((m) => ({ default: m.TouchPage })));
 
 const G = "System";
-export const routes: P2Route[] = [
+export const routes: AreaRoute[] = [
   { path: "/chrome/banners", label: "Environment and banners", icon: "flag", group: G, keywords: "environment maintenance read-only impersonation consent", element: <BannersPage /> },
   { path: "/chrome/status", label: "Status bar and tasks", icon: "loader", group: G, keywords: "background tasks connection sync", element: <StatusPage /> },
   { path: "/chrome/access", label: "Access, audit and scoping", icon: "shield", group: G, keywords: "permissions roles audit workspace view as", element: <AccessPage /> },

@@ -7,7 +7,7 @@ import { ProgressBar } from "@belikh/jupiter-ui/Charts.tsx";
 import { usePrefs } from "@belikh/jupiter-ui/store.tsx";
 import { DASHES, nextIndex } from "./lib.ts";
 import { Widget } from "./Widgets.tsx";
-import "./p3a.css";
+import "./forms.css";
 
 type Slide = { id: string; rev: number; dash: string; seconds: number; on: boolean; order: number };
 const seed = (): Slide[] => [{ id: "S1", rev: 1, dash: "ops", seconds: 20, on: true, order: 1 }, { id: "S2", rev: 1, dash: "sales", seconds: 15, on: true, order: 2 }, { id: "S3", rev: 1, dash: "net", seconds: 30, on: true, order: 3 }, { id: "S4", rev: 1, dash: "support", seconds: 10, on: false, order: 4 }];
@@ -26,13 +26,13 @@ export function PlaylistEditor() {
     <>
       <PageHeader title="TV playlist" crumbs={["Embeds", "TV playlist"]} desc="Rotate dashboards on a wall display. Set how long each stays on screen, reorder them, and open the player on the TV."
         status={<Badge s={total ? "ok" : "warn"}>{total ? `${total} s per loop` : "Nothing scheduled"}</Badge>}
-        actions={<><Btn onClick={add} icon="plus">Add dashboard</Btn><Link className="jp-btn jp-btn--primary" to="/p3/playlist/tv">Start TV player</Link></>} />
+        actions={<><Btn onClick={add} icon="plus">Add dashboard</Btn><Link className="jp-btn jp-btn--primary" to="/playlist/tv">Start TV player</Link></>} />
       <Panel title="Rotation" flush>
         {list.length === 0 ? <EmptyState title="The playlist is empty" action={<Btn variant="primary" onClick={add}>Add a dashboard</Btn>}>Add at least one dashboard to start the TV player.</EmptyState> :
-          <ol className="p3a-playlist">{list.map((s, i) => (
+          <ol className="frm-playlist">{list.map((s, i) => (
             <li key={s.id} className={s.on ? "" : "is-off"}>
-              <span className="p3a-num" aria-hidden>{i + 1}</span>
-              <div className="p3a-grow"><Editable label={`Dashboard for slide ${i + 1}`} value={s.dash} editor={{ type: "select", options: DASH_OPTS }} onSave={(v) => save(s, "dash", String(v))} /></div>
+              <span className="frm-num" aria-hidden>{i + 1}</span>
+              <div className="frm-grow"><Editable label={`Dashboard for slide ${i + 1}`} value={s.dash} editor={{ type: "select", options: DASH_OPTS }} onSave={(v) => save(s, "dash", String(v))} /></div>
               <Editable label={`Seconds on screen for slide ${i + 1}`} value={s.seconds} editor={{ type: "number", min: 5, max: 300, unit: "s" }} onSave={(v) => save(s, "seconds", Number(v))} validate={(v) => (Number(v) < 5 ? "Show each dashboard for at least 5 seconds" : null)} />
               <Editable label={`Include slide ${i + 1}`} value={s.on} editor={{ type: "boolean", onLabel: "In rotation", offLabel: "Skipped" }} onSave={(v) => save(s, "on", Boolean(v))} />
               <span className="adm-row"><Btn sm variant="ghost" aria-label={`Move slide ${i + 1} up`} disabled={i === 0} onClick={() => void swap(i, -1)}>Up</Btn><Btn sm variant="ghost" aria-label={`Move slide ${i + 1} down`} disabled={i === list.length - 1} onClick={() => void swap(i, 1)}>Down</Btn><Btn sm variant="ghost" aria-label={`Remove slide ${i + 1}`} onClick={() => void remove(s)}>Remove</Btn></span>
@@ -53,15 +53,15 @@ export function TvPlayer() {
   useEffect(() => { if (cur && left >= cur.seconds) go(1); }, [left, cur, go]);
   const onKey = (e: React.KeyboardEvent) => { if (e.key === "ArrowRight") go(1); else if (e.key === "ArrowLeft") go(-1); else if (e.key === " " && (e.target as HTMLElement).tagName !== "BUTTON") { e.preventDefault(); setPaused((p) => !p); } };
   const full = () => { try { void root.current?.requestFullscreen?.(); } catch { /* not supported */ } };
-  if (!cur) return <div className="p3a-tv"><EmptyState title="Nothing to show">Switch at least one dashboard on in the <Link to="/p3/playlist">playlist</Link>.</EmptyState></div>;
+  if (!cur) return <div className="frm-tv"><EmptyState title="Nothing to show">Switch at least one dashboard on in the <Link to="/playlist">playlist</Link>.</EmptyState></div>;
   const dash = DASHES.find((d) => d.id === cur.dash)!;
   return (
-    <div className="p3a-tv" ref={root} onKeyDown={onKey}>
+    <div className="frm-tv" ref={root} onKeyDown={onKey}>
       <header><h1>{dash.title}</h1><span className="jp-muted">Slide {idx + 1} of {active.length}</span></header>
-      <div className="p3a-tv__grid" data-count={dash.widgets.length}>{dash.widgets.map((w) => <Widget key={w} id={w} />)}</div>
+      <div className="frm-tv__grid" data-count={dash.widgets.length}>{dash.widgets.map((w) => <Widget key={w} id={w} />)}</div>
       <footer>
         <ProgressBar value={Math.min(left, cur.seconds)} max={cur.seconds} label={`Next slide in ${Math.max(0, cur.seconds - left)} seconds`} />
-        <div className="adm-row"><Btn aria-label="Previous slide" onClick={() => go(-1)}>Previous</Btn><Btn variant="primary" onClick={() => setPaused(!paused)} aria-pressed={paused}>{paused ? "Resume" : "Pause"}</Btn><Btn aria-label="Next slide" onClick={() => go(1)}>Next</Btn><Btn variant="ghost" onClick={full}>Full screen</Btn><Link className="jp-btn jp-btn--ghost" to="/p3/playlist">Exit</Link></div>
+        <div className="adm-row"><Btn aria-label="Previous slide" onClick={() => go(-1)}>Previous</Btn><Btn variant="primary" onClick={() => setPaused(!paused)} aria-pressed={paused}>{paused ? "Resume" : "Pause"}</Btn><Btn aria-label="Next slide" onClick={() => go(1)}>Next</Btn><Btn variant="ghost" onClick={full}>Full screen</Btn><Link className="jp-btn jp-btn--ghost" to="/playlist">Exit</Link></div>
       </footer>
     </div>
   );

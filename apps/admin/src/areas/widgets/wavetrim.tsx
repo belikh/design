@@ -14,7 +14,7 @@ type Exported = { url: string; name: string; bytes: number; seconds: number; inf
 /** A time field that edits as text and commits on blur or Enter, so typing "1." is not rewritten mid-way. */
 function TimeField({ label, value, max, onCommit }: { label: string; value: number; max: number; onCommit: (v: number) => void }) {
   const [draft, setDraft] = useState<string | null>(null); const commit = () => { if (draft !== null) { const n = Number(draft); if (Number.isFinite(n)) onCommit(Math.min(max, Math.max(0, n))); setDraft(null); } };
-  return <label className="p3-field"><span className="jp-label">{label}</span><input className="jp-input p3-mono p3-num" type="number" inputMode="decimal" min={0} max={max} step={0.01} value={draft ?? value.toFixed(2)} aria-label={label} onChange={(e) => setDraft(e.target.value)} onBlur={commit} onKeyDown={(e) => { if (e.key === "Enter") commit(); }} /></label>;
+  return <label className="lab-field"><span className="jp-label">{label}</span><input className="jp-input lab-mono lab-num" type="number" inputMode="decimal" min={0} max={max} step={0.01} value={draft ?? value.toFixed(2)} aria-label={label} onChange={(e) => setDraft(e.target.value)} onBlur={commit} onKeyDown={(e) => { if (e.key === "Enter") commit(); }} /></label>;
 }
 
 /* ---------------- C048 audio waveform trim ---------------- */
@@ -64,25 +64,25 @@ export function WaveformTrim() {
   return (
     <Stack>
       <SourcePicker kind="audio" current={a?.name} onPick={(p) => void load(p)} />
-      <Row><Btn sm onClick={sample}>Load a sample tone</Btn><span className="p3-note">A 6 second generated WAV (silence, 440 Hz, 660 Hz, silence) that goes through the same decoder.</span></Row>
-      {status === "decoding" && <p className="p3-note" role="status">Decoding audio…</p>}
+      <Row><Btn sm onClick={sample}>Load a sample tone</Btn><span className="lab-note">A 6 second generated WAV (silence, 440 Hz, 660 Hz, silence) that goes through the same decoder.</span></Row>
+      {status === "decoding" && <p className="lab-note" role="status">Decoding audio…</p>}
       {status === "error" && <Alert s="danger" title="Could not load audio" onClose={() => setStatus("idle")}>{err}</Alert>}
-      {!a && status !== "decoding" && <p className="p3-note">Load an audio file, drop one on the area above, or pick a recording from C043 to see its waveform.</p>}
+      {!a && status !== "decoding" && <p className="lab-note">Load an audio file, drop one on the area above, or pick a recording from C043 to see its waveform.</p>}
       {a && <>
-        <div className="p3-wave" ref={box}>
-          <svg viewBox={`0 0 ${BUCKETS} 40`} preserveAspectRatio="none" className="p3-wave__svg" role="img" aria-label={`Waveform of ${a.name}, ${fmtClock(dur)} long, selection ${fmtClock(r[0])} to ${fmtClock(r[1])}`}>
+        <div className="lab-wave" ref={box}>
+          <svg viewBox={`0 0 ${BUCKETS} 40`} preserveAspectRatio="none" className="lab-wave__svg" role="img" aria-label={`Waveform of ${a.name}, ${fmtClock(dur)} long, selection ${fmtClock(r[0])} to ${fmtClock(r[1])}`}>
             {Array.from({ length: BUCKETS }, (_, i) => { const hi = a.peaks.max[i], lo = a.peaks.min[i]; const t = ((i + 0.5) / BUCKETS) * dur; const h = Math.max(0.5, (hi - lo) * 19); return <rect key={i} x={i + 0.1} width={0.8} y={20 - hi * 19} height={h} className={t >= r[0] && t <= r[1] ? "is-in" : ""} />; })}
           </svg>
-          <span className="p3-wave__shade" style={{ insetInlineStart: 0, inlineSize: `${pct(r[0])}%` }} /><span className="p3-wave__shade" style={{ insetInlineEnd: 0, inlineSize: `${100 - pct(r[1])}%` }} />
-          {([0, 1] as const).map((i) => <span key={i} role="slider" tabIndex={0} className="p3-wave__handle" aria-label={i === 0 ? "Trim start" : "Trim end"} aria-valuemin={0} aria-valuemax={Math.round(dur * 100) / 100} aria-valuenow={Math.round(r[i] * 100) / 100} aria-valuetext={fmtClock(r[i])} style={{ insetInlineStart: `${pct(r[i])}%` }} onPointerDown={drag(i)} onKeyDown={nudge(i)} />)}
-          {playing && <span className="p3-wave__play" style={{ insetInlineStart: `${pct(head)}%` }} aria-hidden />}
+          <span className="lab-wave__shade" style={{ insetInlineStart: 0, inlineSize: `${pct(r[0])}%` }} /><span className="lab-wave__shade" style={{ insetInlineEnd: 0, inlineSize: `${100 - pct(r[1])}%` }} />
+          {([0, 1] as const).map((i) => <span key={i} role="slider" tabIndex={0} className="lab-wave__handle" aria-label={i === 0 ? "Trim start" : "Trim end"} aria-valuemin={0} aria-valuemax={Math.round(dur * 100) / 100} aria-valuenow={Math.round(r[i] * 100) / 100} aria-valuetext={fmtClock(r[i])} style={{ insetInlineStart: `${pct(r[i])}%` }} onPointerDown={drag(i)} onKeyDown={nudge(i)} />)}
+          {playing && <span className="lab-wave__play" style={{ insetInlineStart: `${pct(head)}%` }} aria-hidden />}
         </div>
-        <p className="p3-note">Handles: drag, or focus one and use the arrow keys (0.1 s, Shift 1 s, Alt 0.01 s), Page Up and Down (5 s), Home and End.</p>
+        <p className="lab-note">Handles: drag, or focus one and use the arrow keys (0.1 s, Shift 1 s, Alt 0.01 s), Page Up and Down (5 s), Home and End.</p>
         <Row><TimeField label="Start (seconds)" value={r[0]} max={dur} onCommit={(v) => move(0, v)} /><TimeField label="End (seconds)" value={r[1]} max={dur} onCommit={(v) => move(1, v)} />
           <Badge s="info">{a.buffer.numberOfChannels === 1 ? "Mono" : `${a.buffer.numberOfChannels} channels`} · {a.buffer.sampleRate} Hz</Badge></Row>
         <Row><Btn sm icon={playing ? "stop" : "play"} onClick={toggle}>{playing ? "Stop playback" : "Play selection"}</Btn><Btn sm onClick={trimSilence}>Trim silence</Btn><Btn sm variant="ghost" onClick={() => { dropOut(); setR([0, dur]); }}>Reset</Btn><Btn variant="primary" sm onClick={exportWav} disabled={trimLength(r) < MIN_TRIM / 2}>Export WAV</Btn>
-          <span className="p3-note" role="status">Keeps {fmtClock(trimLength(r))} of {fmtClock(dur)}{playing ? " · playing" : ""}</span></Row>
-        {out && <div className="p3-result"><b>{out.name}</b><span className="p3-note">{fmtClock(out.seconds)} · {fmtBytes(out.bytes)} · {out.info}</span><audio controls src={out.url} aria-label="Trimmed audio" /><a className="jp-btn jp-btn--sm jp-btn--primary" href={out.url} download={out.name}>Download WAV</a></div>}
+          <span className="lab-note" role="status">Keeps {fmtClock(trimLength(r))} of {fmtClock(dur)}{playing ? " · playing" : ""}</span></Row>
+        {out && <div className="lab-result"><b>{out.name}</b><span className="lab-note">{fmtClock(out.seconds)} · {fmtBytes(out.bytes)} · {out.info}</span><audio controls src={out.url} aria-label="Trimmed audio" /><a className="jp-btn jp-btn--sm jp-btn--primary" href={out.url} download={out.name}>Download WAV</a></div>}
       </>}
       <Note>Audio is decoded in this tab with the Web Audio API and never uploaded. The waveform shows the true minimum and maximum of each slice. The browser resamples to its audio rate when decoding (usually 44.1 or 48 kHz), so the export is uncompressed 16-bit PCM WAV at that rate with all channels kept.</Note>
     </Stack>

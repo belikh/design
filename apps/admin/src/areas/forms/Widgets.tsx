@@ -21,7 +21,7 @@ export function Widget({ id, tick = 0, title = true }: { id: string; tick?: numb
   else if (id === "capacity") body = <Gauge value={62 + (tick % 4)} label="Storage used" />;
   else if (id === "orders") body = <BarChart labels={["North", "South", "East", "West"]} series={[{ name: "Orders", data: [120 + tick, 98, 143, 87] }]} height={180} tools={false} title="Orders by region" />;
   else body = <Donut parts={[{ label: "Web", value: 52 }, { label: "Store", value: 31 }, { label: "Partner", value: 17 }]} size={150} />;
-  return <figure className="p3a-widget" aria-label={def.title}>{title && <figcaption><b>{def.title}</b><span className="jp-muted">{def.desc}</span></figcaption>}{body}</figure>;
+  return <figure className="frm-widget" aria-label={def.title}>{title && <figcaption><b>{def.title}</b><span className="jp-muted">{def.desc}</span></figcaption>}{body}</figure>;
 }
 
 /** Bumps a counter every `seconds` (0 = never); used for auto-refresh. */

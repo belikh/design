@@ -12,10 +12,10 @@ import { Faceplate, RackElevation, SignalHeat, WifiSpectrum } from "./network.ts
 import { MotionRaster, OccupancyHeat } from "./occupancy.tsx";
 import { AuChoropleth, GpsTrack, Geofences, HexTileMap, RoadIsochrone } from "./geo.tsx";
 
-const P = ({ id, title, children }: { id: string; title: string; children: ReactNode }) => <Panel title={<>{title} <span className="p3e-id">{id}</span></>} id={id.toLowerCase().replace(/\W+/g, "-")}>{children}</Panel>;
+const P = ({ id, title, children }: { id: string; title: string; children: ReactNode }) => <Panel title={<>{title} <span className="dg-id">{id}</span></>} id={id.toLowerCase().replace(/\W+/g, "-")}>{children}</Panel>;
 const Stack = ({ children }: { children: ReactNode }) => <div className="adm-stack" style={{ marginTop: 16 }}>{children}</div>;
 const Grid = ({ children }: { children: ReactNode }) => <div className="adm-grid adm-grid--2" style={{ marginTop: 16 }}>{children}</div>;
-const Ids = ({ ids }: { ids: string }) => <p className="pc-note">Catalogue entries on this page: <span className="p3e-id">{ids}</span></p>;
+const Ids = ({ ids }: { ids: string }) => <p className="pc-note">Catalogue entries on this page: <span className="dg-id">{ids}</span></p>;
 
 export function FlowsPage() {
   return (

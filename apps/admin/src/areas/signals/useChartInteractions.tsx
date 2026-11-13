@@ -80,13 +80,13 @@ export function useChartInteractions(o: Options) {
     const r = keyRange(range, n, e.key, minSpan); if (r) { e.preventDefault(); apply(r); }
   };
   const hint = mode === "lasso" ? "Lasso mode: arrow keys move the point, Space adds a vertex, Enter closes the lasso, Escape cancels." : "Plus and minus zoom, left and right arrows pan, Home and End jump, Escape resets the zoom.";
-  const frameProps = { tabIndex: 0, role: "group" as const, onKeyDown, className: "p3-frame" };
+  const frameProps = { tabIndex: 0, role: "group" as const, onKeyDown, className: "lab-frame" };
   const xOf = (p: Plot) => (i: number) => p.l + ((i - range[0]) / Math.max(1, range[1] - range[0])) * (p.r - p.l);
   const overlay = (p: Plot): ReactNode => (
     <g pointerEvents="none">
-      {brush && <rect className="p3-brush" x={Math.max(p.l, Math.min(brush[0], brush[1]))} y={p.t} width={Math.abs(Math.min(p.r, Math.max(p.l, brush[1])) - Math.min(p.r, Math.max(p.l, brush[0])))} height={p.b - p.t} />}
-      {poly.length > 1 && <path className="p3-brush" d={`${poly.map((q, i) => `${i ? "L" : "M"}${q[0].toFixed(1)},${q[1].toFixed(1)}`).join("")}${drag.current ? "" : "Z"}`} />}
-      {kb && <path className="p3-ink" d={`M${kb[0] - 7},${kb[1]}H${kb[0] + 7}M${kb[0]},${kb[1] - 7}V${kb[1] + 7}`} strokeWidth={2} />}
+      {brush && <rect className="lab-brush" x={Math.max(p.l, Math.min(brush[0], brush[1]))} y={p.t} width={Math.abs(Math.min(p.r, Math.max(p.l, brush[1])) - Math.min(p.r, Math.max(p.l, brush[0])))} height={p.b - p.t} />}
+      {poly.length > 1 && <path className="lab-brush" d={`${poly.map((q, i) => `${i ? "L" : "M"}${q[0].toFixed(1)},${q[1].toFixed(1)}`).join("")}${drag.current ? "" : "Z"}`} />}
+      {kb && <path className="lab-ink" d={`M${kb[0] - 7},${kb[1]}H${kb[0] + 7}M${kb[0]},${kb[1] - 7}V${kb[1] + 7}`} strokeWidth={2} />}
     </g>
   );
   return { n, range, setRange: apply, reset, zoomed, zoomIn: () => apply(zoomBy(range, n, 0.5, 0.5, minSpan)), zoomOut: () => apply(zoomBy(range, n, 2, 0.5, minSpan)), pan: (d: number) => apply(panBy(range, n, d)), cursor, setCursor, scale: o.scales && (typeof o.scales === "boolean" || o.scales.log !== false) && units === "abs" ? scale : ("linear" as Scale), setScale, units, setUnits, mode, setMode, poly, clearLasso, status, hint, plotProps, frameProps, overlay, xOf, opts: o, label, minSpan };
@@ -96,15 +96,15 @@ export function useChartInteractions(o: Options) {
 export function ChartControls({ ix, title }: { ix: ChartIx; title: string }) {
   const o = ix.opts, [a, b] = ix.range, sc = typeof o.scales === "object" ? o.scales : { log: true, percent: true };
   return (
-    <div className="p3-ix" role="group" aria-label={`${title}: zoom and display options`}>
-      {o.controls !== false && <><div className="p3-controls">
+    <div className="lab-ix" role="group" aria-label={`${title}: zoom and display options`}>
+      {o.controls !== false && <><div className="lab-controls">
         {o.lasso && o.zoom !== false && <Segmented label="Drag mode" value={ix.mode} onChange={ix.setMode} options={[{ value: "zoom", label: "Zoom" }, { value: "lasso", label: "Lasso" }]} />}
-        {o.zoom !== false && <><span className="p3-ixbtns"><Btn sm aria-label="Zoom in" onClick={ix.zoomIn} disabled={b - a + 1 <= ix.minSpan}>+</Btn><Btn sm aria-label="Zoom out" onClick={ix.zoomOut} disabled={!ix.zoomed}>-</Btn><Btn sm aria-label="Pan left" onClick={() => ix.pan(-Math.max(1, Math.round((b - a) * 0.25)))} disabled={a === 0}>←</Btn><Btn sm aria-label="Pan right" onClick={() => ix.pan(Math.max(1, Math.round((b - a) * 0.25)))} disabled={b >= ix.n - 1}>→</Btn><Btn sm onClick={ix.reset} disabled={!ix.zoomed}>Reset zoom</Btn></span>
-        <span className="p3-range" aria-hidden="true">{ix.label(a)} to {ix.label(b)} ({b - a + 1} of {ix.n})</span></>}
+        {o.zoom !== false && <><span className="lab-ixbtns"><Btn sm aria-label="Zoom in" onClick={ix.zoomIn} disabled={b - a + 1 <= ix.minSpan}>+</Btn><Btn sm aria-label="Zoom out" onClick={ix.zoomOut} disabled={!ix.zoomed}>-</Btn><Btn sm aria-label="Pan left" onClick={() => ix.pan(-Math.max(1, Math.round((b - a) * 0.25)))} disabled={a === 0}>←</Btn><Btn sm aria-label="Pan right" onClick={() => ix.pan(Math.max(1, Math.round((b - a) * 0.25)))} disabled={b >= ix.n - 1}>→</Btn><Btn sm onClick={ix.reset} disabled={!ix.zoomed}>Reset zoom</Btn></span>
+        <span className="lab-range" aria-hidden="true">{ix.label(a)} to {ix.label(b)} ({b - a + 1} of {ix.n})</span></>}
       </div>
-      <div className="p3-controls">
-        {o.zoom !== false && <><label className="p3-inspect">Zoom start<input type="range" min={0} max={Math.max(0, b - ix.minSpan + 1)} value={a} aria-label={`${title}: visible range start`} aria-valuetext={ix.label(a)} onChange={(e) => ix.setRange([Number(e.target.value), b])} /></label>
-        <label className="p3-inspect">Zoom end<input type="range" min={Math.min(ix.n - 1, a + ix.minSpan - 1)} max={Math.max(0, ix.n - 1)} value={b} aria-label={`${title}: visible range end`} aria-valuetext={ix.label(b)} onChange={(e) => ix.setRange([a, Number(e.target.value)])} /></label></>}
+      <div className="lab-controls">
+        {o.zoom !== false && <><label className="lab-inspect">Zoom start<input type="range" min={0} max={Math.max(0, b - ix.minSpan + 1)} value={a} aria-label={`${title}: visible range start`} aria-valuetext={ix.label(a)} onChange={(e) => ix.setRange([Number(e.target.value), b])} /></label>
+        <label className="lab-inspect">Zoom end<input type="range" min={Math.min(ix.n - 1, a + ix.minSpan - 1)} max={Math.max(0, ix.n - 1)} value={b} aria-label={`${title}: visible range end`} aria-valuetext={ix.label(b)} onChange={(e) => ix.setRange([a, Number(e.target.value)])} /></label></>}
         {o.scales && sc.log !== false && ix.units === "abs" && <Segmented label="Axis scale" value={ix.scale} onChange={ix.setScale} options={[{ value: "linear", label: "Linear" }, { value: "log", label: "Log" }]} />}
         {o.scales && sc.percent !== false && <Segmented label="Units" value={ix.units} onChange={ix.setUnits} options={[{ value: "abs", label: "Absolute" }, { value: "pct", label: "Percent change" }]} />}
         {ix.poly.length > 2 && <Btn sm onClick={ix.clearLasso}>Clear lasso</Btn>}
@@ -120,12 +120,12 @@ export function FreshnessBar({ updated, now, query, rows, ms, cached, onRefresh 
   const [open, setOpen] = useState(false), age = Math.max(0, Math.round((now.getTime() - updated.getTime()) / 60000)), stale = age >= 5;
   return (
     <div>
-      <div className="p3-controls">
-        <span className="p3-stamp">Updated <time dateTime={updated.toISOString()}>{updated.toISOString().slice(0, 16).replace("T", " ")} UTC</time> ({age < 1 ? "just now" : `${age} min ago`})</span>
+      <div className="lab-controls">
+        <span className="lab-stamp">Updated <time dateTime={updated.toISOString()}>{updated.toISOString().slice(0, 16).replace("T", " ")} UTC</time> ({age < 1 ? "just now" : `${age} min ago`})</span>
         {stale && <Badge s="warn">Stale</Badge>}{cached && <Badge s="info">Cached</Badge>}
         <Btn sm icon="loader" onClick={onRefresh}>Refresh</Btn><Btn sm aria-expanded={open} onClick={() => setOpen(!open)}>{open ? "Hide query" : "Inspect query"}</Btn>
       </div>
-      {open && <div role="region" aria-label="Query inspector"><pre className="p3-query">{query}</pre><p className="p3-stats"><span>Rows <b>{rows}</b></span><span>Duration <b>{ms} ms</b></span><span>Source <b>{cached ? "cache" : "warehouse"}</b></span></p></div>}
+      {open && <div role="region" aria-label="Query inspector"><pre className="lab-query">{query}</pre><p className="lab-stats"><span>Rows <b>{rows}</b></span><span>Duration <b>{ms} ms</b></span><span>Source <b>{cached ? "cache" : "warehouse"}</b></span></p></div>}
     </div>
   );
 }

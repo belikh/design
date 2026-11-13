@@ -17,10 +17,10 @@ export function Venn({ sets, title = "Venn: platform usage overlap", state }: Co
           <>
             <Svg w={W} h={H} label={`${title}. ${names.length} sets, ${ex.reduce((a, e) => a + e.count, 0)} distinct items. ${ex.map((e) => `${label(e.sets)}: ${e.count}`).join("; ")}.`}>
               {cs.map((c, i) => <circle key={c.name} cx={c.x} cy={c.y} r={c.r} fill={C(i)} fillOpacity="0.28" stroke={C(i)} strokeWidth="2" />)}
-              {cs.map((c, i) => <text key={c.name} x={c.x + (c.x < W / 2 ? -c.r * 0.5 : c.x > W / 2 ? c.r * 0.5 : 0)} y={c.y + (c.y > H / 2 + 20 ? c.r + 16 : -c.r - 6)} textAnchor="middle" className="p3e-b" style={{ fill: C(i) }}>{c.name} ({fmt(new Set(sets[c.name]).size)})</text>)}
+              {cs.map((c, i) => <text key={c.name} x={c.x + (c.x < W / 2 ? -c.r * 0.5 : c.x > W / 2 ? c.r * 0.5 : 0)} y={c.y + (c.y > H / 2 + 20 ? c.r + 16 : -c.r - 6)} textAnchor="middle" className="dg-b" style={{ fill: C(i) }}>{c.name} ({fmt(new Set(sets[c.name]).size)})</text>)}
               {ex.map((e) => { const a = anchors.get(e.sets.join("|")); if (!a) return null; return (
                 <g key={e.sets.join("|")} {...hit(e.sets.join("|"), `${label(e.sets)}: ${e.count} items`)}>
-                  <circle cx={a.x} cy={a.y} r="16" fill="var(--jp-surface-raised)" fillOpacity={sel === e.sets.join("|") ? 1 : 0.8} stroke="var(--jp-border)" /><text x={a.x} y={a.y} dy="0.35em" textAnchor="middle" className="p3e-b">{e.count}</text>
+                  <circle cx={a.x} cy={a.y} r="16" fill="var(--jp-surface-raised)" fillOpacity={sel === e.sets.join("|") ? 1 : 0.8} stroke="var(--jp-border)" /><text x={a.x} y={a.y} dy="0.35em" textAnchor="middle" className="dg-b">{e.count}</text>
                 </g>); })}
             </Svg>
             <Readout>{text}</Readout>
@@ -50,8 +50,8 @@ export function UpSet({ sets, max = 12, title = "UpSet: feature adoption combina
                     {names.map((n, r) => <circle key={n} cx={x} cy={barsH + 14 + r * rowH} r="6" fill={e.sets.includes(n) ? "var(--jp-text)" : "var(--jp-border)"} />)}
                     {e.sets.length > 1 && (() => { const rs = e.sets.map((s) => names.indexOf(s)); return <line x1={x} x2={x} y1={barsH + 14 + Math.min(...rs) * rowH} y2={barsH + 14 + Math.max(...rs) * rowH} stroke="var(--jp-text)" strokeWidth="2.5" />; })()}
                   </g>); })}
-                {names.map((n, r) => <g key={n}><text x={left - 60} y={barsH + 14 + r * rowH} dy="0.35em" textAnchor="end">{n}</text><rect x={left - 56} y={barsH + 14 + r * rowH - 6} width={(sizes[r] / maxS) * 50} height="12" fill="var(--adm-c3)" rx="2" /><text x={left - 4} y={barsH + 14 + r * rowH - 8} textAnchor="end" className="p3e-mute">{sizes[r]}</text></g>)}
-                <text x="0" y="12" className="p3e-mute">users per combination</text>
+                {names.map((n, r) => <g key={n}><text x={left - 60} y={barsH + 14 + r * rowH} dy="0.35em" textAnchor="end">{n}</text><rect x={left - 56} y={barsH + 14 + r * rowH - 6} width={(sizes[r] / maxS) * 50} height="12" fill="var(--adm-c3)" rx="2" /><text x={left - 4} y={barsH + 14 + r * rowH - 8} textAnchor="end" className="dg-mute">{sizes[r]}</text></g>)}
+                <text x="0" y="12" className="dg-mute">users per combination</text>
               </Svg>
             </Scroll>
             <Readout>{text}</Readout>

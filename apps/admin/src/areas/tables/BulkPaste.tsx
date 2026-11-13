@@ -34,7 +34,7 @@ export function BulkPaste() {
   return (
     <>
       <PageHeader title="Bulk paste with validation preview" crumbs={["Grids", "Bulk paste"]} desc="Copy rows from a spreadsheet and paste them. Columns are mapped by header, every cell is validated, you fix problems in place, and only valid rows are imported." />
-      <div className="p2t-paste">
+      <div className="tbl-paste">
         <Panel title="1. Paste" actions={<div className="adm-row"><Btn sm onClick={() => load(SAMPLE)}>Load sample with errors</Btn><Btn sm variant="ghost" disabled={!text} onClick={() => load("")}>Clear</Btn></div>}>
           <div className="adm-stack">
             <TextArea value={text} onChange={load} rows={9} placeholder={"Paste tab, comma or semicolon separated rows here.\nA header row is detected automatically."} aria-label="Pasted rows" />
@@ -46,10 +46,10 @@ export function BulkPaste() {
         </Panel>
         <Panel title="2. Preview and fix" flush actions={<div className="adm-row"><Badge s="ok">{valid} valid</Badge><Badge s={invalid ? "danger" : undefined}>{invalid} invalid</Badge><Btn sm variant="primary" disabled={!valid} onClick={doImport}>Import {valid} valid rows</Btn></div>}>
           {checked.length === 0 ? <p className="jp-muted" style={{ padding: 16 }}>Nothing pasted yet.</p> : (
-            <div className="adm-dt__wrap p2t-preview" style={{ maxHeight: 420, overflow: "auto" }}><table className="jp-table adm-table"><thead><tr><th>#</th>{FIELDS.map((f) => <th key={f.key}>{f.label}</th>)}</tr></thead>
+            <div className="adm-dt__wrap tbl-preview" style={{ maxHeight: 420, overflow: "auto" }}><table className="jp-table adm-table"><thead><tr><th>#</th>{FIELDS.map((f) => <th key={f.key}>{f.label}</th>)}</tr></thead>
               <tbody>{checked.map((row, r) => (
                 <tr key={r} className={isValid(row) ? "" : "is-badrow"}><td className="adm-num">{isValid(row) ? "✓" : r + 1}</td>
-                  {FIELDS.map((f, c) => <td key={f.key} className={row.errors[c] ? "is-bad" : ""}><input aria-label={`${f.label}, row ${r + 1}`} aria-invalid={!!row.errors[c]} value={grid[r][c]} onChange={(e) => setEdits((x) => ({ ...x, [`${r}:${c}`]: e.target.value }))} />{row.errors[c] && <span className="p2t-err" role="alert">{row.errors[c]}</span>}</td>)}</tr>))}</tbody></table></div>)}
+                  {FIELDS.map((f, c) => <td key={f.key} className={row.errors[c] ? "is-bad" : ""}><input aria-label={`${f.label}, row ${r + 1}`} aria-invalid={!!row.errors[c]} value={grid[r][c]} onChange={(e) => setEdits((x) => ({ ...x, [`${r}:${c}`]: e.target.value }))} />{row.errors[c] && <span className="tbl-err" role="alert">{row.errors[c]}</span>}</td>)}</tr>))}</tbody></table></div>)}
         </Panel>
       </div>
       <Panel title={`Imported rows (${imported.length})`} className="adm-section" flush actions={<Btn sm variant="ghost" disabled={!imported.length} onClick={() => setImported([])}>Clear</Btn>}>

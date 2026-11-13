@@ -55,6 +55,7 @@ These have no npm mechanism. Download the current release file(s) into a **gitig
 | Qt / KDE | `jupiter-qt.tgz`, `JupiterLight.colors`, `JupiterDark.colors` | |
 | ESPHome | `jupiter-esphome.yaml`, npm `@belikh/jupiter-esphome` | |
 | LaTeX | `jupiter-latex.tgz` | `packages/latex/templates` |
+| GitHub (README, profile, org profile, social preview) | `jupiter-github.tgz` (light/dark SVG banner, tile, badge, divider, social preview built on the Jupiter logo (SGI Alt 700) from `packages/graphics/logo`, plus templates; `node make.mjs --title ... --out ...`) | `packages/github` |
 | Mobile | `jupiter.mobile.json` | |
 
 These are theme files, not component libraries: use the platform's native widgets and let the theme colour them.

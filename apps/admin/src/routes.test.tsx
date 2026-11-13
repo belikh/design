@@ -10,7 +10,7 @@ describe("every route renders without crashing", () => {
   for (const path of [...ROUTES.map((r) => r.path), ...extra]) {
     it(path, async () => {
       render(<MemoryRouter initialEntries={[path]}><PrefsProvider><App /></PrefsProvider></MemoryRouter>);
-      await waitFor(() => expect(screen.queryByTestId("route-loading")).not.toBeInTheDocument(), { timeout: 8000 }); // lazy P2 pages
+      await waitFor(() => expect(screen.queryByTestId("route-loading")).not.toBeInTheDocument(), { timeout: 8000 }); // lazy area pages
       expect(screen.queryByText("This view crashed")).not.toBeInTheDocument();
       expect(document.body.textContent?.length).toBeGreaterThan(50);
     });

@@ -1,6 +1,6 @@
-# P2 status: charts (spec sections D1–D9)
+# Status: charts (spec sections D1–D9)
 
-Routes live under `/charts/*` (nav group "Charts"). All data is fictional and deterministic (`apps/admin/src/p2/charts/data.ts`). Nothing here has been exercised against real data. "Done" means the feature exists, renders in light and dark, and is covered by the render/interaction tests in `charts.test.tsx` or the pure-logic tests in `lib.test.ts`.
+Routes live under `/charts/*` (nav group "Charts"). All data is fictional and deterministic (`apps/admin/src/areas/charts/data.ts`). Nothing here has been exercised against real data. "Done" means the feature exists, renders in light and dark, and is covered by the render/interaction tests in `charts.test.tsx` or the pure-logic tests in `lib.test.ts`.
 
 | ID | Entry | Status | Route | Note |
 |---|---|---|---|---|
@@ -32,7 +32,7 @@ Routes live under `/charts/*` (nav group "Charts"). All data is fictional and de
 | D056 | Choropleth, bubble, clusters, flow lines, heat, floor plan, rack | Partial | `/charts/maps` | Map is a coarse hand-drawn Australia outline (~50 km accuracy); choropleth is a tile cartogram because no real state polygons were available. Bubble-map labels overlap in the south-east. Clusters are computed in screen space. |
 | D073 | Export PNG/SVG/CSV, fullscreen, accessible table fallback | Partial | all `/charts/*` | Every chart has the table toggle, CSV and fullscreen. SVG/PNG export captures only the first SVG in a frame, and HTML-based charts (tables, bars, leaderboard, rack, segmented bar) offer CSV only. PNG export and fullscreen are not covered by tests. |
 
-## Shared changes outside `p2/charts/`
+## Shared changes outside `areas/charts/`
 - `ui/Charts.tsx`: exported `nice`, `fmtDefault`, `useWidth`, `Tooltip`; added `thresholds` prop to `LineChart`; `NaN` values now leave a gap in a line; `C(i)` no longer yields an undefined colour for negative indices.
 - `ui/chartTools.tsx`: exported `download`; added `ChartTableData`, `tableToCsv`, `GenericTable`.
 

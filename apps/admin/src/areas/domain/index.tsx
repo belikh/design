@@ -1,4 +1,4 @@
-import type { P2Route } from "../registry.ts";
+import type { AreaRoute } from "../registry.ts";
 import { Billing } from "./Billing.tsx";
 import { Documents } from "./Documents.tsx";
 import { lazy } from "react";
@@ -17,8 +17,8 @@ const EspFleet = lazy(() => import("./EspFleet.tsx").then((m) => ({ default: m.E
 const DesignSystemAdmin = lazy(() => import("./DesignSystemAdmin.tsx").then((m) => ({ default: m.DesignSystemAdmin })));
 const AgentRuns = lazy(() => import("./AgentRuns.tsx").then((m) => ({ default: m.AgentRuns })));
 
-const R = (path: string, label: string, icon: string, keywords: string, element: React.ReactNode): P2Route => ({ path: `/domain/${path}`, label, icon, group: "Domain", keywords, element });
-export const routes: P2Route[] = [
+const R = (path: string, label: string, icon: string, keywords: string, element: React.ReactNode): AreaRoute => ({ path: `/domain/${path}`, label, icon, group: "Domain", keywords, element });
+export const routes: AreaRoute[] = [
   R("service-health", "Service health & on-call", "pulse", "uptime slo incidents alert rules on-call error budget", <ServiceHealth />),
   R("home-automation", "Home automation", "home", "entities automations energy batteries cameras csi presence home assistant", <HomeAutomation />),
   R("hosts-storage", "Hosts & storage", "server", "nixos fleet zfs iscsi smart backups restore ups power", <HostsStorage />),

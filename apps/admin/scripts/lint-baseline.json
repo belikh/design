@@ -1,49 +1,49 @@
 {
- "src/p2/chrome/PagesScale.tsx": {
+ "src/areas/chrome/PagesScale.tsx": {
   "hex-colour": 1
  },
- "src/p2/chrome/chrome.css": {
+ "src/areas/chrome/chrome.css": {
   "hex-colour": 1,
   "literal-constant": 7
  },
- "src/p2/chrome/media.tsx": {
+ "src/areas/chrome/media.tsx": {
   "hex-colour": 1
  },
- "src/p2/domain/design-system.data.ts": {
+ "src/areas/domain/design-system.data.ts": {
   "hex-colour": 2
  },
- "src/p2/inputs/editors.tsx": {
+ "src/areas/inputs/editors.tsx": {
   "hex-colour": 1
  },
- "src/p2/inputs/files.tsx": {
+ "src/areas/inputs/files.tsx": {
   "hex-colour": 6
  },
- "src/p2/inputs/in2.css": {
+ "src/areas/inputs/in2.css": {
   "literal-constant": 1
  },
- "src/p2/inputs/structured.tsx": {
+ "src/areas/inputs/structured.tsx": {
   "bespoke-editor": 1
  },
- "src/p2/inputs/text-fields.tsx": {
+ "src/areas/inputs/text-fields.tsx": {
   "bespoke-editor": 1
  },
- "src/p2/records/design.tsx": {
+ "src/areas/records/design.tsx": {
   "hex-colour": 1
  },
- "src/p2/tools/pages/DiffPage.tsx": {
+ "src/areas/tools/pages/DiffPage.tsx": {
   "hex-colour": 2
  },
- "src/p2/tools/pages/PrintPreview.tsx": {
+ "src/areas/tools/pages/PrintPreview.tsx": {
   "hex-colour": 1
  },
- "src/p2/tools/tools.css": {
+ "src/areas/tools/tools.css": {
   "hex-colour": 6,
   "literal-constant": 1
  },
- "src/p2/views/Records.tsx": {
+ "src/areas/views/Records.tsx": {
   "hex-colour": 1
  },
- "src/p2/views/views.css": {
+ "src/areas/views/views.css": {
   "literal-constant": 1
  },
  "src/pages/Activity.tsx": {

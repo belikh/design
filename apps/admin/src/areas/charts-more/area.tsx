@@ -27,9 +27,9 @@ export function AreaChart({ title = "Area", id = "D002", mode, labels, names, se
           <>
             {mode !== "stream" && <YAxis ticks={nd.ticks} y={y} x0={M.l} x1={w - M.r} fmtT={mode === "percent" ? (v) => `${Math.round(v * 100)}%` : fmt} />}
             {mode === "stream" && <T x={M.l - 6} y={M.t + 8} anchor="end">centred</T>}
-            {layers.map((l, i) => <path key={i} d={areaPath(xs, l.y0.map(y), l.y1.map(y), smooth)} fill={C(i)} fillOpacity={mode === "area" ? 0.35 : 0.9} className="p3-edge" stroke={mode === "area" ? C(i) : undefined} strokeWidth={mode === "area" ? 2 : 1.5} />)}
+            {layers.map((l, i) => <path key={i} d={areaPath(xs, l.y0.map(y), l.y1.map(y), smooth)} fill={C(i)} fillOpacity={mode === "area" ? 0.35 : 0.9} className="lab-edge" stroke={mode === "area" ? C(i) : undefined} strokeWidth={mode === "area" ? 2 : 1.5} />)}
             <XLabels xs={xs} labels={labels} y={height - 8} />
-            {pk.i !== null && <line x1={xs[pk.i]} x2={xs[pk.i]} y1={top} y2={bot} className="p3-ink" />}
+            {pk.i !== null && <line x1={xs[pk.i]} x2={xs[pk.i]} y1={top} y2={bot} className="lab-ink" />}
             {xs.map((x, j) => <rect key={j} x={x - (w - M.l - M.r) / Math.max(1, labels.length - 1) / 2} y={top} width={(w - M.l - M.r) / Math.max(1, labels.length - 1)} height={bot - top} fill="transparent" onMouseEnter={pk.mark(j).onMouseEnter} />)}
           </>
         );
@@ -51,9 +51,9 @@ export function MinMaxBand({ title = "Min-max band", id = "D009", labels, min, m
         return (<>
           <YAxis ticks={nd.ticks} y={y} x0={M.l} x1={w - M.r} />
           <path d={areaPath(xs, min.map(y), max.map(y))} fill="var(--adm-c1)" fillOpacity={0.22} stroke="var(--adm-c1)" strokeWidth={1} />
-          <path d={linePath(xs, mean.map(y))} className="p3-ink" />
+          <path d={linePath(xs, mean.map(y))} className="lab-ink" />
           <XLabels xs={xs} labels={labels} y={height - 8} />
-          {pk.i !== null && <><line x1={xs[pk.i]} x2={xs[pk.i]} y1={y(max[pk.i])} y2={y(min[pk.i])} className="p3-ink" strokeWidth={3} /><circle cx={xs[pk.i]} cy={y(mean[pk.i])} r={5} fill="var(--jp-text)" /></>}
+          {pk.i !== null && <><line x1={xs[pk.i]} x2={xs[pk.i]} y1={y(max[pk.i])} y2={y(min[pk.i])} className="lab-ink" strokeWidth={3} /><circle cx={xs[pk.i]} cy={y(mean[pk.i])} r={5} fill="var(--jp-text)" /></>}
           {xs.map((x, j) => <rect key={j} x={x - 8} y={top} width={16} height={bot - top} fill="transparent" onMouseEnter={pk.mark(j).onMouseEnter} />)}
         </>);
       }} />
@@ -74,9 +74,9 @@ export function FanChart({ title = "Fan chart", id = "D009", labels, median, his
         return (<>
           <YAxis ticks={nd.ticks} y={y} x0={M.l} x1={w - M.r} />
           {[2, 1, 0].map((b) => <path key={b} d={areaPath(fx, bands[b].lo.map(y), bands[b].hi.map(y))} fill="var(--adm-c1)" fillOpacity={[0.3, 0.2, 0.12][b]} />)}
-          <path d={linePath(xs.slice(0, histLen), median.slice(0, histLen).map(y))} className="p3-ink" strokeWidth={2.5} />
+          <path d={linePath(xs.slice(0, histLen), median.slice(0, histLen).map(y))} className="lab-ink" strokeWidth={2.5} />
           <path d={linePath(fx, fut.map(y))} stroke="var(--adm-c1)" strokeWidth={2.5} strokeDasharray="6 4" fill="none" />
-          <line x1={xs[histLen - 1]} x2={xs[histLen - 1]} y1={top} y2={bot} className="p3-ref" /><T x={xs[histLen - 1] + 4} y={top + 8} anchor="start">forecast</T>
+          <line x1={xs[histLen - 1]} x2={xs[histLen - 1]} y1={top} y2={bot} className="lab-ref" /><T x={xs[histLen - 1] + 4} y={top + 8} anchor="start">forecast</T>
           <XLabels xs={xs} labels={labels} y={height - 8} />
           {pk.i !== null && <circle cx={xs[pk.i]} cy={y(median[pk.i])} r={5} fill="var(--jp-text)" />}
           {xs.map((x, j) => <rect key={j} x={x - 10} y={top} width={20} height={bot - top} fill="transparent" onMouseEnter={pk.mark(j).onMouseEnter} />)}
@@ -100,14 +100,14 @@ export function HorizonChart({ title = "Horizon chart", id = "D010", labels, nam
           {names.map((n, i) => {
             const base = 6 + i * (rowH + 6) + rowH, hz = horizonBands(series[i], bands, maxAbs);
             return (<g key={n}>
-              <T x={l - 8} y={base - rowH / 2} anchor="end" dominantBaseline="middle" cls="p3-tl">{n}</T>
-              <rect x={l} y={base - rowH} width={w - l - 8} height={rowH} className="p3-flat" />
+              <T x={l - 8} y={base - rowH / 2} anchor="end" dominantBaseline="middle" cls="lab-tl">{n}</T>
+              <rect x={l} y={base - rowH} width={w - l - 8} height={rowH} className="lab-flat" />
               {hz.pos.map((layer, k) => <path key={`p${k}`} d={areaPath(xs, layer.map(() => base), layer.map((v) => base - v * rowH))} fill="var(--adm-c1)" fillOpacity={0.38} />)}
               {hz.neg.map((layer, k) => <path key={`n${k}`} d={areaPath(xs, layer.map(() => base - rowH), layer.map((v) => base - rowH + v * rowH))} fill="var(--adm-c2)" fillOpacity={0.38} />)}
             </g>);
           })}
           <XLabels xs={xs} labels={labels.map((s) => `${s}h`)} y={height - 6} />
-          {pk.i !== null && <line x1={xs[pk.i]} x2={xs[pk.i]} y1={4} y2={height - 20} className="p3-ink" />}
+          {pk.i !== null && <line x1={xs[pk.i]} x2={xs[pk.i]} y1={4} y2={height - 20} className="lab-ink" />}
           {xs.map((x, j) => <rect key={j} x={x - 3} y={0} width={6} height={height - 20} fill="transparent" onMouseEnter={pk.mark(j).onMouseEnter} />)}
         </>);
       }} />
@@ -130,7 +130,7 @@ export function CyclePlot({ title = "Cycle plot", id = "D010", values, period, s
             const x0 = M.l + c * pw + pad, x1 = M.l + (c + 1) * pw - pad, xs = cycles[c].map((_, k) => (cycles[c].length === 1 ? (x0 + x1) / 2 : x0 + (k / (cycles[c].length - 1)) * (x1 - x0)));
             return (<g key={s} {...pk.mark(c)}>
               <rect x={M.l + c * pw} y={top} width={pw} height={bot - top} fill={pk.on(c) ? "var(--jp-surface)" : "transparent"} />
-              <line x1={x0} x2={x1} y1={y(means[c])} y2={y(means[c])} className="p3-ref" />
+              <line x1={x0} x2={x1} y1={y(means[c])} y2={y(means[c])} className="lab-ref" />
               <path d={linePath(xs, cycles[c].map(y))} stroke="var(--adm-c1)" strokeWidth={2} fill="none" />
               {cycles[c].map((v, k) => <circle key={k} cx={xs[k]} cy={y(v)} r={2.5} fill="var(--adm-c1)" />)}
               <T x={(x0 + x1) / 2} y={height - 8}>{s}</T>

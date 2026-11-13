@@ -1,6 +1,6 @@
-# P2 status: Records (spec section A3, detail and edit)
+# Status: Records (spec section A3, detail and edit)
 
-Area: `apps/admin/src/p2/records/` (nav group **Records**). All routes live under `/records/`. Pure logic is in `*.logic.ts` and
+Area: `apps/admin/src/areas/records/` (nav group **Records**). All routes live under `/records/`. Pure logic is in `*.logic.ts` and
 unit-tested; every page has interaction tests in `pages.test.tsx`. Data is fictional and deterministic, state lives in the browser, and
 nothing talks to a server. "Done" means the workflow works end to end in the browser; it does not mean it is wired to a backend.
 
@@ -34,7 +34,7 @@ nothing talks to a server. "Done" means the workflow works end to end in the bro
 | A088 | Theme and branding editor (the token editor as a page) | Done | `/records/branding` | Edits real `@belikh/jupiter-tokens` in a scoped preview (inline CSS variables; the app theme is untouched), live contrast checks for light and dark, import/export tokens JSON. Does not write `jupiter.tokens.json`. |
 | A089 | Custom fields and schema designer | Done | `/records/schema` | Field editor (add, reorder, delete), types, options, min/max, conditional visibility, issues list, generated JSON Schema, and a form generated from it with validation. Does not enforce conditional `required` in the emitted JSON Schema (it omits conditionally-required fields from `required`). |
 
-Out of scope for this fork (tagged P3, not P2): A087 licence and entitlements, A090 form builder, A091 survey results, A092 approval-flow designer, A093 moderation detail.
+Out of scope for this fork (specialised tier): A087 licence and entitlements, A090 form builder, A091 survey results, A092 approval-flow designer, A093 moderation detail.
 P1 entries in the section (A054, A055, A057–A060, A062, A063) were built earlier in `apps/admin/src/pages/`.
 
 ## Honest gaps

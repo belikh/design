@@ -15,7 +15,7 @@ import { CommentsDemo, LiveCursors, PresenceBar, RecordLocks } from "./collabui.
 import { Entry } from "./ui.tsx";
 
 const Page = ({ title, desc, children }: { title: string; desc: string; children: React.ReactNode }) => (
-  <div className="p3-page"><PageHeader title={title} desc={desc} eyebrow="P3 specialised inputs" /><div className="p3-cols">{children}</div></div>
+  <div className="lab-page"><PageHeader title={title} desc={desc} eyebrow="Specialised inputs" /><div className="lab-cols">{children}</div></div>
 );
 
 export const SpreadsheetPage = () => (
@@ -25,7 +25,7 @@ export const SpreadsheetPage = () => (
 );
 export const RatingsPage = () => (
   <Page title="Ratings and reactions" desc="Ways to ask how someone feels, from a quick reaction to a full survey scale.">
-    <Entry id="C015" title="Rating (stars, hearts)" desc="Radio groups with arrow keys. Click the current value again to clear it."><div className="p3-stack"><RatingInput label="Overall quality" /><RatingInput label="Would you recommend it" icon="heart" max={5} /></div></Entry>
+    <Entry id="C015" title="Rating (stars, hearts)" desc="Radio groups with arrow keys. Click the current value again to clear it."><div className="lab-stack"><RatingInput label="Overall quality" /><RatingInput label="Would you recommend it" icon="heart" max={5} /></div></Entry>
     <Entry id="C015" title="NPS 0 to 10"><NpsInput /></Entry>
     <Entry id="C015" title="Likert scale"><LikertScale /></Entry>
     <Entry id="C015" title="Emoji reaction"><EmojiReactions /></Entry>

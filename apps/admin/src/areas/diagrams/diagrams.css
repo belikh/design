@@ -1,53 +1,53 @@
-/* P3e diagrams and spatial charts. Tokens only; prefix p3e-. */
-.p3e-svg { display: block; max-inline-size: none; overflow: visible; }
-.p3e-svg text { fill: var(--jp-text); font-size: var(--jp-fs-xs); font-family: var(--jp-font-mono); }
-.p3e-svg .p3e-mute { fill: var(--jp-text-muted); }
-.p3e-svg .p3e-sm { font-size: var(--jp-fs-sm); }
-.p3e-svg .p3e-b { font-weight: 700; }
-.p3e-svg .p3e-halo { paint-order: stroke; stroke: var(--jp-surface-raised); stroke-width: 3px; stroke-linejoin: round; }
-.p3e-svg .p3e-on { fill: var(--jp-on-accent); }
-.p3e-pt { cursor: pointer; outline: none; }
-.p3e-pt:focus-visible > :first-child, .p3e-pt:hover > :first-child { stroke: var(--jp-text); stroke-width: 2.5px; }
-.p3e-pt:focus-visible { outline: 2px solid var(--jp-accent); outline-offset: 2px; }
-.p3e-dim { opacity: .18; transition: opacity .15s; }
-.p3e-link { fill: none; transition: opacity .15s; }
-.p3e-edge { fill: none; stroke: var(--jp-text-muted); stroke-width: 1.5px; }
-.p3e-edge.is-hot { stroke: var(--jp-accent); stroke-width: 2.5px; }
-.p3e-box { fill: var(--jp-surface-raised); stroke: var(--jp-border); stroke-width: 1.5px; }
-.p3e-head { fill: var(--jp-surface); }
-.p3e-scroll { overflow-x: auto; max-inline-size: 100%; }
-.p3e-scroll:focus-visible { outline: 2px solid var(--jp-accent); }
-.p3e-legend { list-style: none; margin: var(--jp-space-2) 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--jp-space-3); font-size: var(--jp-fs-xs); color: var(--jp-text-muted); }
-.p3e-legend li { display: inline-flex; align-items: center; gap: 6px; }
-.p3e-legend i { display: inline-block; inline-size: 12px; block-size: 12px; border-radius: 3px; border: 1px solid var(--jp-border); }
-.p3e-scale { display: inline-flex; align-items: center; gap: 6px; font-size: var(--jp-fs-xs); color: var(--jp-text-muted); }
-.p3e-scale i { inline-size: 110px; block-size: 10px; border-radius: 3px; background: linear-gradient(to right, color-mix(in oklab, var(--jp-accent) 8%, var(--jp-surface-raised)), var(--jp-accent)); border: 1px solid var(--jp-border); }
-.p3e-controls { display: flex; flex-wrap: wrap; gap: var(--jp-space-3); align-items: center; margin-block-end: var(--jp-space-3); font-size: var(--jp-fs-sm); }
-.p3e-controls label { display: inline-flex; gap: 8px; align-items: center; }
-.p3e-controls input[type="range"] { inline-size: min(280px, 60vw); accent-color: var(--jp-accent); }
-.p3e-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: var(--jp-space-2); margin-block-end: var(--jp-space-3); }
-.p3e-stats div { border: 1px solid var(--jp-border); border-radius: var(--jp-radius-md); padding: var(--jp-space-2) var(--jp-space-3); background: var(--jp-surface); }
-.p3e-stats b { display: block; font: 700 var(--jp-fs-lg) var(--jp-font-mono); }
-.p3e-stats span { font-size: var(--jp-fs-xs); color: var(--jp-text-muted); }
-.p3e-id { font: var(--jp-fs-xs) var(--jp-font-mono); color: var(--jp-text-muted); }
-.p3e-badge { display: inline-flex; gap: 6px; align-items: center; padding: 2px 8px; border: 1px solid var(--jp-border); border-radius: 999px; font: var(--jp-fs-xs) var(--jp-font-mono); background: var(--jp-surface); }
-.p3e-badge.is-ok { border-color: var(--jp-ok); } .p3e-badge.is-warn { border-color: var(--jp-warn); } .p3e-badge.is-danger { border-color: var(--jp-danger); }
-.p3e-focus-grid { outline: none; } .p3e-focus-grid:focus-visible { outline: 2px solid var(--jp-accent); outline-offset: 3px; }
+/* Diagrams and spatial charts. Tokens only; prefix dg-. */
+.dg-svg { display: block; max-inline-size: none; overflow: visible; }
+.dg-svg text { fill: var(--jp-text); font-size: var(--jp-fs-xs); font-family: var(--jp-font-mono); }
+.dg-svg .dg-mute { fill: var(--jp-text-muted); }
+.dg-svg .dg-sm { font-size: var(--jp-fs-sm); }
+.dg-svg .dg-b { font-weight: 700; }
+.dg-svg .dg-halo { paint-order: stroke; stroke: var(--jp-surface-raised); stroke-width: 3px; stroke-linejoin: round; }
+.dg-svg .dg-on { fill: var(--jp-on-accent); }
+.dg-pt { cursor: pointer; outline: none; }
+.dg-pt:focus-visible > :first-child, .dg-pt:hover > :first-child { stroke: var(--jp-text); stroke-width: 2.5px; }
+.dg-pt:focus-visible { outline: 2px solid var(--jp-accent); outline-offset: 2px; }
+.dg-dim { opacity: .18; transition: opacity .15s; }
+.dg-link { fill: none; transition: opacity .15s; }
+.dg-edge { fill: none; stroke: var(--jp-text-muted); stroke-width: 1.5px; }
+.dg-edge.is-hot { stroke: var(--jp-accent); stroke-width: 2.5px; }
+.dg-box { fill: var(--jp-surface-raised); stroke: var(--jp-border); stroke-width: 1.5px; }
+.dg-head { fill: var(--jp-surface); }
+.dg-scroll { overflow-x: auto; max-inline-size: 100%; }
+.dg-scroll:focus-visible { outline: 2px solid var(--jp-accent); }
+.dg-legend { list-style: none; margin: var(--jp-space-2) 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--jp-space-3); font-size: var(--jp-fs-xs); color: var(--jp-text-muted); }
+.dg-legend li { display: inline-flex; align-items: center; gap: 6px; }
+.dg-legend i { display: inline-block; inline-size: 12px; block-size: 12px; border-radius: 3px; border: 1px solid var(--jp-border); }
+.dg-scale { display: inline-flex; align-items: center; gap: 6px; font-size: var(--jp-fs-xs); color: var(--jp-text-muted); }
+.dg-scale i { inline-size: 110px; block-size: 10px; border-radius: 3px; background: linear-gradient(to right, color-mix(in oklab, var(--jp-accent) 8%, var(--jp-surface-raised)), var(--jp-accent)); border: 1px solid var(--jp-border); }
+.dg-controls { display: flex; flex-wrap: wrap; gap: var(--jp-space-3); align-items: center; margin-block-end: var(--jp-space-3); font-size: var(--jp-fs-sm); }
+.dg-controls label { display: inline-flex; gap: 8px; align-items: center; }
+.dg-controls input[type="range"] { inline-size: min(280px, 60vw); accent-color: var(--jp-accent); }
+.dg-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: var(--jp-space-2); margin-block-end: var(--jp-space-3); }
+.dg-stats div { border: 1px solid var(--jp-border); border-radius: var(--jp-radius-md); padding: var(--jp-space-2) var(--jp-space-3); background: var(--jp-surface); }
+.dg-stats b { display: block; font: 700 var(--jp-fs-lg) var(--jp-font-mono); }
+.dg-stats span { font-size: var(--jp-fs-xs); color: var(--jp-text-muted); }
+.dg-id { font: var(--jp-fs-xs) var(--jp-font-mono); color: var(--jp-text-muted); }
+.dg-badge { display: inline-flex; gap: 6px; align-items: center; padding: 2px 8px; border: 1px solid var(--jp-border); border-radius: 999px; font: var(--jp-fs-xs) var(--jp-font-mono); background: var(--jp-surface); }
+.dg-badge.is-ok { border-color: var(--jp-ok); } .dg-badge.is-warn { border-color: var(--jp-warn); } .dg-badge.is-danger { border-color: var(--jp-danger); }
+.dg-focus-grid { outline: none; } .dg-focus-grid:focus-visible { outline: 2px solid var(--jp-accent); outline-offset: 3px; }
 /* heat table */
-.p3e-heat { border-collapse: separate; border-spacing: 2px; font: var(--jp-fs-xs) var(--jp-font-mono); }
-.p3e-heat th { font-weight: 600; color: var(--jp-text-muted); text-align: start; padding: 4px 8px; white-space: nowrap; }
-.p3e-heat th.p3e-num, .p3e-heat td { text-align: end; }
-.p3e-heat td { padding: 6px 8px; min-inline-size: 38px; border-radius: 3px; cursor: default; background: var(--jp-surface); }
-.p3e-heat td.is-empty { background: transparent; border: 1px dashed var(--jp-border); }
-.p3e-heat td.p3e-plain { background: transparent; color: var(--jp-text); }
-.p3e-heat td:focus-visible { outline: 2px solid var(--jp-text); outline-offset: 1px; }
-.p3e-heat.is-vertical td { min-inline-size: 26px; padding: 6px 4px; text-align: center; }
-.p3e-heat th.p3e-vert { vertical-align: bottom; padding: 4px 2px; } .p3e-heat th.p3e-vert span { writing-mode: vertical-rl; transform: rotate(180deg); display: inline-block; }
-.p3e-run { animation: p3e-dash 1.2s linear infinite; stroke-dasharray: 5 4; }
-@keyframes p3e-dash { to { stroke-dashoffset: -18; } }
-@media (prefers-reduced-motion: reduce) { .p3e-run { animation: none; } .p3e-dim, .p3e-link { transition: none; } }
-.p3e-legend i.p3e-hatched { background: repeating-linear-gradient(45deg, var(--jp-danger) 0 3px, transparent 3px 6px); border-color: var(--jp-danger); }
-.p3e-legend i.p3e-ring { border-radius: 50%; background: transparent; border: 2px solid var(--jp-text-muted); }
-.adm-chart .p3e-svg, .adm-chart__plot .p3e-svg { max-inline-size: none; inline-size: auto; block-size: auto; }
-.p3e-controls label { white-space: nowrap; }
-.p3e-legend .p3e-outline { border-color: var(--jp-text-muted); }
+.dg-heat { border-collapse: separate; border-spacing: 2px; font: var(--jp-fs-xs) var(--jp-font-mono); }
+.dg-heat th { font-weight: 600; color: var(--jp-text-muted); text-align: start; padding: 4px 8px; white-space: nowrap; }
+.dg-heat th.dg-num, .dg-heat td { text-align: end; }
+.dg-heat td { padding: 6px 8px; min-inline-size: 38px; border-radius: 3px; cursor: default; background: var(--jp-surface); }
+.dg-heat td.is-empty { background: transparent; border: 1px dashed var(--jp-border); }
+.dg-heat td.dg-plain { background: transparent; color: var(--jp-text); }
+.dg-heat td:focus-visible { outline: 2px solid var(--jp-text); outline-offset: 1px; }
+.dg-heat.is-vertical td { min-inline-size: 26px; padding: 6px 4px; text-align: center; }
+.dg-heat th.dg-vert { vertical-align: bottom; padding: 4px 2px; } .dg-heat th.dg-vert span { writing-mode: vertical-rl; transform: rotate(180deg); display: inline-block; }
+.dg-run { animation: dg-dash 1.2s linear infinite; stroke-dasharray: 5 4; }
+@keyframes dg-dash { to { stroke-dashoffset: -18; } }
+@media (prefers-reduced-motion: reduce) { .dg-run { animation: none; } .dg-dim, .dg-link { transition: none; } }
+.dg-legend i.dg-hatched { background: repeating-linear-gradient(45deg, var(--jp-danger) 0 3px, transparent 3px 6px); border-color: var(--jp-danger); }
+.dg-legend i.dg-ring { border-radius: 50%; background: transparent; border: 2px solid var(--jp-text-muted); }
+.adm-chart .dg-svg, .adm-chart__plot .dg-svg { max-inline-size: none; inline-size: auto; block-size: auto; }
+.dg-controls label { white-space: nowrap; }
+.dg-legend .dg-outline { border-color: var(--jp-text-muted); }

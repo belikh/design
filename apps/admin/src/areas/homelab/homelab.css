@@ -1,4 +1,4 @@
-/* P3g: home lab and household. Tokens only. */
+/* Home lab and household. Tokens only. */
 .hg-row { display: flex; align-items: center; gap: var(--jp-space-3); flex-wrap: wrap; }
 .hg-between { justify-content: space-between; }
 .hg-num { font-family: var(--jp-font-mono); font-variant-numeric: tabular-nums; }

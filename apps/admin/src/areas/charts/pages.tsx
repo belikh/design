@@ -120,7 +120,7 @@ export function FurniturePage() {
   const [st, setSt] = useState<FrameState>("ready");
   return (
     <>
-      <PageHeader title="Chart furniture" crumbs={crumbs("Furniture")} desc="What every P2 chart gets: export (SVG, PNG, CSV), an accessible data-table view, fullscreen, and loading / empty / error states." />
+      <PageHeader title="Chart furniture" crumbs={crumbs("Furniture")} desc="What every chart gets: export (SVG, PNG, CSV), an accessible data-table view, fullscreen, and loading / empty / error states." />
       <div className="adm-row" style={{ margin: "8px 0 16px" }}><span className="jp-muted">Preview state</span><Segmented label="Chart state" value={st} onChange={setSt} options={[{ value: "ready", label: "Ready" }, { value: "loading", label: "Loading" }, { value: "empty", label: "Empty" }, { value: "error", label: "Error" }]} /></div>
       <G><P title="Same chart, any state · D073"><Lollipop title="Sales by city" items={D.regionsSales} unit="k" state={st} /></P>
         <P title="Frame with a custom body · D073"><ChartFrame title="Custom frame" state={st} height={160} table={{ head: ["Step", "Value"], rows: [["one", 1], ["two", 2], ["three", 3]] }}>{(w) => <svg viewBox={`0 0 ${w} 140`} style={{ width: "100%", height: 140 }} role="img" aria-label="Three bars">{[1, 2, 3].map((v) => <rect key={v} x={20 + (v - 1) * 70} y={130 - v * 36} width="50" height={v * 36} fill="var(--jp-accent)" rx="4" />)}</svg>}</ChartFrame></P></G>

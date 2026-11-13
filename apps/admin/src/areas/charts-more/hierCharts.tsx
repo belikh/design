@@ -20,9 +20,9 @@ export function TreemapChart({ title = "Treemap", id = "D021", root, unit: u = u
       build={(w, pk) => {
         const all = treemap(root, w, height, 3, 16), leavesN = all.filter((n) => n.leaf);
         return (<>
-          {all.filter((n) => !n.leaf).map((g) => <g key={pathText(g.path)}><rect x={g.rect.x} y={g.rect.y} width={g.rect.w} height={g.rect.h} fill={C(branchOf(root, g.path))} fillOpacity={0.18} stroke="var(--jp-surface-raised)" strokeWidth={1} />{g.rect.w > 50 && <T x={g.rect.x + 5} y={g.rect.y + 12} anchor="start" cls="p3-tl">{g.name}</T>}</g>)}
+          {all.filter((n) => !n.leaf).map((g) => <g key={pathText(g.path)}><rect x={g.rect.x} y={g.rect.y} width={g.rect.w} height={g.rect.h} fill={C(branchOf(root, g.path))} fillOpacity={0.18} stroke="var(--jp-surface-raised)" strokeWidth={1} />{g.rect.w > 50 && <T x={g.rect.x + 5} y={g.rect.y + 12} anchor="start" cls="lab-tl">{g.name}</T>}</g>)}
           {leavesN.map((n, i) => <g key={pathText(n.path)}><rect {...pk.mark(i)} x={n.rect.x} y={n.rect.y} width={n.rect.w} height={n.rect.h} fill={C(branchOf(root, n.path))} fillOpacity={0.85} stroke="var(--jp-surface-raised)" strokeWidth={1.5} />
-            {fits(n.rect.w, n.rect.h, n.name) && <T x={n.rect.x + 5} y={n.rect.y + 14} anchor="start" cls="p3-tw" pointerEvents="none">{n.name}</T>}</g>)}
+            {fits(n.rect.w, n.rect.h, n.name) && <T x={n.rect.x + 5} y={n.rect.y + 14} anchor="start" cls="lab-tw" pointerEvents="none">{n.name}</T>}</g>)}
         </>);
       }} />
   );
@@ -40,7 +40,7 @@ export function Sunburst({ title = "Sunburst", id = "D021", root, unit: u = unit
         const cx = w / 2, cy = height / 2, R = Math.min(w, height) / 2 - 4, r0 = R * 0.22, rw = (R - r0) / (D || 1);
         return (<>
           {nodes.map((n, i) => <path key={pathText(n.path)} {...pk.mark(i)} d={arcPath(cx, cy, r0 + n.depth * rw, r0 + (n.depth + 1) * rw - 1, n.x0 * Math.PI * 2, n.x1 * Math.PI * 2)} fill={C(n.branch)} fillOpacity={1 - n.depth * 0.22} stroke="var(--jp-surface-raised)" strokeWidth={1.5} />)}
-          <T x={cx} y={cy - 2} cls="p3-tc">{fmt(pk.i === null ? tot : nodes[pk.i].value)}</T><T x={cx} y={cy + 14}>{pk.i === null ? u : nodes[pk.i].name}</T>
+          <T x={cx} y={cy - 2} cls="lab-tc">{fmt(pk.i === null ? tot : nodes[pk.i].value)}</T><T x={cx} y={cy + 14}>{pk.i === null ? u : nodes[pk.i].name}</T>
         </>);
       }} />
   );
@@ -56,7 +56,7 @@ export function Icicle({ title = "Icicle", id = "D021", root, unit: u = unit, he
       table={{ head: ["Path", u, "Share"], rows: flatRows(root, tot) }}
       build={(w, pk) => {
         const rh = (height - 4) / (D || 1);
-        return (<>{nodes.map((n, i) => { const x = n.x0 * w, ww = (n.x1 - n.x0) * w; return (<g key={pathText(n.path)}><rect {...pk.mark(i)} x={x} y={2 + n.depth * rh} width={Math.max(0, ww - 1)} height={rh - 2} fill={C(n.branch)} fillOpacity={1 - n.depth * 0.2} stroke="var(--jp-surface-raised)" />{fits(ww, rh, n.name) && <T x={x + 5} y={2 + n.depth * rh + rh / 2 + 4} anchor="start" cls="p3-tw" pointerEvents="none">{n.name}</T>}</g>); })}</>);
+        return (<>{nodes.map((n, i) => { const x = n.x0 * w, ww = (n.x1 - n.x0) * w; return (<g key={pathText(n.path)}><rect {...pk.mark(i)} x={x} y={2 + n.depth * rh} width={Math.max(0, ww - 1)} height={rh - 2} fill={C(n.branch)} fillOpacity={1 - n.depth * 0.2} stroke="var(--jp-surface-raised)" />{fits(ww, rh, n.name) && <T x={x + 5} y={2 + n.depth * rh + rh / 2 + 4} anchor="start" cls="lab-tw" pointerEvents="none">{n.name}</T>}</g>); })}</>);
       }} />
   );
 }
@@ -72,7 +72,7 @@ export function PackedCircles({ title = "Packed circles", id = "D021", root, uni
       table={{ head: ["Path", u, "Share"], rows: leaves.map((n) => [pathText(n.path), n.value, `${((n.value / tot) * 100).toFixed(1)}%`]) }}
       build={(w, pk) => {
         const cs = fitCircles(raw, w, height);
-        return (<>{cs.map((c, i) => <g key={i}><circle {...pk.mark(i)} cx={c.x} cy={c.y} r={Math.max(0, c.r - 1)} fill={C(leaves[i].branch)} fillOpacity={0.8} stroke="var(--jp-surface-raised)" strokeWidth={1.5} />{c.r > 22 && <T x={c.x} y={c.y + 4} cls="p3-tw" pointerEvents="none">{leaves[i].name.length * 6.5 > c.r * 2 ? leaves[i].name.slice(0, Math.floor(c.r / 3.5)) + "…" : leaves[i].name}</T>}</g>)}</>);
+        return (<>{cs.map((c, i) => <g key={i}><circle {...pk.mark(i)} cx={c.x} cy={c.y} r={Math.max(0, c.r - 1)} fill={C(leaves[i].branch)} fillOpacity={0.8} stroke="var(--jp-surface-raised)" strokeWidth={1.5} />{c.r > 22 && <T x={c.x} y={c.y + 4} cls="lab-tw" pointerEvents="none">{leaves[i].name.length * 6.5 > c.r * 2 ? leaves[i].name.slice(0, Math.floor(c.r / 3.5)) + "…" : leaves[i].name}</T>}</g>)}</>);
       }} />
   );
 }

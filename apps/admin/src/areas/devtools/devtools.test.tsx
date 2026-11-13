@@ -28,10 +28,10 @@ import { attempted, initRollout, rollback, startNext, tick } from "./lib/rollout
 const toasts = () => screen.getByRole("region", { name: "Notifications" });
 const wrap = (ui: ReactNode) => render(<PrefsProvider><MemoryRouter><Suspense fallback={null}>{ui}</Suspense></MemoryRouter></PrefsProvider>);
 
-describe("p3b routes", () => {
-  it("registers nine unique /p3 routes", () => {
+describe("devtools routes", () => {
+  it("registers nine unique routes", () => {
     expect(routes).toHaveLength(9); expect(new Set(routes.map((r) => r.path)).size).toBe(9);
-    for (const r of routes) { expect(r.path.startsWith("/p3/")).toBe(true); expect(r.path.startsWith("/p2")).toBe(false); }
+    for (const r of routes) { expect(r.path.startsWith("/")).toBe(true); }
   });
 });
 

@@ -1,4 +1,4 @@
-import type { P2Route } from "../registry.ts";
+import type { AreaRoute } from "../registry.ts";
 import { Onboarding } from "./misc.tsx";
 import { Billing, Quotas, Integrations } from "./platform.tsx";
 import { Retention, Maintenance } from "./lifecycle.tsx";
@@ -24,7 +24,7 @@ const SchemaDesigner = lazy(() => import("./design.tsx").then((m) => ({ default:
 const RolesMatrix = lazy(() => import("./access.tsx").then((m) => ({ default: m.RolesMatrix })));
 const NotificationMatrix = lazy(() => import("./access.tsx").then((m) => ({ default: m.NotificationMatrix })));
 
-export const routes: P2Route[] = [
+export const routes: AreaRoute[] = [
   { path: "/records/split", label: "Split view", icon: "sliders", group: "Records", keywords: "resizable panes divider master detail", element: <SplitView /> },
   { path: "/records/bulk-edit", label: "Bulk edit", icon: "edit", group: "Records", keywords: "multi select update many", element: <BulkEdit /> },
   { path: "/records/onboarding", label: "Onboarding checklist", icon: "check", group: "Records", keywords: "setup progress get started", element: <Onboarding /> },

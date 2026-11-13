@@ -1,6 +1,6 @@
-# P2 status: chrome (spec sections E and F)
+# Status: chrome (spec sections E and F)
 
-Area: app shell and cross-cutting chrome. All pages live under `apps/admin/src/p2/chrome/` and appear in the **System** nav group at `/chrome/*`.
+Area: app shell and cross-cutting chrome. All pages live under `apps/admin/src/areas/chrome/` and appear in the **System** nav group at `/chrome/*`.
 Statuses: **Done** = built, reachable, covered by the route smoke test (and a behaviour test where noted); **Partial** = works but with a stated limit.
 
 | ID | Entry | Status | Route | Honest note |
@@ -43,7 +43,7 @@ Assistant/chat panel with streaming and tool-call cards, presence/locks/comments
 
 ```bash
 npm run visual                          # all routes, light + dark, compare with visual/baseline.json
-npm run visual -- --only /p2/chrome     # subset by path prefix
+npm run visual -- --only /chrome     # subset by path prefix
 npm run visual -- --update              # refresh baseline after an intended visual change
 VISUAL_URL=http://127.0.0.1:3000 npm run visual   # reuse a running dev server
 ```
@@ -52,4 +52,4 @@ Needs `chromium` on PATH (override with `CHROMIUM=`). Screenshots go to `.visual
 
 ## Tests
 
-`src/p2/chrome/engine.test.ts`, `pdf.test.ts`, `chrome.test.tsx` (34 tests) plus the automatic route smoke test in `src/routes.test.tsx`.
+`src/areas/chrome/engine.test.ts`, `pdf.test.ts`, `chrome.test.tsx` (34 tests) plus the automatic route smoke test in `src/routes.test.tsx`.

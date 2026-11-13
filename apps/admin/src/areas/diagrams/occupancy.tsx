@@ -18,7 +18,7 @@ export function OccupancyHeat({ samples, capacity, rooms, title = "Occupancy by 
           <HeatTable caption={`${title}: ${rooms.length} rooms by 24 hours`} corner="Room" rowHeads={rooms} colHeads={hours} vertical onRead={setText} extraCols={["Cap.", "Peak"]} rowExtra={(r) => [capacity[rooms[r]], `${hours[peak(r)]}:00`]}
             cell={(r, h) => { const v = m[r][h]; return { t: v === null ? null : Math.min(1, v), text: v !== null && v >= 0.5 ? String(Math.round(v * 100)) : "", label: v === null ? `${rooms[r]} at ${hours[h]}:00: no data` : `${rooms[r]} at ${hours[h]}:00: ${pct(v)} of capacity (about ${Math.round(v * capacity[rooms[r]])} of ${capacity[rooms[r]]} people)` }; }} />
           <Readout>{text}</Readout>
-          <div className="p3e-controls"><HeatScale lo="empty" hi="at capacity" /><span className="pc-note">Numbers show percent where a room is at least half full. Hours are local time, averaged over five weekdays.</span></div>
+          <div className="dg-controls"><HeatScale lo="empty" hi="at capacity" /><span className="pc-note">Numbers show percent where a room is at least half full. Hours are local time, averaged over five weekdays.</span></div>
         </>
       )}
     </ChartFrame>
@@ -36,7 +36,7 @@ export function MotionRaster({ events, title = "Motion events by sensor", state 
         return (
           <>
             <Svg w={w} h={H} label={`${title}. ${names.length} sensors, ${sum(stats.map((s) => s.total))} events over 24 hours. ${stats.map((s) => `${s.n}: ${s.total} events, busiest around ${hhmm(s.peak * 60)}`).join("; ")}.`}>
-              {[0, 6, 12, 18, 24].map((h) => <g key={h}><line x1={X(h * 60)} x2={X(h * 60)} y1="14" y2={H - 4} stroke="var(--jp-border)" /><text x={X(h * 60)} y="10" textAnchor="middle" className="p3e-mute">{String(h).padStart(2, "0")}:00</text></g>)}
+              {[0, 6, 12, 18, 24].map((h) => <g key={h}><line x1={X(h * 60)} x2={X(h * 60)} y1="14" y2={H - 4} stroke="var(--jp-border)" /><text x={X(h * 60)} y="10" textAnchor="middle" className="dg-mute">{String(h).padStart(2, "0")}:00</text></g>)}
               {stats.map((s, r) => { const y = 20 + r * rowH; return (
                 <g key={s.n} {...hit(s.n, `${s.n}: ${s.total} events; busiest hour ${hhmm(s.peak * 60)} with ${s.bins[s.peak]}`)}>
                   <rect x="0" y={y} width={w} height={rowH - 4} rx="3" fill="transparent" stroke="none" />

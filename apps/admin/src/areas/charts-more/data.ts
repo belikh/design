@@ -1,4 +1,4 @@
-/* Deterministic sample data for the P3d gallery (seeded, so tests and screenshots are stable). */
+/* Deterministic sample data for the more-charts gallery (seeded, so tests and screenshots are stable). */
 import { normals, rng } from "./stats.ts";
 import type { HNode } from "./hier.ts";
 

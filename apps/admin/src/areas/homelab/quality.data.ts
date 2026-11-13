@@ -8,10 +8,10 @@ export type Cov = { path: string; label: string; group: string; light: boolean; 
 type R = { path: string; label: string; group: string };
 /** Baseline key for one variant. Comfortable keeps the original "#theme" form so older baselines stay valid; compact adds "+compact". */
 export const shotKey = (path: string, theme: Theme, density: Density = "comfortable") => `${path}#${theme}${density === "compact" ? "+compact" : ""}`;
-/** Visual baseline keys look like "/chrome/access#dark" or "/chrome/access#dark+compact"; routes may or may not carry the /p2 prefix, so try both. */
+/** Visual baseline keys look like "/chrome/access#dark" or "/chrome/access#dark+compact". */
 export function hasShot(shots: Record<string, string>, path: string, theme: Theme, density: Density = "comfortable") {
   const k = (p: string) => shotKey(p, theme, density);
-  return k(path) in shots || k(`/p2${path}`) in shots || (path.startsWith("/p2") && k(path.slice(3)) in shots);
+  return k(path) in shots;
 }
 export function coverage(routes: R[], shots: Record<string, string>, a11y: Record<string, string[]>): Cov[] {
   return routes.map((r) => {
@@ -29,7 +29,7 @@ export const summary = (c: Cov[]) => ({
 });
 /** Baseline entries whose route no longer exists (stale screenshots). */
 export function orphanShots(routes: R[], shots: Record<string, string>) {
-  const ps = new Set(routes.flatMap((r) => [r.path, `/p2${r.path}`])); return [...new Set(Object.keys(shots).map((k) => k.split("#")[0]))].filter((p) => !ps.has(p) && !ps.has(p.replace(/^\/p2/, "")));
+  const ps = new Set(routes.map((r) => r.path)); return [...new Set(Object.keys(shots).map((k) => k.split("#")[0]))].filter((p) => !ps.has(p));
 }
 export const COMMANDS = [
   { cmd: "npm run visual", dir: "apps/admin", what: "Screenshots every route in four variants (light and dark, comfortable and compact density) at 1280x800 with Chromium and compares a 24x14 luminance grid with visual/baseline.json. Add -- --update to accept, -- --only /home to limit, -- --density compact for one density, -- --baseline-out file.json to write the baseline elsewhere." },

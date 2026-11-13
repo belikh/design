@@ -11,8 +11,8 @@ const link = (x0: number, y0: number, x1: number, y1: number) => { const m = (x0
 /** Cardinality end-marks in crow's foot notation. dir = +1 when the line leaves to the right of the entity, -1 to the left. */
 function EndMark({ x, y, dir, card }: { x: number; y: number; dir: 1 | -1; card: string }) {
   const s = (d: number) => x + dir * d;
-  if (card === "N") return <g className="p3e-edge" strokeWidth="1.5"><path d={`M${s(12)},${y}L${x},${y - 7}M${s(12)},${y}L${x},${y}M${s(12)},${y}L${x},${y + 7}`} /></g>;
-  return <g className="p3e-edge">{card === "0..1" && <circle cx={s(15)} cy={y} r="4" fill="var(--jp-surface-raised)" />}<path d={`M${s(8)},${y - 7}V${y + 7}`} /></g>;
+  if (card === "N") return <g className="dg-edge" strokeWidth="1.5"><path d={`M${s(12)},${y}L${x},${y - 7}M${s(12)},${y}L${x},${y}M${s(12)},${y}L${x},${y + 7}`} /></g>;
+  return <g className="dg-edge">{card === "0..1" && <circle cx={s(15)} cy={y} r="4" fill="var(--jp-surface-raised)" />}<path d={`M${s(8)},${y - 7}V${y + 7}`} /></g>;
 }
 
 /** D047 ER diagram: parents sit left of the tables that reference them; crow's foot ends show cardinality. */
@@ -29,11 +29,11 @@ export function ErDiagram({ entities, relations, title = "ER diagram: shop schem
             <Scroll label={title}>
               <Svg w={lay.width + 2 * P} h={lay.height + 2 * P} label={`${title}. ${entities.length} tables and ${relations.length} relationships: ${relations.map((r) => `${r[0]} ${r[2]} to ${r[3]} ${r[1]}`).join("; ")}.`}>
                 <g transform={`translate(${P},${P})`}>
-                  {relations.map(([a, b, ca, cb], i) => { const A = by.get(a)!, B = by.get(b)!; const x0 = A.x + A.w, y0 = A.y + A.h / 2, x1 = B.x, y1 = B.y + B.h / 2; const hot = sel === a || sel === b; return <g key={i}><path className={`p3e-edge${hot ? " is-hot" : ""}`} d={link(x0, y0, x1, y1)} /><EndMark x={x0} y={y0} dir={1} card={ca} /><EndMark x={x1} y={y1} dir={-1} card={cb} /><text x={x0 + 16} y={y0 - 6} className="p3e-mute">{ca}</text><text x={x1 - 16} y={y1 - 6} textAnchor="end" className="p3e-mute">{cb}</text></g>; })}
+                  {relations.map(([a, b, ca, cb], i) => { const A = by.get(a)!, B = by.get(b)!; const x0 = A.x + A.w, y0 = A.y + A.h / 2, x1 = B.x, y1 = B.y + B.h / 2; const hot = sel === a || sel === b; return <g key={i}><path className={`dg-edge${hot ? " is-hot" : ""}`} d={link(x0, y0, x1, y1)} /><EndMark x={x0} y={y0} dir={1} card={ca} /><EndMark x={x1} y={y1} dir={-1} card={cb} /><text x={x0 + 16} y={y0 - 6} className="dg-mute">{ca}</text><text x={x1 - 16} y={y1 - 6} textAnchor="end" className="dg-mute">{cb}</text></g>; })}
                   {entities.map((e) => { const p = by.get(e.id)!; const rel = relations.filter((r) => r[0] === e.id || r[1] === e.id).map((r) => (r[0] === e.id ? `${r[2]} to ${r[3]} ${r[1]}` : `${r[3]} to ${r[2]} ${r[0]}`)); return (
                     <g key={e.id} {...hit(e.id, `${e.id}: ${e.attrs.length} columns. Keys: ${e.attrs.filter((a) => a.pk || a.fk).map((a) => `${a.name} ${a.pk ? "primary" : "foreign"}`).join(", ")}. Relationships: ${rel.join("; ")}`)}>
-                      <rect x={p.x} y={p.y} width={p.w} height={p.h} rx="6" className="p3e-box" /><path d={`M${p.x},${p.y + 26}H${p.x + p.w}`} className="p3e-edge" /><text x={p.x + 10} y={p.y + 14} dy="0.35em" className="p3e-b p3e-sm">{e.id}</text>
-                      {e.attrs.map((a, i) => <text key={a.name} x={p.x + 10} y={p.y + 26 + 9 + i * 18 + 4} className={a.pk ? "p3e-b" : undefined}>{a.pk ? "PK " : a.fk ? "FK " : "   "}{a.name}<tspan className="p3e-mute" dx="8">{a.type}</tspan></text>)}
+                      <rect x={p.x} y={p.y} width={p.w} height={p.h} rx="6" className="dg-box" /><path d={`M${p.x},${p.y + 26}H${p.x + p.w}`} className="dg-edge" /><text x={p.x + 10} y={p.y + 14} dy="0.35em" className="dg-b dg-sm">{e.id}</text>
+                      {e.attrs.map((a, i) => <text key={a.name} x={p.x + 10} y={p.y + 26 + 9 + i * 18 + 4} className={a.pk ? "dg-b" : undefined}>{a.pk ? "PK " : a.fk ? "FK " : "   "}{a.name}<tspan className="dg-mute" dx="8">{a.type}</tspan></text>)}
                     </g>); })}
                 </g>
               </Svg>
@@ -60,13 +60,13 @@ export function Architecture({ tiers, edges, title = "Architecture diagram: shop
         return (
           <>
             <Svg w={w} h={H} label={`${title}. ${tiers.length} tiers, ${all.length} components, ${edges.length} connections.`}>
-              <defs><marker id="p3e-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="var(--jp-text-muted)" /></marker></defs>
-              {tiers.map((t, ti) => <g key={t.name}><rect x="0" y={ti * (bandH + gapY)} width={w} height={bandH} rx="8" fill="var(--jp-surface)" /><text x="10" y={ti * (bandH + gapY) + 18} className="p3e-mute p3e-b">{t.name}</text></g>)}
-              {edges.map(([a, b], i) => { const A = pos.get(a)!, B = pos.get(b)!; const hot = sel === a || sel === b; const x0 = A.x, y0 = A.y + 22, x1 = B.x, y1 = B.y - 24, m = (y0 + y1) / 2; return <path key={i} className={`p3e-edge${hot ? " is-hot" : ""}${sel && !hot ? " p3e-dim" : ""}`} d={`M${x0},${y0}C${x0},${m} ${x1},${m} ${x1},${y1}`} markerEnd="url(#p3e-arrow)" />; })}
+              <defs><marker id="dg-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="var(--jp-text-muted)" /></marker></defs>
+              {tiers.map((t, ti) => <g key={t.name}><rect x="0" y={ti * (bandH + gapY)} width={w} height={bandH} rx="8" fill="var(--jp-surface)" /><text x="10" y={ti * (bandH + gapY) + 18} className="dg-mute dg-b">{t.name}</text></g>)}
+              {edges.map(([a, b], i) => { const A = pos.get(a)!, B = pos.get(b)!; const hot = sel === a || sel === b; const x0 = A.x, y0 = A.y + 22, x1 = B.x, y1 = B.y - 24, m = (y0 + y1) / 2; return <path key={i} className={`dg-edge${hot ? " is-hot" : ""}${sel && !hot ? " dg-dim" : ""}`} d={`M${x0},${y0}C${x0},${m} ${x1},${m} ${x1},${y1}`} markerEnd="url(#dg-arrow)" />; })}
               {all.map((n) => { const p = pos.get(n.id)!; const es = touched(n.id); return (
                 <g key={n.id} {...hit(n.id, `${n.label} (${n.kind}). Calls ${es.filter(([a]) => a === n.id).map(([, b]) => all.find((x) => x.id === b)?.label).join(", ") || "nothing"}. Called by ${es.filter(([, b]) => b === n.id).map(([a]) => all.find((x) => x.id === a)?.label).join(", ") || "nothing"}.`)}>
-                  <rect x={p.x - bw / 2} y={p.y - 22} width={bw} height="44" rx={n.kind === "store" ? 14 : n.kind === "queue" ? 2 : 6} className="p3e-box" style={{ stroke: C(KIND_COL[n.kind] ?? 0), strokeWidth: 2.5, strokeDasharray: n.kind === "queue" ? "6 3" : undefined }} />
-                  <text x={p.x} y={p.y - 3} textAnchor="middle" className="p3e-b">{n.label}</text><text x={p.x} y={p.y + 13} textAnchor="middle" className="p3e-mute">{n.kind}</text>
+                  <rect x={p.x - bw / 2} y={p.y - 22} width={bw} height="44" rx={n.kind === "store" ? 14 : n.kind === "queue" ? 2 : 6} className="dg-box" style={{ stroke: C(KIND_COL[n.kind] ?? 0), strokeWidth: 2.5, strokeDasharray: n.kind === "queue" ? "6 3" : undefined }} />
+                  <text x={p.x} y={p.y - 3} textAnchor="middle" className="dg-b">{n.label}</text><text x={p.x} y={p.y + 13} textAnchor="middle" className="dg-mute">{n.kind}</text>
                 </g>); })}
             </Svg>
             <Readout>{text}</Readout>
@@ -103,7 +103,7 @@ function Glyph({ s, x, y }: { s: RunState; x: number; y: number }) {
   switch (s) {
     case "success": return <g><circle cx={x} cy={y} r="8" fill={c} /><path d={`M${x - 4},${y}L${x - 1},${y + 3}L${x + 4},${y - 3}`} stroke="var(--jp-surface-raised)" strokeWidth="2" fill="none" /></g>;
     case "failed": return <g><circle cx={x} cy={y} r="8" fill={c} /><path d={`M${x - 3.5},${y - 3.5}L${x + 3.5},${y + 3.5}M${x + 3.5},${y - 3.5}L${x - 3.5},${y + 3.5}`} stroke="var(--jp-surface-raised)" strokeWidth="2" /></g>;
-    case "running": return <g><circle cx={x} cy={y} r="8" fill="none" stroke={c} strokeWidth="2.5" className="p3e-run" /><path d={`M${x - 2},${y - 4}L${x + 4},${y}L${x - 2},${y + 4}z`} fill={c} /></g>;
+    case "running": return <g><circle cx={x} cy={y} r="8" fill="none" stroke={c} strokeWidth="2.5" className="dg-run" /><path d={`M${x - 2},${y - 4}L${x + 4},${y}L${x - 2},${y + 4}z`} fill={c} /></g>;
     case "queued": return <circle cx={x} cy={y} r="7" fill="none" stroke={c} strokeWidth="2" />;
     case "skipped": return <g><circle cx={x} cy={y} r="7" fill="none" stroke={c} strokeWidth="2" strokeDasharray="3 2" /><path d={`M${x - 3},${y}H${x + 3}`} stroke={c} strokeWidth="2" /></g>;
     default: return <g><circle cx={x} cy={y} r="7" fill="none" stroke={c} strokeWidth="2" /><path d={`M${x - 5},${y + 5}L${x + 5},${y - 5}`} stroke={c} strokeWidth="2" /></g>;
@@ -128,10 +128,10 @@ export function LayeredGraph({ ids, edges, raw, mode = "run", title, state }: Co
             <Scroll label={t}>
               <Svg w={lay.width + 2 * P} h={lay.height + 2 * P} label={`${t}. ${ids.length} nodes in ${Math.max(...lay.placed.map((p) => p.layer)) + 1} layers, ${edges.length} edges.${counts.length ? " " + counts.map(([s, n]) => `${n} ${STATE_LABEL[s].toLowerCase()}`).join(", ") + "." : ""}`}>
                 <g transform={`translate(${P},${P})`}>
-                  {edges.map(([a, b], i) => { const A = by.get(a)!, B = by.get(b)!; const hot = !!sel && lit(a) && lit(b); return <path key={i} className={`p3e-edge${hot ? " is-hot" : ""}${sel && !hot ? " p3e-dim" : ""}`} d={link(A.x + A.w, A.y + A.h / 2, B.x, B.y + B.h / 2)} />; })}
+                  {edges.map(([a, b], i) => { const A = by.get(a)!, B = by.get(b)!; const hot = !!sel && lit(a) && lit(b); return <path key={i} className={`dg-edge${hot ? " is-hot" : ""}${sel && !hot ? " dg-dim" : ""}`} d={link(A.x + A.w, A.y + A.h / 2, B.x, B.y + B.h / 2)} />; })}
                   {lay.placed.map((p) => { const s = eff?.[p.id]; const lp = mode === "lineage" ? LAYER_PREFIX.indexOf(p.id.split(".")[0]) : -1; return (
                     <g key={p.id} style={sel && !lit(p.id) ? { opacity: 0.2 } : undefined} {...hit(p.id, mode === "run" ? `${p.id}: ${s ? STATE_LABEL[s] : ""}. Waits for ${edges.filter(([, b]) => b === p.id).map(([a]) => a).join(", ") || "nothing"}. Unblocks ${[...reach(p.id, edges, "down")].length} later tasks.` : `${p.id}: ${[...reach(p.id, edges, "up")].length} upstream and ${[...reach(p.id, edges, "down")].length} downstream tables. Fed by ${edges.filter(([, b]) => b === p.id).map(([a]) => a).join(", ") || "source"}.`)}>
-                      <rect x={p.x} y={p.y} width={p.w} height={p.h} rx="6" className="p3e-box" style={{ stroke: s ? STATE_COLOUR[s] : C(Math.max(0, lp)), strokeWidth: 2, strokeDasharray: s === "skipped" ? "4 3" : undefined }} />
+                      <rect x={p.x} y={p.y} width={p.w} height={p.h} rx="6" className="dg-box" style={{ stroke: s ? STATE_COLOUR[s] : C(Math.max(0, lp)), strokeWidth: 2, strokeDasharray: s === "skipped" ? "4 3" : undefined }} />
                       {s && <Glyph s={s} x={p.x + 16} y={p.y + p.h / 2} />}<text x={p.x + (s ? 32 : 10)} y={p.y + p.h / 2} dy="0.35em">{p.id}</text>
                     </g>); })}
                 </g>

@@ -9,7 +9,7 @@ import { AnnotCanvas, type FocusReq, type Tool } from "./AnnotCanvas.tsx";
 import { MAX_CLASSES, MAX_IMAGE_BYTES, SAMPLE, bbox, classIndex, defaultShape, describe, fromCoco, fromCsv, insertVertex, minPts, nextId, normalize, removeVertex, seedDoc, toCoco, toCsv, type Ann, type Doc, type Kind } from "./lib/annotate.ts";
 import { fitView, round2, setZoomKeepCentre, type Pt, type View } from "./lib/geometry.ts";
 import { download } from "./ShellPlayer.tsx";
-import "./p3b.css";
+import "./devtools.css";
 
 const readText = (f: File): Promise<string> => (typeof f.text === "function" ? f.text() : new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(String(r.result)); r.onerror = () => rej(r.error); r.readAsText(f); }));
 const baseName = (n: string) => n.replace(/\.[^.]+$/, "") || "annotations";
@@ -97,7 +97,7 @@ export function ImageAnnotator() {
 
   const zoomTo = (z: number) => setView((v) => setZoomKeepCentre(v, bounds, z));
   const selected = doc.anns.find((a) => a.id === sel);
-  const sw = (c: string) => <i className="p3-sw" style={{ background: C(classIndex(doc.classes, c)) }} />;
+  const sw = (c: string) => <i className="lab-sw" style={{ background: C(classIndex(doc.classes, c)) }} />;
   const json = toCoco(doc);
 
   return (
@@ -107,20 +107,20 @@ export function ImageAnnotator() {
         actions={<><Btn icon="upload" onClick={() => fileRef.current?.click()}>Open image</Btn><input ref={fileRef} type="file" hidden accept="image/*" aria-label="Open image file" onChange={(e) => { const f = e.target.files?.[0]; e.target.value = ""; if (f) loadImage(f); }} />
           {doc.image.url != null && <Btn onClick={useSample}>Use sample image</Btn>}</>} />
       {err && <Alert s="danger" title="Could not load that file" onClose={() => setErr(null)}>{err}</Alert>}
-      <div className="p3-split">
+      <div className="lab-split">
         <Panel title={`Image: ${doc.image.name}`} actions={<div className="adm-row"><Segmented<Tool> label="Tool" value={tool} onChange={setTool} options={[{ value: "select", label: "Select" }, { value: "box", label: "Box" }, { value: "point", label: "Point" }, { value: "polygon", label: "Polygon" }, { value: "polyline", label: "Polyline" }, { value: "pan", label: "Pan" }]} /><Select aria-label="Class for new annotations" value={curCls} onChange={setCls} options={doc.classes} /></div>}>
-          <div className={`p3-dropzone ${drop ? "is-over" : ""}`} onDragOver={(e) => { if ([...e.dataTransfer.types].includes("Files")) { e.preventDefault(); setDrop(true); } }} onDragLeave={() => setDrop(false)}
+          <div className={`lab-dropzone ${drop ? "is-over" : ""}`} onDragOver={(e) => { if ([...e.dataTransfer.types].includes("Files")) { e.preventDefault(); setDrop(true); } }} onDragLeave={() => setDrop(false)}
             onDrop={(e) => { e.preventDefault(); setDrop(false); const f = [...e.dataTransfer.files][0]; if (f) loadImage(f); }}>
             <AnnotCanvas doc={doc} sel={sel} tool={tool} view={view} focusReq={focusReq} onView={setView} onSelect={setSel} onCreate={create} onToolDone={() => setTool("select")}
               onChange={(a, label) => liveEdit(label, replaceAnn(a), true)} onEnd={endGesture} onDelete={remove} onVertexDelete={delVertex} onInsertAfter={addVertex} onFocusVertex={(id, i) => setFocusReq({ id, i, n: ++focusN.current })} onNotice={setNote} />
           </div>
-          <p className="p3-note jp-muted" data-testid="annot-note" aria-live="polite">{note || (tool === "polygon" || tool === "polyline" ? "Click to place vertices. Enter or double-click finishes, Backspace removes the last, Escape cancels." : tool === "pan" ? "Drag to pan." : "Drop or paste an image to replace it. Ctrl+wheel zooms.")}</p>
+          <p className="lab-note jp-muted" data-testid="annot-note" aria-live="polite">{note || (tool === "polygon" || tool === "polyline" ? "Click to place vertices. Enter or double-click finishes, Backspace removes the last, Escape cancels." : tool === "pan" ? "Drag to pan." : "Drop or paste an image to replace it. Ctrl+wheel zooms.")}</p>
           <div className="adm-row">
             <Btn sm aria-label="Zoom out" onClick={() => zoomTo(view.zoom / 1.25)}>−</Btn><Btn sm aria-label="Zoom in" onClick={() => zoomTo(view.zoom * 1.25)}>+</Btn><Btn sm onClick={() => setView(fitView(bounds))}>Fit</Btn>
-            <div className="p3-grow"><Slider label="Zoom" value={Math.round(view.zoom * 100)} onChange={(v) => zoomTo(v / 100)} min={100} max={800} step={25} fmt={(v) => `${v}%`} /></div>
+            <div className="lab-grow"><Slider label="Zoom" value={Math.round(view.zoom * 100)} onChange={(v) => zoomTo(v / 100)} min={100} max={800} step={25} fmt={(v) => `${v}%`} /></div>
             <Btn sm disabled={!us.canUndo} onClick={() => { endGesture(); void undo(); }}>Undo{us.undoLabel ? `: ${us.undoLabel}` : ""}</Btn><Btn sm disabled={!us.canRedo} onClick={() => { endGesture(); void redo(); }}>Redo</Btn>
           </div>
-          <div className="adm-row p3-addrow"><span className="jp-muted">Add without the pointer:</span>{(["box", "point", "polygon", "polyline"] as Kind[]).map((k) => <Btn key={k} sm icon="plus" onClick={() => addDefault(k)}>{`Add ${k}`}</Btn>)}</div>
+          <div className="adm-row lab-addrow"><span className="jp-muted">Add without the pointer:</span>{(["box", "point", "polygon", "polyline"] as Kind[]).map((k) => <Btn key={k} sm icon="plus" onClick={() => addDefault(k)}>{`Add ${k}`}</Btn>)}</div>
         </Panel>
         <div className="adm-stack">
           <Panel title="Selected">
@@ -129,7 +129,7 @@ export function ImageAnnotator() {
               <Field label="Note">{() => <Editable value={selected.note} label="Note" editor={{ type: "text", placeholder: "What is this?", maxLength: 200 }} undo={false} placeholderEmpty="Add a note" onSave={(v) => patch(selected.id, { note: String(v) }, "Edit note")} />}</Field>
               <div className="jp-muted adm-num">{selected.kind}{selected.kind !== "point" ? `, ${bbox(selected).w.toFixed(0)} × ${bbox(selected).h.toFixed(0)}` : ""}. Arrow keys nudge it (Shift 1 px, Ctrl 20 px); Enter edits its vertices.</div>
               {selected.kind !== "point" && <Disclosure label={`Vertices (${selected.pts.length})`}>
-                <ul className="p3-verts" aria-label="Vertices">{selected.pts.slice(0, 60).map((q, i) => <li key={i}><span className="adm-num">{i + 1}</span>
+                <ul className="lab-verts" aria-label="Vertices">{selected.pts.slice(0, 60).map((q, i) => <li key={i}><span className="adm-num">{i + 1}</span>
                   <Editable value={round2(q[0])} label={`Vertex ${i + 1} x`} editor={{ type: "number", min: 0, max: doc.image.w, step: 1 }} undo={false} compact onSave={(v) => setVertexXY(selected.id, i, 0, Number(v))} />
                   <Editable value={round2(q[1])} label={`Vertex ${i + 1} y`} editor={{ type: "number", min: 0, max: doc.image.h, step: 1 }} undo={false} compact onSave={(v) => setVertexXY(selected.id, i, 1, Number(v))} />
                   {(selected.kind === "polygon" || selected.kind === "polyline") && <><Btn sm aria-label={`Add vertex after ${i + 1}`} onClick={() => addVertex(selected.id, i)}>+</Btn><Btn sm aria-label={`Delete vertex ${i + 1}`} disabled={selected.pts.length <= minPts(selected.kind)} onClick={() => delVertex(selected.id, i)}>×</Btn></>}</li>)}</ul>
@@ -138,17 +138,17 @@ export function ImageAnnotator() {
             </div> : <p className="jp-muted">Select an annotation (click it, or Tab to it), or draw a new one.</p>}
           </Panel>
           <Panel title="Classes">
-            <ul className="p3-tree" aria-label="Classes">{doc.classes.map((c) => { const n = doc.anns.filter((a) => a.cls === c).length; return <li key={c} className="p3-rec"><span className="p3-clsrow">{sw(c)}{c}<span className="jp-muted adm-num">{n}</span></span><button className="adm-x" aria-label={`Remove class ${c}`} disabled={n > 0 || doc.classes.length <= 1} title={n > 0 ? "In use" : undefined} onClick={() => removeClass(c)}>×</button></li>; })}</ul>
-            <form className="p3-term-form p3-pad" onSubmit={(e) => { e.preventDefault(); addClass(); }}><Field label="New class" error={classErr}>{(id) => <TextInput id={id} value={newClass} onChange={(v) => { setNewClass(v); setClassErr(undefined); }} placeholder="e.g. Port" />}</Field><Btn type="submit">Add</Btn></form>
+            <ul className="lab-tree" aria-label="Classes">{doc.classes.map((c) => { const n = doc.anns.filter((a) => a.cls === c).length; return <li key={c} className="lab-rec"><span className="lab-clsrow">{sw(c)}{c}<span className="jp-muted adm-num">{n}</span></span><button className="adm-x" aria-label={`Remove class ${c}`} disabled={n > 0 || doc.classes.length <= 1} title={n > 0 ? "In use" : undefined} onClick={() => removeClass(c)}>×</button></li>; })}</ul>
+            <form className="lab-term-form lab-pad" onSubmit={(e) => { e.preventDefault(); addClass(); }}><Field label="New class" error={classErr}>{(id) => <TextInput id={id} value={newClass} onChange={(v) => { setNewClass(v); setClassErr(undefined); }} placeholder="e.g. Port" />}</Field><Btn type="submit">Add</Btn></form>
           </Panel>
           <Panel title="All annotations" flush>
-            {doc.anns.length === 0 ? <p className="jp-muted p3-pad">Nothing yet.</p> : <ul className="p3-tree" aria-label="Annotations">{doc.anns.map((a) => <li key={a.id}><button className={sel === a.id ? "is-on" : ""} aria-current={sel === a.id ? "true" : undefined} onClick={() => setSel(a.id)}><span>{sw(a.cls)}{a.cls} {a.kind}</span><span className="jp-muted">{a.note || "no note"}</span></button></li>)}</ul>}
+            {doc.anns.length === 0 ? <p className="jp-muted lab-pad">Nothing yet.</p> : <ul className="lab-tree" aria-label="Annotations">{doc.anns.map((a) => <li key={a.id}><button className={sel === a.id ? "is-on" : ""} aria-current={sel === a.id ? "true" : undefined} onClick={() => setSel(a.id)}><span>{sw(a.cls)}{a.cls} {a.kind}</span><span className="jp-muted">{a.note || "no note"}</span></button></li>)}</ul>}
           </Panel>
           <Panel title="Export and import">
             <div className="adm-stack"><div className="adm-row">
               <Btn icon="download" onClick={() => download(`${baseName(doc.image.name)}.coco.json`, json)}>COCO JSON</Btn><Btn icon="download" onClick={() => download(`${baseName(doc.image.name)}.csv`, toCsv(doc.anns))}>CSV</Btn>
               <Btn icon="upload" onClick={() => annRef.current?.click()}>Import</Btn><input ref={annRef} type="file" hidden accept=".json,.csv,application/json,text/csv" aria-label="Import annotations file" onChange={(e) => { const f = e.target.files?.[0]; e.target.value = ""; if (f) void importAnns(f); }} />
-            </div><p className="p3-note jp-muted">Import replaces the current annotations (Undo restores them). Polylines and points are stored in COCO as attributes and keypoints.</p></div>
+            </div><p className="lab-note jp-muted">Import replaces the current annotations (Undo restores them). Polylines and points are stored in COCO as attributes and keypoints.</p></div>
             <Disclosure label="Preview COCO JSON"><CodeBlock label="coco json" code={json} maxHeight="16rem" /></Disclosure>
           </Panel>
         </div>

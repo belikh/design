@@ -1,4 +1,4 @@
-import type { P2Route } from "../registry.ts";
+import type { AreaRoute } from "../registry.ts";
 import { Terminal } from "./pages/Terminal.tsx";
 import { Trace } from "./pages/Trace.tsx";
 import { Diagnostics } from "./pages/Diagnostics.tsx";
@@ -22,7 +22,7 @@ const SystemInfo = lazy(() => import("./pages/SystemInfo.tsx").then((m) => ({ de
 const PrintPreview = lazy(() => import("./pages/PrintPreview.tsx").then((m) => ({ default: m.PrintPreview })));
 
 const G = "Tools";
-export const routes: P2Route[] = [
+export const routes: AreaRoute[] = [
   { path: "/tools/report-builder", label: "Report builder", icon: "filter", group: G, keywords: "query visual builder sql report", element: <QueryBuilder /> },
   { path: "/tools/sql", label: "SQL console", icon: "database", group: G, keywords: "query select table results", element: <SqlConsole /> },
   { path: "/tools/terminal", label: "Terminal", icon: "terminal", group: G, keywords: "console shell command recording", element: <Terminal /> },

@@ -7,7 +7,7 @@ import { StatTile } from "@belikh/jupiter-ui/Charts.tsx";
 import { Segmented, TextInput } from "@belikh/jupiter-ui/inputs.tsx";
 import { DataTable, type Col } from "@belikh/jupiter-ui/DataTable.tsx";
 import { coverage, summary, orphanShots, VARIANTS, COMMANDS, HOOKS, type Cov } from "./quality.data.ts";
-import "./p3g.css";
+import "./homelab.css";
 
 type Filter = "all" | "gaps" | "a11y";
 export function Quality({ routes = ROUTES, shots = baseline.shots, a11y = a11yBaseline }: { routes?: { path: string; label: string; group: string }[]; shots?: Record<string, string>; a11y?: Record<string, string[]> }) {

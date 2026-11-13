@@ -43,12 +43,12 @@ export function ShellTerminal({ transport, meta, onFail, onSave }: { transport: 
   const submit = (e: React.FormEvent) => { e.preventDefault(); send(line + "\r"); setLine(""); };
   return (
     <div className="adm-stack">
-      <div ref={term} className="p3-term" role="application" aria-label={`Terminal on ${transport.label}`} aria-describedby="p3-term-hint" tabIndex={0} onKeyDown={onKey} onPaste={onPaste}>
-        <pre ref={body} className="p3-term-body">{text}{status === "connecting" ? "Connecting…" : ""}</pre>
+      <div ref={term} className="lab-term" role="application" aria-label={`Terminal on ${transport.label}`} aria-describedby="lab-term-hint" tabIndex={0} onKeyDown={onKey} onPaste={onPaste}>
+        <pre ref={body} className="lab-term-body">{text}{status === "connecting" ? "Connecting…" : ""}</pre>
       </div>
-      <p id="p3-term-hint" className="p3-note jp-muted">Click the terminal and type. Tab completes, Up and Down recall history, Ctrl+C cancels, Ctrl+L clears, Ctrl+D exits. Escape moves focus out to the Command box.</p>
-      <form onSubmit={submit} className="p3-term-form">
-        <Field label="Command">{(id) => <input id={id} ref={cmd} className="jp-input p3-mono" value={line} disabled={status !== "connected"} onChange={(e) => setLine(e.target.value)} autoComplete="off" spellCheck={false} autoCapitalize="off" />}</Field>
+      <p id="lab-term-hint" className="lab-note jp-muted">Click the terminal and type. Tab completes, Up and Down recall history, Ctrl+C cancels, Ctrl+L clears, Ctrl+D exits. Escape moves focus out to the Command box.</p>
+      <form onSubmit={submit} className="lab-term-form">
+        <Field label="Command">{(id) => <input id={id} ref={cmd} className="jp-input lab-mono" value={line} disabled={status !== "connected"} onChange={(e) => setLine(e.target.value)} autoComplete="off" spellCheck={false} autoCapitalize="off" />}</Field>
         <Btn variant="primary" type="submit" disabled={status !== "connected"}>Run</Btn>
         <Btn type="button" aria-label="Send Ctrl+C" disabled={status !== "connected"} onClick={() => send("\x03")}>Ctrl+C</Btn>
         <Btn type="button" aria-label="Send Ctrl+L (clear screen)" disabled={status !== "connected"} onClick={() => send("\x0c")}>Ctrl+L</Btn>

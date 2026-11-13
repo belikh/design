@@ -1,20 +1,20 @@
 import { useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 import { Panel } from "@belikh/jupiter-ui/kit.tsx";
 import { Btn } from "@belikh/jupiter-ui/kit.tsx";
-import "./p3c.css";
+import "./widgets.css";
 
 /** A demo entry: a Panel labelled with its backlog ID. */
 export function Entry({ id, title, desc, children, actions }: { id: string; title: string; desc?: ReactNode; children: ReactNode; actions?: ReactNode }) {
   return (
-    <Panel title={<><span className="p3-id">{id}</span> {title}</>} actions={actions} className="p3-entry" id={`entry-${id}`}>
-      {desc && <p className="p3-note p3-desc">{desc}</p>}
+    <Panel title={<><span className="lab-id">{id}</span> {title}</>} actions={actions} className="lab-entry" id={`entry-${id}`}>
+      {desc && <p className="lab-note lab-desc">{desc}</p>}
       {children}
     </Panel>
   );
 }
-export const Stack = ({ children, className = "" }: { children: ReactNode; className?: string }) => <div className={`p3-stack ${className}`}>{children}</div>;
-export const Row = ({ children, className = "" }: { children: ReactNode; className?: string }) => <div className={`p3-row ${className}`}>{children}</div>;
-export const Note = ({ children, warn }: { children: ReactNode; warn?: boolean }) => <p className={`p3-note ${warn ? "p3-warn" : ""}`}>{children}</p>;
+export const Stack = ({ children, className = "" }: { children: ReactNode; className?: string }) => <div className={`lab-stack ${className}`}>{children}</div>;
+export const Row = ({ children, className = "" }: { children: ReactNode; className?: string }) => <div className={`lab-row ${className}`}>{children}</div>;
+export const Note = ({ children, warn }: { children: ReactNode; warn?: boolean }) => <p className={`lab-note ${warn ? "lab-warn" : ""}`}>{children}</p>;
 
 export function useReducedMotion(): boolean {
   const [r, setR] = useState(() => typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches);

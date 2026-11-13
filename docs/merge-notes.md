@@ -13,10 +13,10 @@ Why: the design system was two sites on two ports (docs :3000, admin :3100) with
 | admin `/` (dashboard Overview) | `/overview` | nav label "Admin overview", group Dashboards |
 | every other admin route | unchanged | |
 
-Nav order: Foundations, Build, Ship, then the admin groups. `p2/registry.ts` ranks `p2/docs` first, then `core`, then areas alphabetically.
+Nav order: Foundations, Build, Ship, then the admin groups. `areas/registry.ts` ranks `areas/docs` first, then `core`, then areas alphabetically.
 
 ## What moved where
-- Pages: `apps/admin/src/docs/*` (registered by `p2/docs/index.tsx`). Token editor state: `docs/store.tsx` (`DsProvider`, mounted in `App.tsx`).
+- Pages: `apps/admin/src/docs/*` (registered by `areas/docs/index.tsx`). Token editor state: `docs/store.tsx` (`DsProvider`, mounted in `App.tsx`).
 - Live tokens: when the tokens differ from the defaults a `<style id="jupiter-live">` with `generateTokensCSS` is emitted into the `jp` layer after the static tokens.css, so edits restyle the whole site. (Only the token variables are re-emitted, not the component CSS, so app overrides in the `app` layer keep winning.)
 - Theme: one preference, `PrefsProvider.theme` (`jp-theme`); added additive `resolvedTheme`. The docs `mode`/`setMode` are thin aliases. The editor's light/dark tab sets it like the old site did.
 - Toasts: `usePrefs().toast` replaces sonner (`docs/copy.ts`).
@@ -35,8 +35,8 @@ Nav order: Foundations, Build, Ship, then the admin groups. `p2/registry.ts` ran
 `scripts/check-divergence.mjs` (root `npm run lint`, CI): one UI app; no banned deps; no `--jp-*` definitions in app/ui CSS or TSX (tokens output and the live style excepted); no `.site-*`; every CSS file in apps/admin imported (global ones listed in `src/styles/entry.ts`). See AGENTS.md "Divergence rules".
 
 ## Left over / caveats
-- The "shared style entry list" rule is enforced for `src/styles/*` only; area CSS (`p2/*/*.css`, warehouse, ha, esp) is imported by its components (reachability is checked). Moving those into the entry would touch concurrently edited files.
-- `npm run build -w @belikh/jupiter-admin` (tsc) currently fails only in other agents' `p2/p3c/*` files; `vite build` succeeds. `lint:style` fails only on `p2/p3c/grid.tsx` and `querytools.tsx` (not mine).
+- The "shared style entry list" rule is enforced for `src/styles/*` only; area CSS (`areas/*/*.css`, warehouse, ha, esp) is imported by its components (reachability is checked). Moving those into the entry would touch concurrently edited files.
+- `npm run build -w @belikh/jupiter-admin` (tsc) currently fails only in other agents' `areas/widgets/*` files; `vite build` succeeds. `lint:style` fails only on `areas/widgets/grid.tsx` and `querytools.tsx` (not mine).
 - Visual baseline has no entries for the new docs routes; run `npm run visual -- --update --only /` when the tree settles.
 - Hard-coded colours/px font sizes still exist in legacy files under the lint baseline; the new check does not add colour/shadow scanning beyond `lint:style`.
-- Nav group ids are now sanitised (`navId` in `p2/chrome/nav.tsx`, with a test).
+- Nav group ids are now sanitised (`navId` in `areas/chrome/nav.tsx`, with a test).

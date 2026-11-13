@@ -22,8 +22,8 @@ export function Spectrogram({ signal, sampleRate = 1024, title = "Channel spectr
           <YAxis t={[0, 0.25, 0.5, 0.75, 1].map((f) => f * BINS * fbin)} y={(v) => M.t + ph - (v / (BINS * fbin)) * ph} w={w - 28} fmt={(v) => `${Math.round(v)}`} grid={false} />
           <XLabels labels={rows.map((_, i) => `${((i * hop) / sampleRate).toFixed(1)}s`)} x={(i) => M.l + (i + 0.5) * cw} h={h} every={Math.ceil(rows.length / 6)} />
           <defs><linearGradient id={`${uid}-ramp`} x1="0" x2="0" y1="1" y2="0"><stop offset="0" stopColor="var(--jp-surface)" /><stop offset="1" stopColor="var(--adm-c1)" /></linearGradient></defs>
-          <rect x={w - 20} y={M.t} width={10} height={ph} fill={`url(#${uid}-ramp)`} stroke="var(--jp-border)" /><text className="p3-ax" x={w - 15} y={M.t - 1} textAnchor="end">{Math.round(hi)} dB</text>
-          {active !== null && <rect x={M.l + active * cw} y={M.t} width={Math.max(cw, 2)} height={ph} fill="none" className="p3-hi" />}</>;
+          <rect x={w - 20} y={M.t} width={10} height={ph} fill={`url(#${uid}-ramp)`} stroke="var(--jp-border)" /><text className="lab-ax" x={w - 15} y={M.t - 1} textAnchor="end">{Math.round(hi)} dB</text>
+          {active !== null && <rect x={M.l + active * cw} y={M.t} width={Math.max(cw, 2)} height={ph} fill="none" className="lab-hi" />}</>;
       }} />
   );
 }
@@ -39,7 +39,7 @@ export function Waterfall({ signal, title = "Waterfall of spectra" }: { signal: 
       render={({ w, h, active, setActive }) => {
         const lines = waterfallLines(rows, w - 20, h - 24, 150, 90);
         return <g transform="translate(10,0)">{lines.map((l, i) => <path key={i} d={`${pathOf(l)}L${l.at(-1)![0]},${h - 24 + 24}L${l[0][0]},${h}Z`} fill="var(--jp-surface-raised)" stroke={active === i ? "var(--jp-text)" : C(0)} strokeWidth={active === i ? 3 : 1.4} onPointerEnter={() => setActive(i)} />)}
-          <text className="p3-ax" x={0} y={h - 6}>0 Hz</text><text className="p3-ax" x={w - 20} y={h - 6} textAnchor="end">frequency</text></g>;
+          <text className="lab-ax" x={0} y={h - 6}>0 Hz</text><text className="lab-ax" x={w - 20} y={h - 6} textAnchor="end">frequency</text></g>;
       }} />
   );
 }
@@ -52,14 +52,14 @@ export function Constellation({ symbols, title = "16-QAM constellation" }: { sym
     <Fig title={title} empty={!symbols.length} count={ideal.length} height={320}
       summary={`${title}: ${symbols.length} received symbols around 16 ideal points; error vector magnitude ${(e * 100).toFixed(1)}%.`}
       table={table(["Ideal I", "Ideal Q", "Symbols", "Mean error"], ideal.map((d, k) => [d.i, d.q, near[k].length, near[k].length ? +(near[k].reduce((a, s) => a + Math.hypot(s.i - d.i, s.q - d.q), 0) / near[k].length).toFixed(3) : 0]))}
-      footer={<p className="p3-stats">EVM <b>{(e * 100).toFixed(1)}%</b> Symbols <b>{symbols.length}</b></p>}
+      footer={<p className="lab-stats">EVM <b>{(e * 100).toFixed(1)}%</b> Symbols <b>{symbols.length}</b></p>}
       describe={(k) => `Ideal point I ${ideal[k].i}, Q ${ideal[k].q}: ${near[k].length} symbols, mean error ${near[k].length ? (near[k].reduce((a, s) => a + Math.hypot(s.i - ideal[k].i, s.q - ideal[k].q), 0) / near[k].length).toFixed(2) : "none"}`}
       render={({ w, h, active, setActive }) => {
         const s = Math.min(w - 60, h - 40), x = lin(-4.5, 4.5, (w - s) / 2, (w + s) / 2), y = lin(-4.5, 4.5, h / 2 + s / 2, h / 2 - s / 2);
-        return <>{[-3, -1, 1, 3].map((v) => <g key={v}><line className="p3-gl" x1={x(v)} x2={x(v)} y1={y(-4.5)} y2={y(4.5)} /><line className="p3-gl" x1={x(-4.5)} x2={x(4.5)} y1={y(v)} y2={y(v)} /><text className="p3-ax" x={x(v)} y={y(-4.5) + 14} textAnchor="middle">{v}</text><text className="p3-ax" x={x(-4.5) - 6} y={y(v)} textAnchor="end" dominantBaseline="middle">{v}</text></g>)}
+        return <>{[-3, -1, 1, 3].map((v) => <g key={v}><line className="lab-gl" x1={x(v)} x2={x(v)} y1={y(-4.5)} y2={y(4.5)} /><line className="lab-gl" x1={x(-4.5)} x2={x(4.5)} y1={y(v)} y2={y(v)} /><text className="lab-ax" x={x(v)} y={y(-4.5) + 14} textAnchor="middle">{v}</text><text className="lab-ax" x={x(-4.5) - 6} y={y(v)} textAnchor="end" dominantBaseline="middle">{v}</text></g>)}
           {symbols.map((p, k) => <circle key={k} cx={x(p.i)} cy={y(p.q)} r={2.4} fill={C(0)} opacity={0.45} />)}
           {ideal.map((d, k) => <path key={k} d={`M${x(d.i) - 6},${y(d.q) - 6}l12,12m0,-12l-12,12`} stroke="var(--jp-text)" strokeWidth={active === k ? 3.5 : 1.6} onPointerEnter={() => setActive(k)} />)}
-          <text className="p3-ax" x={x(4.5)} y={y(0) - 4} textAnchor="end">I</text><text className="p3-ax" x={x(0) + 4} y={y(4.5) + 4}>Q</text></>;
+          <text className="lab-ax" x={x(4.5)} y={y(0) - 4} textAnchor="end">I</text><text className="lab-ax" x={x(0) + 4} y={y(4.5) + 4}>Q</text></>;
       }} />
   );
 }
@@ -74,9 +74,9 @@ export function Waveform({ samples, sampleRate = 4800, title = "Audio waveform" 
       describe={(i) => `${((i * seg) / sampleRate).toFixed(2)} s to ${(((i + 1) * seg) / sampleRate).toFixed(2)} s: peak ${peaks[i].toFixed(2)}`}
       render={({ w, h, active, setActive }) => {
         const n = Math.max(8, Math.floor((w - M.l - M.r) / 2)), env = waveformEnvelope(samples, n), y = lin(-1, 1, h - 24, 4), x = (i: number) => M.l + (i * (w - M.l - M.r)) / (n - 1);
-        return <><line className="p3-gl" x1={M.l} x2={w - M.r} y1={y(0)} y2={y(0)} />
+        return <><line className="lab-gl" x1={M.l} x2={w - M.r} y1={y(0)} y2={y(0)} />
           <path d={`${env.map((e, i) => `${i ? "L" : "M"}${x(i)},${y(e.max)}`).join("")}${[...env].reverse().map((e, i) => `L${x(n - 1 - i)},${y(e.min)}`).join("")}Z`} fill={C(0)} fillOpacity={0.75} stroke={C(0)} />
-          <text className="p3-ax" x={M.l - 6} y={y(1)} textAnchor="end" dominantBaseline="middle">+1</text><text className="p3-ax" x={M.l - 6} y={y(-1)} textAnchor="end" dominantBaseline="middle">-1</text>
+          <text className="lab-ax" x={M.l - 6} y={y(1)} textAnchor="end" dominantBaseline="middle">+1</text><text className="lab-ax" x={M.l - 6} y={y(-1)} textAnchor="end" dominantBaseline="middle">-1</text>
           <XLabels labels={Array.from({ length: 6 }, (_, i) => `${((i * samples.length) / 5 / sampleRate).toFixed(1)}s`)} x={(i) => M.l + (i * (w - M.l - M.r)) / 5} h={h} every={1} />
           {active !== null && <rect x={M.l + (active / SEG) * (w - M.l - M.r)} y={4} width={(w - M.l - M.r) / SEG} height={h - 28} fill="var(--jp-accent)" opacity={0.25} stroke="var(--jp-accent)" />}
           <rect x={M.l} y={4} width={w - M.l - M.r} height={h - 28} fill="transparent" onPointerMove={(e) => { const r = (e.currentTarget.ownerSVGElement as SVGSVGElement).getBoundingClientRect(); setActive(Math.max(0, Math.min(SEG - 1, Math.floor(((e.clientX - r.left - M.l) / (w - M.l - M.r)) * SEG)))); }} />
@@ -93,13 +93,13 @@ export function ImageHistogram({ pixels, title = "Image histogram (luminance)" }
     <Fig title={title} empty={!n} count={B} height={240}
       summary={`${title}: ${n} pixels, mean luminance ${Math.round(mean)} of 255; ${dark.toFixed(1)}% in the darkest bin and ${bright.toFixed(1)}% in the brightest bin.`}
       table={table(["Luminance range", "Pixels", "Cumulative %"], h8.map((v, i) => [`${i * (256 / B)}-${(i + 1) * (256 / B) - 1}`, v, Math.round((100 * cum[i]) / n)]))} legend={[{ name: "Pixels per bin", color: C(0) }, { name: "Cumulative (line)", color: C(5) }]}
-      footer={<p className="p3-stats">Shadows clipped <b>{dark.toFixed(1)}%</b> Highlights clipped <b>{bright.toFixed(1)}%</b> Mean <b>{Math.round(mean)}</b></p>}
+      footer={<p className="lab-stats">Shadows clipped <b>{dark.toFixed(1)}%</b> Highlights clipped <b>{bright.toFixed(1)}%</b> Mean <b>{Math.round(mean)}</b></p>}
       describe={(i) => `Luminance ${i * (256 / B)} to ${(i + 1) * (256 / B) - 1}: ${h8[i]} pixels (${((100 * h8[i]) / n).toFixed(1)}%), cumulative ${Math.round((100 * cum[i]) / n)}%`}
       render={({ w, h, active, setActive }) => {
         const mx = Math.max(...h8), y = lin(0, mx, h - M.b, M.t), bw = (w - M.l - M.r) / B, yc = lin(0, n, h - M.b, M.t);
         return <><YAxis t={ticks(0, mx, 4)} y={y} w={w} /><XLabels labels={h8.map((_, i) => String(i * (256 / B)))} x={(i) => M.l + bw * (i + 0.5)} h={h} every={4} />
           {h8.map((v, i) => <rect key={i} x={M.l + bw * i + 1} y={y(v)} width={bw - 2} height={y(0) - y(v)} fill={C(0)} stroke={active === i ? "var(--jp-text)" : "none"} strokeWidth={2} onPointerEnter={() => setActive(i)} />)}
-          <path className="p3-line" stroke={C(5)} strokeDasharray="6 3" d={pathOf(cum.map((v, i) => [M.l + bw * (i + 0.5), yc(v)]))} /></>;
+          <path className="lab-line" stroke={C(5)} strokeDasharray="6 3" d={pathOf(cum.map((v, i) => [M.l + bw * (i + 0.5), yc(v)]))} /></>;
       }} />
   );
 }
@@ -117,11 +117,11 @@ export function VideoMarkers({ duration, markers, title = "Video timeline" }: { 
       render={({ w, h, active, setActive }) => {
         const x = lin(0, duration, M.l, w - M.r), ty = 40;
         return <><rect x={M.l} y={ty - 8} width={w - M.l - M.r} height={16} rx={3} fill="var(--jp-surface)" stroke="var(--jp-border)" />
-          {[0, 0.25, 0.5, 0.75, 1].map((f) => <text key={f} className="p3-ax" x={x(f * duration)} y={14} textAnchor={f === 0 ? "start" : f === 1 ? "end" : "middle"}>{clock(f * duration)}</text>)}
+          {[0, 0.25, 0.5, 0.75, 1].map((f) => <text key={f} className="lab-ax" x={x(f * duration)} y={14} textAnchor={f === 0 ? "start" : f === 1 ? "end" : "middle"}>{clock(f * duration)}</text>)}
           {packed.map((m, i) => { const col = C(KIND_COLOR[m.kind] ?? 6), ly = ty + 22 + m.row * 26; return <g key={i} onPointerEnter={() => setActive(i)}>
             <line x1={x(m.at)} x2={x(m.at)} y1={ty} y2={ly - 10} stroke={col} strokeWidth={1.5} />
             <path d={SHAPE[m.kind] ?? SHAPE.note} transform={`translate(${x(m.at)},${ty})`} fill={col} stroke={active === i ? "var(--jp-text)" : "var(--jp-surface-raised)"} strokeWidth={active === i ? 3 : 1.5} />
-            <text className="p3-ax p3-ax--strong" x={x(m.at) + 4} y={ly}>{m.label}</text></g>; })}</>;
+            <text className="lab-ax lab-ax--strong" x={x(m.at) + 4} y={ly}>{m.label}</text></g>; })}</>;
       }} />
   );
 }

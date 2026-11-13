@@ -7,7 +7,7 @@ import { SyncStatus } from "@belikh/jupiter-ui/sync.tsx";
 import { createCollection, useCollection } from "@belikh/jupiter-ui/mock.ts";
 import { usePrefs } from "@belikh/jupiter-ui/store.tsx";
 import { ENDPOINTS, replayResult, seed, type Delivery } from "./lib/webhooks.ts";
-import "./p3b.css";
+import "./devtools.css";
 
 export function WebhookLog() {
   const { toast } = usePrefs();
@@ -35,11 +35,11 @@ export function WebhookLog() {
       <PageHeader title="Webhook deliveries" crumbs={["Operations", "Webhook log"]} desc="Every delivery attempt with its request and response. Replay a failed delivery, or select several and replay them together. Replays against an unhealthy endpoint fail again."
         status={failed ? <Badge s="danger">{failed} failed</Badge> : <Badge s="ok">all delivered</Badge>} actions={<SyncStatus online={online} pending={pending} stale={stale} updatedAt={updatedAt} onRefresh={refresh} />} />
       <div className="adm-grid adm-grid--3"><StatTile label="Deliveries" value={String(rows.length)} /><StatTile label="Success rate" value={`${rate}%`} /><StatTile label="Failed" value={String(failed)} /></div>
-      <div className="p3-gap" />
+      <div className="lab-gap" />
       <Panel title="Endpoint health (simulation)">
-        <div className="p3-endpoints">{ENDPOINTS.map((e) => <div key={e} className="adm-row"><Switch checked={healthy[e]} onChange={(v) => setHealthy({ ...healthy, [e]: v })} label={`${e.replace("https://", "")} is healthy`} /></div>)}</div>
+        <div className="lab-endpoints">{ENDPOINTS.map((e) => <div key={e} className="adm-row"><Switch checked={healthy[e]} onChange={(v) => setHealthy({ ...healthy, [e]: v })} label={`${e.replace("https://", "")} is healthy`} /></div>)}</div>
       </Panel>
-      <div className="p3-gap" />
+      <div className="lab-gap" />
       <Panel title="Deliveries" flush>
         <DataTable<Delivery> rows={[...rows].reverse()} cols={cols} state={state === "loading" ? "loading" : "ready"} ariaLabel="Webhook deliveries" exportName="webhook-deliveries" pageSize={12} severity={(r) => (r.outcome === "failed" ? "danger" : undefined)}
           facet={{ key: "outcome", label: "Outcome", options: [{ value: "delivered", s: "ok" }, { value: "failed", s: "danger" }] }}

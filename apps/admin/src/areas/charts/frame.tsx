@@ -9,7 +9,7 @@ export type FrameState = "ready" | "loading" | "empty" | "error";
 export const slug = (s: string) => s.toLowerCase().replace(/\W+/g, "-").replace(/^-|-$/g, "");
 
 /**
- * Shared frame for every P2 chart: toolbar (data table, fullscreen, export SVG/PNG/CSV), measured width for pixel-true SVG,
+ * Shared frame for every chart: toolbar (data table, fullscreen, export SVG/PNG/CSV), measured width for pixel-true SVG,
  * and the loading / empty / error states. `table` is the accessible equivalent of the chart and also feeds the CSV export.
  */
 export function ChartFrame({ title, table, state = "ready", height = 240, children, svg = true, footer, onRetry }: {

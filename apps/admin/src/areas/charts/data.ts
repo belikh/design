@@ -1,4 +1,4 @@
-// Deterministic fictional data for the P2 chart demos.
+// Deterministic fictional data for the chart demos.
 import { rng } from "../../data/fixtures.ts";
 import type { GN } from "./graphs.tsx";
 import type { GTask, Booking, Strip, TrState } from "./timelines.tsx";
