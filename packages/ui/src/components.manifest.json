@@ -529,7 +529,7 @@
       "file": "Terrain.tsx",
       "when": "A contour map of linked items: each item is a hill (its height says how developed or important it is), links are dotted trails, placed by links or by meaning. Real links, plain SVG, works on the server",
       "props": [
-        "nodes (id, label, href, height, icon, x, y, vector)",
+        "nodes (id, label, href, height, icon, quiet, x, y, vector)",
         "links",
         "layout: links|meaning",
         "width",

@@ -22,6 +22,13 @@ describe("Terrain", () => {
     expect(container.querySelectorAll(".adm-terrain__trails line.is-hot")).toHaveLength(1);
     expect(container.querySelectorAll(".adm-terrain__trails line.is-dim")).toHaveLength(1);
   });
+  it("keeps a quiet item's label hidden until it is pointed at", () => {
+    const { container } = render(<Terrain nodes={nodes.map((n, i) => (i === 2 ? { ...n, quiet: true } : n))} links={links} />);
+    const texts = () => [...container.querySelectorAll("text")].map((e) => e.textContent);
+    expect(texts()).not.toContain("Gamma");
+    fireEvent.mouseEnter(screen.getByRole("link", { name: "Gamma" }));
+    expect(texts()).toContain("Gamma");
+  });
   it("is deterministic: the same input gives the same map", () => {
     const a = buildTerrain(nodes, links, 1000, 560, "links"), b = buildTerrain(nodes, links, 1000, 560, "links");
     expect(a.P).toEqual(b.P); expect(a.contours.map((c) => c.d)).toEqual(b.contours.map((c) => c.d));

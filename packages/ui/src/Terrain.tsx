@@ -13,6 +13,8 @@ export type TerrainNode = {
   icon?: string;
   /** Fixed position as a fraction of the map (0 to 1). Leave out to let the layout place it. */
   x?: number; y?: number;
+  /** Show the label only while the item, or one linked to it, is hovered or focused. For maps with many items or long names. */
+  quiet?: boolean;
   /** An embedding. When every item has one and layout is "meaning", distance on the map follows how unlike the vectors are. */
   vector?: number[];
 };
@@ -129,6 +131,7 @@ export function Terrain({ nodes, links = [], layout = "links", width = 1000, hei
     const order = nodes.map((n, i) => ({ i, pri: n.height * 5 + t.deg[i] * 0.2 + (i === hot ? 100 : 0) + (near.has(i) ? 50 : 0) })).sort((a, b) => b.pri - a.pri);
     const placed: number[][] = [], out = new Set<number>();
     for (const { i } of order) {
+      if (nodes[i].quiet && i !== hot && !near.has(i)) continue;
       const w = nodes[i].label.length * CHAR + 8, x = Math.min(Math.max(t.P[i].x * width - w / 2, 4), width - w - 4), y = t.P[i].y * height + 24;
       const box = [x - 4, y - 10, x + w + 4, y + 10];
       if (i !== hot && placed.some((q) => box[0] < q[2] && box[2] > q[0] && box[1] < q[3] && box[3] > q[1])) continue;
