@@ -37,6 +37,9 @@ Never commit a token. Never `npm link`/copy source into the project to "make it 
 - Your own CSS may only use `var(--jp-*)` (chart series `var(--adm-c1..c8)`), logical properties (`margin-inline-start`, not `margin-left`),
   and layout. Red and green mean status only.
 
+## 3b. Design rules
+Before drawing, laying out or styling anything visual, read `DESIGN.md` next to this file (type, colour, space, shape, graphics, motion, documents, and a finish checklist). It says how to use the constants; this file says how to depend on them.
+
 ## 4. Other targets: depend on generated files, fetch them at build time
 These have no npm mechanism. Download the current release file(s) into a **gitignored** directory as part of the build, never commit them:
 `gh release download --repo belikh/design --pattern '<file>' --dir <build-dir> --clobber` (add `--skip-existing` offline).
@@ -72,6 +75,7 @@ the packages). Then, back in the project, `npm run update:design`. If you cannot
 TODO; do not patch around it locally.
 
 ## 7. Before you finish
+Work through the checklist at the end of `DESIGN.md` (light and dark, 390px and desktop, squint test, keyboard).
 Run these in the project and fix any hit:
 `grep -rnE '#[0-9a-fA-F]{3,8}\b|font-size: *[0-9]+px' src` (literals), `grep -rn -- '--jp-.*:' src` (definitions), and check `git status` for files that
 look copied from the design system. In the design-system repo itself also run `npm run lint`.

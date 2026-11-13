@@ -7,6 +7,8 @@ description: How to write and lay out README files, GitHub profile READMEs and o
 
 Every jupiter.au repo has a README that looks the same and reads the same. Follow this when you create or edit one.
 
+The visual rules (type, colour, space, graphics) are in `DESIGN.md` in the `jupiter-design-system` skill; this skill applies them to READMEs.
+
 ## Format
 
 Write `README.rst` (reStructuredText), not `README.md`. If a repo has both, GitHub shows the Markdown one, so delete the `.md`. When you edit a repo that still has `README.md`, convert it to `README.rst` in the same commit (`git mv` first so the history follows).

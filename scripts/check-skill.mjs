@@ -27,6 +27,14 @@ for (const t of ["README.rst", "profile-README.rst", "org-profile-README.rst"]) 
 for (const m of rs.matchAll(/releases\/latest\/download\/(icon|rule|spot|scene)-([\w-]+)-(light|dark)\.svg/g)) if (!existsSync(join(root, "packages/github/graphics", m[1], `${m[2]}-${m[3]}.svg`))) bad.push(`github-readme: no such README graphic ${m[0]}`);
 for (const m of rs.matchAll(/releases\/latest\/download\/logo-(light|dark)\.svg/g)) if (!existsSync(join(root, "packages/graphics/logo", `jupiter-logo-${m[1]}.svg`))) bad.push(`github-readme: no such logo ${m[0]}`);
 if (/raw\.githubusercontent\.com\/belikh\/design/.test(rs.replace(/Never link `raw\.githubusercontent\.com`/, ""))) bad.push("github-readme: skill links raw.githubusercontent.com/belikh/design; use release URLs");
+// DESIGN.md: the token facts it states must equal the token file, and the skills must point to it.
+const dz = readFileSync(join(root, "packages/ui/skill/DESIGN.md"), "utf8"); const tk = JSON.parse(readFileSync(join(root, "packages/tokens/jupiter.tokens.json"), "utf8"));
+const facts = /<!-- token-facts\n([\s\S]*?)-->/.exec(dz)?.[1]; if (!facts) bad.push("DESIGN.md: token-facts block missing");
+else for (const line of facts.trim().split("\n")) { const [k, v] = line.split("="); const want = k.split(".").reduce((o, p) => o?.[p], tk);
+  const got = v.includes(":") ? Object.fromEntries(v.split(",").map((x) => x.split(":").map((y, i) => (i ? Number(y) : y)))) : v.includes(",") ? v.split(",").map(Number) : Number(v);
+  const wantCmp = got && !Array.isArray(got) && typeof got === "object" ? Object.fromEntries(Object.keys(got).map((x) => [x, want?.[x]])) : want;
+  if (JSON.stringify(wantCmp) !== JSON.stringify(got)) bad.push(`DESIGN.md: ${k} is ${JSON.stringify(want)} in the tokens, DESIGN.md says ${v}`); }
+if (!skill.includes("DESIGN.md")) bad.push("jupiter-design-system skill does not point to DESIGN.md"); if (!rs.includes("DESIGN.md")) bad.push("github-readme skill does not point to DESIGN.md");
 const header = /<p align="right">[\s\S]*?<\/p>/.exec(rs)?.[0]; const rootReadme = existsSync(join(root, "README.rst")) ? readFileSync(join(root, "README.rst"), "utf8") : "";
 if (existsSync(join(root, "README.md"))) bad.push("github-readme: README.md exists next to README.rst (GitHub would show the Markdown one)");
 if (!header || !header.includes("logo-light.svg") || !header.includes('width="260"')) bad.push("github-readme: logo header snippet missing");
