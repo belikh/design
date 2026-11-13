@@ -48,10 +48,18 @@ jobs:
         if: steps.v.outputs.exists == 'false'
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends texlive-xetex texlive-latex-recommended texlive-latex-extra texlive-pictures texlive-fonts-recommended poppler-utils
+          sudo apt-get install -y --no-install-recommends texlive-xetex texlive-latex-recommended texlive-latex-extra texlive-pictures texlive-fonts-recommended poppler-utils librsvg2-bin
+          node packages/latex/scripts/graphics.mjs
+          git diff --exit-code -- packages/latex/graphics/sources.lock || { echo "::error::packages/latex/graphics is stale (sources.lock differs): run node packages/latex/scripts/graphics.mjs and commit the result"; exit 1; }
           packages/latex/scripts/build.sh packages/latex/templates/*.tex
-          pdffonts packages/latex/build/report.pdf | grep -qi sgi
+          for f in packages/latex/build/*.pdf; do
+            fonts="$(pdffonts "$f" | tail -n +3)"; echo "$fonts" | grep -qi "SGIText" || { echo "$f does not embed SGI Text"; exit 1; }
+            ! echo "$fonts" | grep -qiE "LMRoman|LMSans|LatinModern|CMR|CMSY|CMMI|Pagella|DejaVu|Fira" || { echo "$f embeds a non-Jupiter font"; exit 1; }
+          done
           for f in packages/latex/build/*.pdf; do pdftoppm -r 70 -f 1 -l 1 -png -singlefile "$f" "${f%.pdf}"; done
+          node packages/docs/bin/jupiter-docs.mjs build --pdf
+          pdffonts dist/jupiter-docs.pdf | grep -qi sgi
+          pdftoppm -r 70 -f 1 -l 1 -png -singlefile dist/jupiter-docs.pdf dist/jupiter-docs
       - name: Build release assets
         if: steps.v.outputs.exists == 'false'
         run: scripts/release-assets.sh

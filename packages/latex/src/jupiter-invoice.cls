@@ -1,20 +1,27 @@
-%% jupiter-invoice.cls: tax invoices with computed totals.
+%% jupiter-invoice.cls: tax invoices with computed totals. The typographic Jupiter look: a 44 mm gutter of mono labels beside a
+%% 130 mm column, SGI Alt title, one big total, a hand-drawn flowing line under the title. Long invoices run onto further pages
+%% (the item table repeats its header).
 %%   \invoicefrom{Name \\ address \\ ABN ...}  \invoiceto{Client \\ address}
 %%   \invoicenumber{INV-0001} \invoicedate{12 Nov 2026} \invoiceduedate{26 Nov 2026}
 %%   \invoicestatus{Unpaid}  \currency{\$}  \taxrate{10}  \taxname{GST}
 %%   \begin{invoiceitems} \invoiceitem{Description}{qty}{unit price} ... \end{invoiceitems}
-%%   \invoicetotals   \paymentdetails{...}   \invoicenotes{...}
+%%   \invoicetotals   \paymentdetails{...}   \invoicenotes{...}   \invoicefooter
+%% The computed figures are available as \jpsubtotal \jptaxamount \jptotaldue \jptaxrate for your own layout.
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{jupiter-invoice}[2026/01/01 Jupiter invoice]
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{article}}
 \ProcessOptions\relax
 \LoadClass[a4paper,10pt]{article}
 \RequirePackage{jupiter}
-\RequirePackage[top=18mm,bottom=18mm,left=20mm,right=20mm]{geometry}
-\RequirePackage{tabularx}
+\RequirePackage[top=30mm,bottom=24mm,left=62mm,right=18mm,headheight=12pt,headsep=8mm]{geometry}
+\RequirePackage{array}
+\RequirePackage{longtable}
 \RequirePackage{booktabs}
-\pagestyle{empty}\setlength{\parindent}{0pt}\setlength{\parskip}{0pt}
-\AtBeginDocument{\jpsans\fontsize{9.8}{13.4}\selectfont\color{jpText}}
+\RequirePackage{fancyhdr}
+\RequirePackage{needspace}
+\setlength{\parindent}{0pt}\setlength{\parskip}{0pt}
+\jpbody{9.8}{13.4}
+\setlength{\LTleft}{0pt}\setlength{\LTright}{0pt}
 
 \newcommand{\invoicefrom}[1]{\gdef\jp@from{#1}}
 \newcommand{\invoiceto}[1]{\gdef\jp@to{#1}}
@@ -28,6 +35,9 @@
 \newcommand{\invoicenotes}[1]{\gdef\jp@notes{#1}}
 \gdef\jp@from{}\gdef\jp@to{}\gdef\jp@num{}\gdef\jp@idate{\today}\gdef\jp@due{}\gdef\jp@stat{}
 \gdef\jp@cur{\$}\gdef\jp@taxname{GST}\gdef\jp@pay{}\gdef\jp@notes{}
+
+%% a figure: mono, small. \jp@fig keeps cells on one baseline with the description.
+\newcommand{\jp@fig}[1]{{\jpmono\small #1}}
 
 \ExplSyntaxOn
 \fp_new:N \g__jp_sub_fp
@@ -60,47 +70,69 @@
   {
     \fp_gset:Nn \g__jp_tmp_fp { #2 * #3 }
     \fp_gadd:Nn \g__jp_sub_fp { \g__jp_tmp_fp }
-    #1 & \jpmono\small #2 & \jpmono\small \__jp_money:n { #3 } & \jpmono\small \__jp_money:n { \g__jp_tmp_fp } \\
+    #1 & \jp@fig{#2} & \jp@fig{ \__jp_money:n { #3 } } & \jp@fig{ \__jp_money:n { \g__jp_tmp_fp } } \\
   }
-\NewDocumentCommand{\invoicetotals}{}
-  {
-    \par\vspace{6pt}\hfill
-    \begin{tabular}{@{}l r@{}}
-      \jpmuted{Subtotal} & \jpmono\small \__jp_money:n { \g__jp_sub_fp } \\
-      \jpmuted{\jp@taxname\ (\fp_eval:n{\g__jp_taxrate_fp}\%)} & \jpmono\small \__jp_money:n { \g__jp_sub_fp * \g__jp_taxrate_fp / 100 } \\
-      \noalign{\vspace{2pt}\color{jpAccent}\hrule height 1.2pt\vspace{3pt}}
-      \bfseries Total\space due & \jpmono\bfseries\color{jpAccent} \__jp_money:n { \g__jp_sub_fp * ( 1 + \g__jp_taxrate_fp / 100 ) } \\
-    \end{tabular}\par
-  }
+\NewDocumentCommand{\jpsubtotal}{}{ \__jp_money:n { \g__jp_sub_fp } }
+\NewDocumentCommand{\jptaxamount}{}{ \__jp_money:n { \g__jp_sub_fp * \g__jp_taxrate_fp / 100 } }
+\NewDocumentCommand{\jptotaldue}{}{ \__jp_money:n { \g__jp_sub_fp * ( 1 + \g__jp_taxrate_fp / 100 ) } }
+\NewDocumentCommand{\jptaxrate}{}{ \fp_eval:n { \g__jp_taxrate_fp } }
 \ExplSyntaxOff
-
+%% ---- item table: description + three right-aligned mono columns, no vertical rules, header repeats on every page.
+\newlength{\jp@wqty}\setlength{\jp@wqty}{14mm}
+\newlength{\jp@wunit}\setlength{\jp@wunit}{28mm}
+\newlength{\jp@wamt}\setlength{\jp@wamt}{30mm}
+\newcolumntype{R}[1]{>{\raggedleft\arraybackslash}p{#1}}
+\newcommand{\jp@ihead}{%
+  \jpgutter{}{\color{jpTextMuted}\jplabel{Description}} & \multicolumn{1}{R{\jp@wqty}}{\color{jpTextMuted}\jplabel{Qty}} & \multicolumn{1}{R{\jp@wunit}}{\color{jpTextMuted}\jplabel{Unit}} & \multicolumn{1}{R{\jp@wamt}}{\color{jpTextMuted}\jplabel{Amount}}\\
+  \noalign{\color{jpText}\hrule height 0.9pt}}
 \newenvironment{invoiceitems}{%
-  \renewcommand{\arraystretch}{1.5}%
-  \noindent\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.5\linewidth} r r r@{}}
-  \color{jpAccent}\jplabel{Description} & \color{jpAccent}\jplabel{Qty} & \color{jpAccent}\jplabel{Unit} & \color{jpAccent}\jplabel{Amount}\\
-  \noalign{\color{jpBorder}\hrule height 0.5pt}}{%
-  \noalign{\color{jpBorder}\hrule height 0.5pt}\end{tabular}}
+  \par\vspace{10pt}\noindent
+  \setlength{\extrarowheight}{3pt}\setlength{\tabcolsep}{0pt}%
+  \begin{longtable}{@{}>{\raggedright\arraybackslash}p{\dimexpr\linewidth-\jp@wqty-\jp@wunit-\jp@wamt\relax}R{\jp@wqty}R{\jp@wunit}R{\jp@wamt}@{}}
+  \jp@ihead \endfirsthead
+  \jp@ihead \endhead
+  \noalign{\color{jpBorder}\hrule height 0.4pt}\endfoot
+  \noalign{\color{jpBorder}\hrule height 0.4pt}\endlastfoot
+  \ignorespaces}{%
+  \end{longtable}\vspace{-\baselineskip}}
+
+%% ---- header rows: a hairline, a mono label in the gutter, the value in the column
+\newcommand{\jp@irow}[2]{\par\noindent{\color{jpBorder}\rule{\linewidth}{0.4pt}}\par\vspace{4pt}%
+  \noindent\jpgutter{#1}{#2}\par\vspace{5pt}}
+
+\newcommand{\invoicetotals}{%
+  \par\Needspace*{40mm}\vspace{8pt}\nopagebreak\noindent
+  \begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}@{}l r@{}}
+    \jpmuted{Subtotal} & \jp@fig{\jpsubtotal} \\
+    \jpmuted{\jp@taxname\ (\jptaxrate\%)} & \jp@fig{\jptaxamount} \\
+  \end{tabular*}\par\vspace{6pt}\nopagebreak
+  \noindent{\color{jpText}\rule{\linewidth}{0.9pt}}\par\vspace{5pt}\nopagebreak
+  \noindent\jpgutter[jpAccent]{Total due}%
+  \hfill{\jpdisplay\bfseries\fontsize{50}{54}\selectfont\jptotaldue}\par}
 
 \renewcommand{\maketitle}{%
-  \noindent\begin{minipage}[t]{0.58\linewidth}
-    {\jpdisplay\bfseries\fontsize{26}{29}\selectfont INVOICE}\par
-    \vspace{3pt}{\jpmono\small\color{jpAccent}\jp@num}\par
-    \ifdefempty{\jp@stat}{}{\vspace{4pt}\jpbadge[warn]{\jp@stat}\par}
-  \end{minipage}\hfill
-  \begin{minipage}[t]{0.38\linewidth}\raggedleft
-    {\jpmono\footnotesize\color{jpTextMuted}ISSUED}\ \ {\jpmono\small\jp@idate}\par
-    \ifdefempty{\jp@due}{}{{\jpmono\footnotesize\color{jpTextMuted}DUE}\ \ {\jpmono\small\jp@due}\par}
-  \end{minipage}
-  \par\vspace{6pt}{\jpaccentrule[1.4pt]}\vspace{10pt}
-  \noindent\begin{minipage}[t]{0.48\linewidth}
-    {\color{jpAccent}\jplabel{From}}\par\vspace{2pt}\jp@from\par
-  \end{minipage}\hfill
-  \begin{minipage}[t]{0.48\linewidth}
-    {\color{jpAccent}\jplabel{Bill to}}\par\vspace{2pt}\jp@to\par
-  \end{minipage}
-  \par\vspace{14pt}}
+  \thispagestyle{empty}%
+  \jpat[north east]{192mm}{16mm}{\jpart[width=31mm]{logo-light}}%
+  \jpat{0mm}{51mm}{\jpart[width=210mm]{swash-accent}}%
+  \noindent\jpgutter[jpAccent]{Invoice}%
+  {\jpdisplay\bfseries\fontsize{48}{50}\selectfont Invoice}\par
+  \vspace{4pt}\noindent{\jpmono\small\color{jpAccent}\jp@num}%
+  \ifdefempty{\jp@stat}{}{\hspace{10pt}\jpbadge[warn]{\jp@stat}}\par
+  \vspace{15mm}
+  \jp@irow{Issued}{\jpmono\small\jp@idate}%
+  \ifdefempty{\jp@due}{}{\jp@irow{Due}{\jpmono\small\jp@due}}%
+  \jp@irow{From}{\jp@from}%
+  \jp@irow{Bill to}{\jp@to}%
+  {\color{jpBorder}\rule{\linewidth}{0.4pt}}\par}
 
 \newcommand{\invoicefooter}{%
-  \ifdefempty{\jp@pay}{}{\vspace{16pt}\noindent{\color{jpAccent}\jplabel{Payment details}}\par\vspace{2pt}{\jp@pay}\par}
-  \ifdefempty{\jp@notes}{}{\vspace{10pt}\noindent{\color{jpAccent}\jplabel{Notes}}\par\vspace{2pt}{\small\jp@notes}\par}}
+  \Needspace*{50mm}%
+  \ifdefempty{\jp@pay}{}{\vspace{14pt}\jp@irow{Payment}{\jp@pay}}%
+  \ifdefempty{\jp@notes}{}{\vspace{4pt}\jp@irow{Notes}{\small\jp@notes}}}
+
+%% pages after the first: a running line with the invoice number and page
+\pagestyle{fancy}\fancyhf{}\fancyhfoffset[L]{\jpgutterw}
+\renewcommand{\headrulewidth}{0.4pt}\renewcommand{\headrule}{{\color{jpBorder}\hrule width\headwidth height 0.4pt}}
+\fancyhead[L]{\jpmono\fontsize{7}{9}\selectfont\color{jpTextMuted}INVOICE \jp@num}
+\fancyfoot[L]{\jpmono\fontsize{7}{9}\selectfont\color{jpAccent}\thepage}
 \endinput

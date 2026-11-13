@@ -1,4 +1,5 @@
-%% jupiter-notes.cls: working notes. Wide right margin for \jpmargin{} remarks, checklists, callouts.
+%% jupiter-notes.cls: working notes in the typographic Jupiter look. Section numbers and \jpmargin{} remarks hang in the
+%% 44 mm gutter on the left, beside a 130 mm text column; checklists, callouts and code sit in the column.
 %%   \notemeta{2026-11-12}{tag-one, tag-two}   then \maketitle
 %%   \begin{jptodo} \todo{open task} \done{finished task} \end{jptodo}
 \NeedsTeXFormat{LaTeX2e}
@@ -7,27 +8,30 @@
 \ProcessOptions\relax
 \LoadClass[a4paper,10pt]{article}
 \RequirePackage{jupiter}
-\RequirePackage[top=20mm,bottom=20mm,left=20mm,right=62mm,marginparwidth=44mm,marginparsep=6mm]{geometry}
+\RequirePackage[top=24mm,bottom=22mm,left=62mm,right=18mm,marginparwidth=40mm,marginparsep=4mm,headheight=12pt]{geometry}
 \RequirePackage{titlesec}
 \RequirePackage{fancyhdr}
+\RequirePackage{array}
+\RequirePackage{booktabs}
+\reversemarginpar
 \setlength{\parindent}{0pt}\setlength{\parskip}{0.55em}
-\AtBeginDocument{\jpsans\fontsize{9.8}{13.6}\selectfont\color{jpText}}
+\jpbody{9.8}{13.8}
 
 \newcommand{\notemeta}[2]{\gdef\jp@notedate{#1}\gdef\jp@notetags{#2}}
 \gdef\jp@notedate{\today}\gdef\jp@notetags{}
 \renewcommand{\maketitle}{%
-  \par{\jplabel{\jp@notedate}\ifx\\\jp@notetags\\\else\hspace{0.8em}{\color{jpAccent}\jplabel{\jp@notetags}}\fi\par}
-  \vspace{2pt}{\jpdisplay\bfseries\fontsize{22}{25}\selectfont\@title\par}
-  \vspace{2pt}{\jpaccentrule[1.4pt]}\vspace{8pt}}
+  \par\noindent\jpgutter[jpAccent]{Notes}{\jpmono\fontsize{7.5}{10}\selectfont\color{jpTextMuted}\MakeUppercase{\jp@notedate}%
+    \ifx\\\jp@notetags\\\else\hspace{1em}{\color{jpAccent}\MakeUppercase{\jp@notetags}}\fi}\par
+  \vspace{7pt}{\jpdisplay\bfseries\fontsize{34}{36}\selectfont\@title\par}
+  \vspace{1mm}\jpunderline[accent]{70mm}\vspace{3mm}}
 
-\titleformat{\section}{\jpdisplay\bfseries\large}{\color{jpAccent}\jpmono\normalsize\thesection}{0.7em}{}[{\color{jpBorder}\titlerule[0.5pt]}]
-\titleformat{\subsection}{\jpdisplay\bfseries\normalsize}{\color{jpAccent}\jpmono\small\thesubsection}{0.6em}{}
-\titlespacing*{\section}{0pt}{1.1em}{0.5em}
-\titlespacing*{\subsection}{0pt}{0.8em}{0.3em}
-\renewcommand{\thesection}{\jp@twodigits{section}}
-\newcommand{\jp@twodigits}[1]{\ifnum\value{#1}<10 0\fi\arabic{#1}}
+\titleformat{\section}{\jpdisplay\bfseries\fontsize{16}{18}\selectfont}{\jpgutter[jpAccent]{\jptwodigits{section}}}{0pt}{}
+\titleformat{\subsection}{\jpdisplay\bfseries\normalsize}{\jpgutter{\jptwodigits{section}.\arabic{subsection}}}{0pt}{}
+\titlespacing*{\section}{0pt}{1.6em}{0.6em}
+\titlespacing*{\subsection}{0pt}{1.1em}{0.35em}
+\renewcommand{\thesection}{\jptwodigits{section}}
 
-\newcommand{\jpmargin}[1]{\marginpar{\raggedright\jpmono\scriptsize\color{jpTextMuted}\setlength{\parskip}{2pt}#1}}
+\newcommand{\jpmargin}[1]{\marginpar{\raggedright\jpmono\fontsize{7}{9.6}\selectfont\color{jpTextMuted}\setlength{\parskip}{2pt}#1}}
 
 \newcommand{\jp@box}{\fboxsep=0pt\fboxrule=0.6pt\color{jpAccent}\fbox{\rule{0pt}{0.62em}\rule{0.62em}{0pt}}}
 \newcommand{\jp@boxdone}{\color{jpAccent}\rule{0.62em}{0.62em}}
@@ -35,8 +39,8 @@
 \newcommand{\todo}[1]{\item[{\jp@box}] #1}
 \newcommand{\done}[1]{\item[{\jp@boxdone}] {\color{jpTextMuted}#1}}
 
-\pagestyle{fancy}\fancyhf{}
+\pagestyle{fancy}\fancyhf{}\fancyhfoffset[L]{\jpgutterw}
 \renewcommand{\headrulewidth}{0pt}
-\fancyfoot[L]{\jpmono\scriptsize\color{jpTextMuted}\@title}
-\fancyfoot[R]{\jpmono\scriptsize\color{jpTextMuted}\thepage}
+\fancyfoot[L]{\jpmono\fontsize{7}{9}\selectfont\color{jpAccent}\thepage}
+\fancyfoot[R]{\jpmono\fontsize{7}{9}\selectfont\color{jpTextMuted}\MakeUppercase{\@title}}
 \endinput

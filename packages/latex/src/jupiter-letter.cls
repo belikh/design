@@ -1,6 +1,7 @@
-%% jupiter-letter.cls: formal letters and cover letters.
-%%   \documentclass{jupiter-letter}         formal: serif, monochrome, conventional layout
-%%   \documentclass[cover]{jupiter-letter}  cover letter: matches the `dense` resume (sans, accent rule)
+%% jupiter-letter.cls: formal letters and cover letters, in the typographic Jupiter look: a 44 mm gutter of mono labels
+%% (date, to, subject) beside a 130 mm text column, the sender's name in SGI Alt, a hand-drawn underline, small logo top-right.
+%%   \documentclass{jupiter-letter}         formal: ink underline, no accent
+%%   \documentclass[cover]{jupiter-letter}  cover letter: accent underline and the red spot after the name
 %% Usage:
 %%   \sender{Name}{Address line 1 \\ Address line 2}{contact line}
 %%   \recipient{Name \\ Organisation \\ Address}
@@ -15,19 +16,14 @@
 \DeclareOption{formal}{\jp@coverfalse}
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{article}}
 \ProcessOptions\relax
-\LoadClass[a4paper,11pt]{article}
+\LoadClass[a4paper,10pt]{article}
 \RequirePackage{jupiter}
-\RequirePackage{geometry}
-\geometry{top=22mm,bottom=22mm,left=25mm,right=25mm}
+\RequirePackage[top=22mm,bottom=24mm,left=62mm,right=18mm]{geometry}
 \pagestyle{empty}
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{0.8em}
-\ifjp@cover
-  \AtBeginDocument{\jpsans\fontsize{10.4}{14.6}\selectfont}
-\else
-  \hypersetup{colorlinks=false,pdfborder={0 0 0}}
-  \AtBeginDocument{\jpserif\fontsize{11}{14.8}\selectfont\color{jpText}}
-\fi
+\jpbody{10}{14.6}
+\ifjp@cover\else\hypersetup{colorlinks=false,pdfborder={0 0 0}}\fi
 
 \newcommand{\sender}[3]{\gdef\jp@sname{#1}\gdef\jp@saddr{#2}\gdef\jp@scontact{#3}}
 \newcommand{\recipient}[1]{\gdef\jp@rcpt{#1}}
@@ -35,25 +31,26 @@
 \newcommand{\subject}[1]{\gdef\jp@subject{#1}}
 \gdef\jp@sname{}\gdef\jp@saddr{}\gdef\jp@scontact{}\gdef\jp@rcpt{}\gdef\jp@date{\today}\gdef\jp@subject{}
 
+\newcommand{\jp@lrow}[2]{\par\noindent{\color{jpBorder}\rule{\linewidth}{0.4pt}}\par\vspace{5pt}\nointerlineskip
+  \noindent\jpgutter{#1}{#2}\par\vspace{5pt}}
+\newcommand{\jp@spotdot}{\hspace{0.18em}\tikz[baseline=-0.3ex]\fill[jpDanger] (0,0) circle (1.25mm);}
+
 \newcommand{\jp@letterhead}{%
-  \ifjp@cover
-    {\noindent{\jpdisplay\bfseries\fontsize{22}{25}\selectfont\color{jpText}\jp@sname}\par}
-    \vspace{3pt}{\noindent\jpmono\footnotesize\color{jpTextMuted}\jp@saddr\ifx\\\jp@scontact\\\else\ \textperiodcentered\ \jp@scontact\fi\par}
-    \vspace{4pt}{\jpaccentrule[1.4pt]}\vspace{14pt}
-    {\raggedleft\jp@date\par}
-  \else
-    {\raggedleft{\scshape\bfseries\large\jp@sname}\par\vspace{2pt}
-     {\small\jp@saddr\par\ifx\\\jp@scontact\\\else\jp@scontact\par\fi}\par}
-    \vspace{16pt}
-    {\raggedleft\jp@date\par}
-  \fi
-  \vspace{10pt}
-  \ifx\\\jp@rcpt\\\else{\noindent\jp@rcpt\par}\vspace{10pt}\fi
-  \ifx\\\jp@subject\\\else{\noindent\bfseries\jp@subject\par}\vspace{4pt}\fi}
+  \jpat[north east]{192mm}{14mm}{\jpart[width=28mm]{logo-light}}%
+  \vspace*{5mm}%
+  \noindent\jpgutter[\ifjp@cover jpAccent\else jpTextMuted\fi]{\ifjp@cover Cover letter\else Letter\fi}%
+  {\jpdisplay\bfseries\fontsize{30}{32}\selectfont\color{jpText}\jp@sname\ifjp@cover\jp@spotdot\fi\par}
+  \vspace{3pt}\noindent{\jpmono\fontsize{7.5}{10.5}\selectfont\color{jpTextMuted}\jp@saddr\ifx\\\jp@scontact\\\else\\\jp@scontact\fi\par}
+  \vspace{1mm}\ifjp@cover\jpunderline[accent]{70mm}\else\jpunderline[ink]{70mm}\fi
+  \vspace{9mm}
+  \jp@lrow{Date}{\jpmono\small\jp@date}%
+  \ifx\\\jp@rcpt\\\else\jp@lrow{To}{\jp@rcpt}\fi
+  \ifx\\\jp@subject\\\else\jp@lrow{Re}{\bfseries\jp@subject}\fi
+  {\color{jpBorder}\rule{\linewidth}{0.4pt}}\par\vspace{10mm}}
 
 \newenvironment{jpletter}[1]{\jp@letterhead\noindent #1\par}{}
 
 \newcommand{\signoff}[3][]{%
-  \par\vspace{1em}\noindent #2\par\vspace{2.6em}\noindent{\bfseries #3}\par
-  \ifx\\#1\\\else\vspace{1.2em}{\small\jpmuted{#1}}\par\fi}
+  \par\nobreak\vskip1em\noindent #2\par\nobreak\vskip2.6em\noindent{\bfseries #3}\par
+  \ifx\\#1\\\else\nobreak\vskip1.2em{\small\jpmuted{#1}}\par\fi}
 \endinput

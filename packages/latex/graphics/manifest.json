@@ -1,0 +1,13 @@
+[
+ { "id": "logo-light", "src": "logo/jupiter-logo-light" },
+ { "id": "logo-dark", "src": "logo/jupiter-logo-dark" },
+ { "id": "flow-accent", "src": "art/flow-a", "color": "jplightAccent", "stroke": 2.2 },
+ { "id": "flow-ink", "src": "art/flow-b", "color": "jplightText", "stroke": 1.5 },
+ { "id": "flow-muted", "src": "art/flow-c", "color": "jplightTextMuted", "stroke": 1.1 },
+ { "id": "flow-onaccent", "src": "art/flow-b", "color": "jplightOnAccent", "stroke": 1.5 },
+ { "id": "underline-ink", "src": "rule/underline", "color": "jplightText", "stroke": 1.6 },
+ { "id": "underline-accent", "src": "rule/underline", "color": "jplightAccent", "stroke": 2.2 },
+ { "id": "underline-onaccent", "src": "rule/underline", "color": "jplightOnAccent", "stroke": 1.6 },
+ { "id": "swash-accent", "src": "rule/swash", "color": "jplightAccent", "stroke": 1.6 },
+ { "id": "swash-muted", "src": "rule/swash", "color": "jplightTextMuted", "stroke": 1.2 }
+]

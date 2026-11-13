@@ -885,7 +885,7 @@
    "name": "Notes",
    "kind": "Template",
    "detail": "jupiter-notes",
-   "source": "\\documentclass{jupiter-notes}\n\\title{Network migration notes}\n\\notemeta{2026-11-12}{infra, unifi}\n\\begin{document}\n\\maketitle\n\\section{Plan}\nMove the camera VLAN behind its own firewall zone before touching the IoT network.\\jpmargin{Check the UDM Pro firmware first.}\n\n\\begin{jptodo}\n  \\todo{Create the camera zone and block inter-VLAN traffic}\n  \\todo{Re-adopt the three access points}\n  \\done{Back up the controller}\n\\end{jptodo}\n\n\\section{Findings}\n\\subsection{Switch ports}\nPort profiles are inherited from the VLAN, so overrides need to be cleared first.\\jpmargin{Profiles live under Settings $\\rightarrow$ Profiles.}\n\\begin{jpnote}[warn]Do not change the native VLAN while connected over it.\\end{jpnote}"
+   "source": "\\documentclass{jupiter-notes}\n\\title{Network migration notes}\n\\notemeta{2026-11-12}{infra, unifi}\n\\begin{document}\n\\maketitle\n\\section{Plan}\nMove the camera VLAN behind its own firewall zone before touching the IoT network.\\jpmargin{Check the UDM Pro firmware first.}\n\n\\begin{jptodo}\n  \\todo{Create the camera zone and block inter-VLAN traffic}\n  \\todo{Re-adopt the three access points}\n  \\done{Back up the controller}\n\\end{jptodo}\n\n\\section{Findings}\n\\subsection{Switch ports}\nPort profiles are inherited from the VLAN, so overrides need to be cleared first.\\jpmargin{Profiles live under Settings, then Profiles.}\n\\begin{jpnote}[warn]Do not change the native VLAN while connected over it.\\end{jpnote}"
   },
   {
    "name": "Report",
