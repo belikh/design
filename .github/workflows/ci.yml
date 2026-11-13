@@ -51,11 +51,11 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build:tokens
-      - name: Install TeX Live and fallback fonts
+      - name: Install TeX Live and fallback fonts   # no texlive-fonts-extra or texlive-science: the templates use free fonts by file name and no science packages (they are the bulk of the download)
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends texlive-xetex texlive-latex-recommended texlive-latex-extra \
-            texlive-fonts-recommended texlive-fonts-extra texlive-science latexmk fonts-dejavu-core fonts-firacode
+            texlive-pictures texlive-fonts-recommended latexmk fonts-dejavu-core fonts-firacode
           # Fira Sans is the free fallback for the SGI fonts: install it if packaged, then make fontconfig see TeX Live's own copy too.
           sudo apt-get install -y --no-install-recommends fonts-fira-sans || true
           sudo fc-cache -f
