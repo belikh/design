@@ -49,11 +49,6 @@ cp -r "$tex/graphics" "$d/graphics"; mkdir -p "$d/scripts"; cp "$tex/scripts/gra
 ( cd "$stage" && tar czf "$out/jupiter-latex.tgz" jupiter-latex )
 rm -rf "$stage"
 
-# 3b. README graphics: the logo and every baked light/dark graphic as flat, unversioned files, so READMEs can link
-#     https://github.com/<owner>/<repo>/releases/latest/download/<file>  (logo-light.svg, icon-bolt-dark.svg, rule-end-light.svg, ...)
-cp "$gfx/logo/jupiter-logo-light.svg" "$out/logo-light.svg"; cp "$gfx/logo/jupiter-logo-dark.svg" "$out/logo-dark.svg"
-for f in "$root"/packages/github/graphics/*/*.svg; do tier="$(basename "$(dirname "$f")")"; cp "$f" "$out/$tier-$(basename "$f")"; done
-
 # 3c. LaTeX demo documents rendered by the release workflow: latex-<template>.pdf and latex-<template>.png (first page). Skipped when not rendered locally.
 for f in "$tex"/build/*.pdf; do [ -e "$f" ] || continue; n="$(basename "$f" .pdf)"
   cp "$f" "$out/latex-$n.pdf"; [ -f "$tex/build/$n.png" ] && cp "$tex/build/$n.png" "$out/latex-$n.png"; done

@@ -72,11 +72,16 @@ jobs:
           id="$(gh api -X POST "repos/$GITHUB_REPOSITORY/releases" -f tag_name="v$v" -f target_commitish="$GITHUB_SHA" -f name="Jupiter design system v$v" \
             -f body="Generated from jupiter.tokens.json at $GITHUB_SHA. Use unversioned URLs under .../releases/latest/download/ to track current." -F draft=true -q .id)"
           case "$id" in ''|*[!0-9]*) echo "could not find the draft release id: $id"; exit 1;; esac
-          ( cd release && ls | grep -vE '\.(svg|png|pdf)$' | xargs -n 50 sh -c 'for i in 1 2 3; do gh release upload "v'"$v"'" "$@" --clobber && break || sleep 5; done' _ )
-          ( cd release && ls | grep -E '\.(svg|png|pdf)$' | xargs -P 3 -I{} sh -c 'case "{}" in *.svg) t=image/svg+xml;; *.png) t=image/png;; *) t=application/pdf;; esac; for i in 1 2 3 4 5 6; do curl -fsS -o /dev/null -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Content-Type: $t" --data-binary @"{}" "https://uploads.github.com/repos/'"$GITHUB_REPOSITORY"'/releases/'"$id"'/assets?name={}" && exit 0; sleep $((i*i*5)); done; echo "failed: {}"; exit 1' )
+          ( cd release && ls | grep -vE '\.(png|pdf)$' | xargs -n 50 sh -c 'for i in 1 2 3; do gh release upload "v'"$v"'" "$@" --clobber && break || sleep 5; done' _ )
+          ( cd release && ls | grep -E '\.(png|pdf)$' | xargs -P 3 -I{} sh -c 'case "{}" in *.png) t=image/png;; *) t=application/pdf;; esac; for i in 1 2 3 4 5 6; do curl -fsS -o /dev/null -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Content-Type: $t" --data-binary @"{}" "https://uploads.github.com/repos/'"$GITHUB_REPOSITORY"'/releases/'"$id"'/assets?name={}" && exit 0; sleep $((i*i*5)); done; echo "failed: {}"; exit 1' )
           want="$(ls release | wc -l)"; have="$(gh release view "v$v" --json assets -q '.assets|length')"
           if [ "$want" != "$have" ]; then echo "uploaded $have of $want assets"; exit 1; fi
           gh release edit "v$v" --draft=false --latest
+      - name: Move the latest tag to this release (READMEs link raw files at the latest tag: a release asset is served as octet-stream and cannot be drawn in an img)
+        if: steps.v.outputs.exists == 'false'
+        run: |
+          gh api -X PATCH "repos/$GITHUB_REPOSITORY/git/refs/tags/latest" -f sha="$GITHUB_SHA" -F force=true >/dev/null 2>&1 \
+            || gh api -X POST "repos/$GITHUB_REPOSITORY/git/refs" -f ref=refs/tags/latest -f sha="$GITHUB_SHA" >/dev/null
       - name: Publish the npm packages to GitHub Packages (projects depend on these; skips versions already published)
         run: node scripts/publish-packages.mjs --registry https://npm.pkg.github.com
         env:

@@ -35,8 +35,8 @@ Start the file with the logo, right-aligned, and nothing else before the title. 
 
    <p align="right">
      <picture>
-       <source media="(prefers-color-scheme: dark)" srcset="https://github.com/belikh/design/releases/latest/download/logo-dark.svg">
-       <img alt="jupiter.au" src="https://github.com/belikh/design/releases/latest/download/logo-light.svg" width="260">
+       <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/belikh/design/latest/packages/graphics/logo/jupiter-logo-dark.svg">
+       <img alt="jupiter.au" src="https://raw.githubusercontent.com/belikh/design/latest/packages/graphics/logo/jupiter-logo-light.svg" width="260">
      </picture>
    </p>
 
@@ -47,7 +47,7 @@ The title is a raw `<h1>` on purpose. If it were an `.rst` heading, GitHub would
 
 Link the logo files; do not copy them into the repo. Keep the width at 260.
 
-Every image link in a README, a page or an app that is live or in production uses a release URL, `https://github.com/belikh/design/releases/latest/download/<file>`. Never link `raw.githubusercontent.com` or a branch: that shows unreleased changes. The release carries the logo and every baked graphic as flat files, so the file name is the tier and name joined with dashes. This also applies inside `belikh/design`.
+Every image link in a README, a page or an app that is live or in production points at the `latest` tag of `belikh/design`: `https://raw.githubusercontent.com/belikh/design/latest/packages/graphics/logo/jupiter-logo-light.svg`. The release workflow moves that tag to each release, so a link only changes when a release is cut. Never link `main` (it shows unreleased changes), and never link a release asset: GitHub serves release assets as `application/octet-stream`, which an `<img>` will not draw as SVG.
 
 Then, in this order:
 
@@ -66,12 +66,12 @@ Rules for the page:
 - Code blocks always name the language: `.. code-block:: sh`.
 - Inline code uses double backticks. Links are `` `text <url>`_ ``.
 - Badges only for status that changes (build, version). Make them with `@belikh/jupiter-github` (`node src/make.mjs --badge "build|passing|ok"`) so they use the token colours. One row, below the intro.
-- Profile README (`<user>/<user>`) and organisation README (`.github/profile/README.rst`): same logo header, a short intro, then tiles or a table of projects. The org page needs absolute URLs (the release URLs above).
+- Profile README (`<user>/<user>`) and organisation README (`.github/profile/README.rst`): same logo header, a short intro, then tiles or a table of projects. The org page needs absolute URLs (the `latest` tag URLs above).
 - The social preview is 1280x640 and set by hand under Settings > Social preview. Generate it with `@belikh/jupiter-github`.
 
 ## Icons and graphics
 
-Use graphics from the design system and nothing else: no emoji, no icon fonts, no third-party icon sets, no clip art. Everything comes from `@belikh/jupiter-graphics`, baked for READMEs into `packages/github/graphics/<tier>/<name>-{light,dark}.svg` and attached to every release as `<tier>-<name>-{light,dark}.svg` (tiers: `icon` 20 to 32px, `spot` 120px and up, `scene` wide hero art, `rule` dividers). `<img>` cannot take the text colour, so always use the baked light/dark pair, never the unbaked build output of the graphics package. Find names on the Graphics page of the app or in the manifest the graphics package builds. If the set has no graphic you need, add one to `packages/graphics` first.
+Use graphics from the design system and nothing else: no emoji, no icon fonts, no third-party icon sets, no clip art. Everything comes from `@belikh/jupiter-graphics`, baked for READMEs into `packages/github/graphics/<tier>/<name>-{light,dark}.svg` (tiers: `icon` 20 to 32px, `spot` 120px and up, `scene` wide hero art, `rule` dividers). `<img>` cannot take the text colour, so always use the baked light/dark pair, never the unbaked build output of the graphics package. Find names on the Graphics page of the app or in the manifest the graphics package builds. If the set has no graphic you need, add one to `packages/graphics` first.
 
 Where they go:
 
@@ -84,15 +84,15 @@ Light and dark in raw HTML:
 ```rst
 .. raw:: html
 
-   <p align="center"><picture><source media="(prefers-color-scheme: dark)" srcset="https://github.com/belikh/design/releases/latest/download/rule-end-dark.svg"><img alt="" src="https://github.com/belikh/design/releases/latest/download/rule-end-light.svg" width="50%"></picture></p>
+   <p align="center"><picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/belikh/design/latest/packages/github/graphics/rule/end-dark.svg"><img alt="" src="https://raw.githubusercontent.com/belikh/design/latest/packages/github/graphics/rule/end-light.svg" width="50%"></picture></p>
 ```
 
 Light and dark inline (table cells, lists), as a substitution pair placed next to each other; only one of the two shows:
 
 ```rst
-.. |bolt-l| image:: https://github.com/belikh/design/releases/latest/download/icon-bolt-light.svg#gh-light-mode-only
+.. |bolt-l| image:: https://raw.githubusercontent.com/belikh/design/latest/packages/github/graphics/icon/bolt-light.svg#gh-light-mode-only
    :width: 20
-.. |bolt-d| image:: https://github.com/belikh/design/releases/latest/download/icon-bolt-dark.svg#gh-dark-mode-only
+.. |bolt-d| image:: https://raw.githubusercontent.com/belikh/design/latest/packages/github/graphics/icon/bolt-dark.svg#gh-dark-mode-only
    :width: 20
 
 |bolt-l| |bolt-d| **ESPHome**
@@ -126,6 +126,6 @@ Same voice. The first line says what changed. The body says why it was needed. C
 
 ## Where things live
 
-- Logo files: `packages/graphics/logo/jupiter-logo-{light,dark}.svg` in `belikh/design`, published on each release as `logo-light.svg` and `logo-dark.svg`.
+- Logo files: `packages/graphics/logo/jupiter-logo-{light,dark}.svg` in `belikh/design`, reached from READMEs through the `latest` tag.
 - Asset generator and templates: `packages/github` in `belikh/design` (`templates/README.rst`, `profile-README.rst`, `org-profile-README.rst`).
 - The design system skill, for everything that is not a README: `jupiter-design-system`.
