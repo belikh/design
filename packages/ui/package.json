@@ -49,6 +49,7 @@
   "files": [
     "src",
     "skill",
+    "skill-readme",
     "README.md"
   ]
 }

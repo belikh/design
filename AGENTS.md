@@ -3,6 +3,8 @@
 This repo is the design system. Projects DEPEND on `@belikh/jupiter-*` (see docs/consuming.md) and never copy it, so that **everything we make looks and feels the same**.
 Follow the patterns here instead of inventing new ones. If a need isn't covered, extend the shared component, don't fork it in a page.
 
+Skills (in `packages/ui`, linked into projects by `scripts/new-project.mjs`): `jupiter-design-system` for UI and code, `github-readme` for README.md files, profile READMEs and release notes.
+
 ## Ground rules
 1. **Tokens only.** Colours are `var(--jp-*)` (status) or `var(--adm-c1..c8)` (categorical chart series). Font sizes are `var(--jp-fs-xs|sm|md|lg|xl|2xl)`. Spacing is `var(--jp-space-*)`. Never a hex colour or a pixel font size. `npm run lint:style -w apps/admin` fails on regressions.
 2. **Red and green mean status only** (danger/ok). Never use them as plain series colours: the palette is colour-vision-safe and checked by `npm run check:palette`.

@@ -19,5 +19,13 @@ const manifest = JSON.parse(readFileSync(join(root, "packages/ui/src/components.
 for (const n of ["DataTable", "Editable", "useFieldErrors", "useDraft", "useAutosave", "createCollection", "useCollection", "PrefsProvider"]) if (!manifest.includes(n) && !(n === "PrefsProvider" && existsSync(join(root, "packages/ui/src/store.tsx")))) bad.push(`component named in the skill is not in the manifest: ${n}`);
 const outputs = readFileSync(join(root, "packages/tokens/src/generate.ts"), "utf8"); const release = readFileSync(join(root, "scripts/release-assets.sh"), "utf8");
 for (const t of ticks) if (/^jupiter[-_.\w]*\.(css|html|sh|go|slint|yaml|json|tgz|Xresources)$/.test(t) || /^Jupiter(Light|Dark)\.colors$/.test(t)) { if (!(outputs.includes(`"${t}"`) || release.includes(t) || /^jupiter-(qt|latex|theme-rust|graphics-svg|ui|tokens|graphics|esphome|github)\.tgz$/.test(t) && release.includes(t.replace(".tgz", "")))) bad.push(`release file not produced: ${t}`); }
+// The README skill: frontmatter, logo files, templates and the logo header it shows must match the repo (and the root README).
+const rs = readFileSync(join(root, "packages/ui/skill-readme/SKILL.md"), "utf8");
+if (!/^---\nname: github-readme\ndescription: [\s\S]+?\n---\n/.test(rs)) bad.push("github-readme: expected frontmatter name github-readme and a description");
+for (const m of rs.matchAll(/`((?:packages|apps|scripts)\/[\w./{},-]+)`/g)) { const f = m[1]; if (f.includes("{")) { const [pre, alts, post] = f.split(/[{}]/); for (const a of alts.split(",")) if (!existsSync(join(root, pre + a + post))) bad.push(`github-readme: missing ${pre + a + post}`); } else if (!existsSync(join(root, f))) bad.push(`github-readme: missing ${f}`); }
+for (const t of ["README.md", "profile-README.md", "org-profile-README.md"]) if (!rs.includes(t) || !existsSync(join(root, "packages/github/templates", t))) bad.push(`github-readme: template ${t} not mentioned or missing`);
+const header = /<p align="right">[\s\S]*?<\/p>/.exec(rs)?.[0]; const rootReadme = readFileSync(join(root, "README.md"), "utf8");
+if (!header || !header.includes("jupiter-logo-light.svg") || !header.includes('width="260"')) bad.push("github-readme: logo header snippet missing");
+else if (!/width="260"/.test(rootReadme.slice(0, 600)) || !rootReadme.startsWith('<p align="right">')) bad.push("github-readme: the root README does not open with the logo header the skill describes");
 if (bad.length) { console.error(`SKILL.md drift:\n  ${bad.join("\n  ")}`); process.exit(1); }
 console.log("The agent skill matches the repository.");
