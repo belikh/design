@@ -589,6 +589,67 @@ export function generateEmailHTML(t: Tokens): string {
 `;
 }
 
+/** Public raw URL of the committed header/divider PNGs (packages/github/scripts/email-assets.mjs makes them). Gmail only loads https images. */
+const EMAIL_ASSETS = "https://raw.githubusercontent.com/belikh/design/main/packages/github/assets/email";
+
+/**
+ * Everyday letter for Gmail Templates: open in a browser, select all, copy, paste into a compose window.
+ * Same inline-style, light-safe rules as the status email; the body is plain paragraphs to overwrite.
+ */
+export function generateEmailLetterHTML(t: Tokens): string {
+  const c = t.color.light;
+  const sans = `-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif`;
+  const mono = `ui-monospace, Menlo, Consolas, 'Courier New', monospace`;
+  const s = t.space;
+  const [xs, , md] = t.type.scale;
+  const p = `margin:0 0 ${s[3]}px;font-family:${sans};font-size:${md}px;line-height:${t.type.lineHeightBody};color:${c.text};`;
+  return `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light only">
+  <meta name="supported-color-schemes" content="light">
+  <title>Jupiter — letter</title>
+  <!-- ${t.name}-email-letter.html — generated from ${t.name}.tokens.json. Styles are inline; system fonts only. -->
+</head>
+<body style="margin:0;padding:0;background:${c.bg};">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${c.bg};">
+    <tr>
+      <td align="center" style="padding:${s[5]}px ${s[3]}px;">
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;background:${c.surfaceRaised};border:1px solid ${c.border};border-radius:${t.radius.md}px;">
+          <tr>
+            <td style="padding:0;line-height:0;font-size:0;border-radius:${t.radius.md}px ${t.radius.md}px 0 0;overflow:hidden;">
+              <img src="${EMAIL_ASSETS}/email-header.png" width="600" height="150" alt="jupiter.au" style="display:block;width:100%;height:auto;border:0;">
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:${s[5]}px ${s[4]}px ${s[3]}px;">
+              <p style="${p}">Hi Name,</p>
+              <p style="${p}">Write your message here. Replace these paragraphs; keep the layout around them.</p>
+              <p style="${p}">Second paragraph, if you need one.</p>
+              <p style="margin:0;font-family:${sans};font-size:${md}px;line-height:${t.type.lineHeightBody};color:${c.text};">Thanks,<br>Your name</p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:0 ${s[4]}px;line-height:0;font-size:0;">
+              <img src="${EMAIL_ASSETS}/email-divider.png" width="552" height="12" alt="" style="display:block;width:100%;height:auto;border:0;">
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:${s[2]}px ${s[4]}px;font-family:${mono};font-size:${xs}px;line-height:${t.type.lineHeightBody};color:${c.textMuted};">
+              Your name &middot; Role &middot; <a href="https://jupiter.au" style="color:${c.accent};text-decoration:none;">jupiter.au</a>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+`;
+}
+
 /* ---------- Go (Bubble Tea / Lip Gloss) ---------- */
 
 const goName = (role: string) => role.charAt(0).toUpperCase() + role.slice(1);
@@ -1181,6 +1242,7 @@ export const OUTPUTS: OutputFile[] = [
   { id: "tailwind", filename: "jupiter-tailwind.css", target: "Tailwind v4 theme", mime: "text/css", build: generateTailwindCSS },
   { id: "kiosk", filename: "jupiter-kiosk.css", target: "Kiosk touchscreen", mime: "text/css", build: (t) => generateKioskCSS(t) },
   { id: "email", filename: "jupiter-email.html", target: "Email", mime: "text/html", build: generateEmailHTML },
+  { id: "email-letter", filename: "jupiter-email-letter.html", target: "Email (everyday letter, for Gmail Templates)", mime: "text/html", build: generateEmailLetterHTML },
   { id: "terminal", filename: "jupiter-terminal.sh", target: "SSH / terminal", mime: "text/x-shellscript", build: generateTerminalSh },
   { id: "xresources", filename: "jupiter.Xresources", target: "SSH / terminal (X11)", mime: "text/plain", build: generateXresources },
   { id: "latex", filename: "jupiter-tokens.sty", target: "LaTeX (resume, letter, notes, report, invoice)", mime: "text/x-tex", build: generateLatexSty },
