@@ -39,10 +39,10 @@ qt="$(mktemp -d)"; mkdir -p "$qt/Jupiter"; cp "$tok/dist/Jupiter.qml" "$tok/dist
 ( cd "$qt" && tar czf "$out/jupiter-qt.tgz" Jupiter ); rm -rf "$qt"
 tar --exclude=target --exclude=Cargo.lock -czf "$out/jupiter-theme-rust.tgz" -C "$root/packages" rust
 
-# 3. LaTeX bundle: classes + base + generated colours + templates (no fonts: proprietary, bring your own)
+# 3. LaTeX bundle: classes + base + generated colours + templates + the font files
 stage="$(mktemp -d)"; d="$stage/jupiter-latex"; mkdir -p "$d/tex"
 cp "$tex"/src/*.cls "$tex"/src/*.sty "$tok/dist/jupiter-tokens.sty" "$d/tex/"
-cp -r "$tex/templates" "$d/templates"; cp "$tex/README.md" "$d/README.md"
+cp -r "$tex/templates" "$d/templates"; cp -r "$tex/fonts" "$d/fonts"; cp "$tex/README.md" "$d/README.md"
 ( cd "$stage" && tar czf "$out/jupiter-latex.tgz" jupiter-latex )
 rm -rf "$stage"
 

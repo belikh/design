@@ -38,11 +38,7 @@ hand; compile them like any template with `scripts/build.sh`.
 
 ## Fonts
 
-SGI Text, SGI Alt and JetBrains Mono are loaded from `fonts/` (gitignored: the SGI files are proprietary Bitstream
-typefaces; confirm redistribution rights before publishing them). If `fonts/` is absent, the classes fall back to the
-installed `SGI Text` / `JetBrains Mono` family, then to Fira Sans / DejaVu Sans Mono, so a clean checkout still builds.
-The `.otf` files were converted from the WOFF2 set in `apps/admin/public/fonts/`, because XeLaTeX and LuaLaTeX can't
-load the original Type 1 `.pfb` files through fontspec.
+SGI Text, SGI Alt and JetBrains Mono are loaded from `fonts/`, which is committed. `scripts/build.sh` passes the folder to every document, so CI and local builds use the real fonts. The `.otf` files were converted from the WOFF2 set in `apps/admin/public/fonts/`, because XeLaTeX and LuaLaTeX can't load the original Type 1 `.pfb` files through fontspec. Without the folder (for example a bare `jupiter-latex.tgz` copy), the classes fall back to the installed `SGI Text` / `JetBrains Mono` family, then to Fira Sans / DejaVu Sans Mono.
 
 ## Private documents
 

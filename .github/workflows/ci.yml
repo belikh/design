@@ -51,17 +51,15 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build:tokens
-      - name: Install TeX Live and fallback fonts   # no texlive-fonts-extra or texlive-science: the templates use free fonts by file name and no science packages (they are the bulk of the download)
+      - name: Install TeX Live   # no texlive-fonts-extra or texlive-science: the templates load our SGI and JetBrains Mono files from packages/latex/fonts and use no science packages
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends texlive-xetex texlive-latex-recommended texlive-latex-extra \
-            texlive-pictures texlive-fonts-recommended latexmk fonts-dejavu-core fonts-firacode
-          # Fira Sans is the free fallback for the SGI fonts: install it if packaged, then make fontconfig see TeX Live's own copy too.
-          sudo apt-get install -y --no-install-recommends fonts-fira-sans || true
-          sudo fc-cache -f
-          fc-list | grep -i "fira sans" | head -3 || echo "WARNING: Fira Sans not visible to fontconfig"
-      - name: Compile every template (free fonts only; the proprietary SGI fonts are not in git)
-        run: packages/latex/scripts/build.sh packages/latex/templates/*.tex
+            texlive-pictures texlive-fonts-recommended latexmk
+      - name: Compile every template (with our SGI Text, SGI Alt and JetBrains Mono)
+        run: |
+          packages/latex/scripts/build.sh packages/latex/templates/*.tex
+          pdffonts packages/latex/build/report.pdf | tee /dev/stderr | grep -qiE "sgi" && echo "SGI fonts embedded"
       - uses: actions/upload-artifact@v4
         with:
           name: latex-samples
