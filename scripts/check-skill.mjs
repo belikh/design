@@ -23,9 +23,10 @@ for (const t of ticks) if (/^jupiter[-_.\w]*\.(css|html|sh|go|slint|yaml|json|tg
 const rs = readFileSync(join(root, "packages/ui/skill-readme/SKILL.md"), "utf8");
 if (!/^---\nname: github-readme\ndescription: [\s\S]+?\n---\n/.test(rs)) bad.push("github-readme: expected frontmatter name github-readme and a description");
 for (const m of rs.matchAll(/`((?:packages|apps|scripts)\/[\w./{},-]+)`/g)) { const f = m[1]; if (f.includes("{")) { const [pre, alts, post] = f.split(/[{}]/); for (const a of alts.split(",")) if (!existsSync(join(root, pre + a + post))) bad.push(`github-readme: missing ${pre + a + post}`); } else if (!existsSync(join(root, f))) bad.push(`github-readme: missing ${f}`); }
-for (const t of ["README.md", "profile-README.md", "org-profile-README.md"]) if (!rs.includes(t) || !existsSync(join(root, "packages/github/templates", t))) bad.push(`github-readme: template ${t} not mentioned or missing`);
-const header = /<p align="right">[\s\S]*?<\/p>/.exec(rs)?.[0]; const rootReadme = readFileSync(join(root, "README.md"), "utf8");
+for (const t of ["README.rst", "profile-README.rst", "org-profile-README.rst"]) if (!rs.includes(t) || !existsSync(join(root, "packages/github/templates", t))) bad.push(`github-readme: template ${t} not mentioned or missing`);
+const header = /<p align="right">[\s\S]*?<\/p>/.exec(rs)?.[0]; const rootReadme = existsSync(join(root, "README.rst")) ? readFileSync(join(root, "README.rst"), "utf8") : "";
+if (existsSync(join(root, "README.md"))) bad.push("github-readme: README.md exists next to README.rst (GitHub would show the Markdown one)");
 if (!header || !header.includes("jupiter-logo-light.svg") || !header.includes('width="260"')) bad.push("github-readme: logo header snippet missing");
-else if (!/width="260"/.test(rootReadme.slice(0, 600)) || !rootReadme.startsWith('<p align="right">')) bad.push("github-readme: the root README does not open with the logo header the skill describes");
+else if (!/width="260"/.test(rootReadme.slice(0, 700)) || !rootReadme.startsWith(".. raw:: html")) bad.push("github-readme: the root README.rst does not open with the logo header the skill describes");
 if (bad.length) { console.error(`SKILL.md drift:\n  ${bad.join("\n  ")}`); process.exit(1); }
 console.log("The agent skill matches the repository.");

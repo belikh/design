@@ -80,9 +80,9 @@ test("CLI: placeholders replaced, badge/tile flags, palette", () => {
 });
 
 test("templates reference only assets the kit can produce", () => {
-  for (const f of ["README.md", "profile-README.md", "org-profile-README.md"]) {
+  for (const f of ["README.rst", "profile-README.rst", "org-profile-README.rst"]) {
     const md = readFileSync(new URL(`../templates/${f}`, import.meta.url), "utf8");
-    assert.match(md, /<picture>[\s\S]*prefers-color-scheme: dark/); assert.match(md, /> \[!(NOTE|TIP|IMPORTANT|WARNING)\]/);
+    assert.match(md, /<picture>[\s\S]*prefers-color-scheme: dark/); assert.match(md, /\.\. raw:: html/);
     for (const m of md.matchAll(/(?:banner|divider|tile|badge)-[a-z]+-(?:light|dark)\.svg|(?:banner|divider)-(?:light|dark)\.svg/g)) {
       if (/badge-(build|version)-/.test(m[0])) continue; // generated on demand with --badge
       assert.ok(existsSync(new URL(`../assets/${m[0]}`, import.meta.url)), `${f} uses missing ${m[0]}`);
