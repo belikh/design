@@ -1,6 +1,8 @@
 # Changelog
 
 ## Unreleased
+
+## 1.5.5
 - @belikh/jupiter-graphics: seven logistics icons, `truck`, `trailer`, `forklift`, `pallet`, `dock`, `gate` and `seal`, for dock-scheduling screens
 - Spotlight, SettingsSection and SettingsRail in @belikh/jupiter-ui/kit.tsx; StatTile takes size="lg". A page can lead with its one important item and lay out admin settings as title and explanation beside the controls
 
