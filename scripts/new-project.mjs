@@ -20,7 +20,10 @@ const names = ["tokens", "graphics", "ui", "fonts"];
 const ref = (n) => (local ? `file:${join(root, "packages", n)}` : range);
 const pkgPath = join(target, "package.json"); const pkg = JSON.parse(readFileSync(pkgPath, "utf8"));
 pkg.name = dest.split("/").filter(Boolean).pop().replace(/[^a-z0-9-]/gi, "-").toLowerCase(); pkg.private = true; pkg.description = "A project built on the Jupiter design system.";
-for (const n of names) pkg.dependencies[`@${scope}/jupiter-${n}`] = ref(n);
+// The fonts package is published by hand (publish-packages.mjs --include-fonts), so its newest version is usually older than the
+// release. It gets a range over the whole major version; the other packages follow the release version.
+const fontsRange = `^${version.split(".")[0]}.0.0`;
+for (const n of names) pkg.dependencies[`@${scope}/jupiter-${n}`] = !local && n === "fonts" ? fontsRange : ref(n);
 // the packages reference their siblings by name: make npm resolve those names to the same sources
 if (local) pkg.overrides = Object.fromEntries(names.map((n) => [`@${scope}/jupiter-${n}`, ref(n)]));
 pkg.scripts = { ...pkg.scripts, "update:design": "npm update @belikh/jupiter-tokens @belikh/jupiter-graphics @belikh/jupiter-ui @belikh/jupiter-fonts" };
