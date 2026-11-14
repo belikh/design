@@ -10,7 +10,7 @@ Skill (in `packages/ui/skill`, linked into projects by `scripts/new-project.mjs`
 2. **Red and green mean status only** (danger/ok). Never use them as plain series colours: the palette is colour-vision-safe and checked by `npm run check:palette`.
 3. **No real backend.** `useCollection` gives every page optimistic saves, an offline queue, conflict handling and stale-data refresh; show them with `SyncStatus` and `ConflictPrompt`. Pages talk to async functions that simulate latency and can fail. Saves return `null` on success or an error string; the UI rolls back and shows the message. Never call `fetch` to a made-up API.
 4. **Editing is in place.** No separate "edit mode" pages, no `window.confirm`. Reversible edits get an **Undo toast**; only irreversible ones get a `ConfirmDelete`/`Modal`.
-5. **Commit mode is a user preference** (Settings → Appearance: on blur, or Save/Cancel). Don't pass `commit` to `Editable` unless a field genuinely needs one mode.
+5. **Commit mode is a user preference** (Settings → Appearance: on blur, or Save/Cancel). Don't pass `commit` to `Editable` unless the field cannot work in the other mode.
 6. **Accessible by default.** Every control has a visible label or `aria-label`; everything works from the keyboard; respect `prefers-reduced-motion`; use logical CSS properties (`margin-inline-start`) so RTL works.
 7. **Every page has a test** (`*.test.tsx`, Vitest + Testing Library). `npm test` must stay green; `npm run typecheck` must be clean.
 

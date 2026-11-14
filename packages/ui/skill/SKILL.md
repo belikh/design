@@ -10,7 +10,14 @@ Why this exists: the point of the design system is that one change in it changes
 components all come from the dependency.
 
 ## Inherit dynamically
-Take every design decision through a live reference so one upstream change updates every project: `var(--jp-*)` at runtime (never a copied number or a colour computed in JS), components, icons and graphics imported by name from the packages, `^` ranges in `package.json` and `npm run update:design` to pull releases, generated files fetched from the release at build time. Where a value cannot be a live reference (an `<img>`, a PDF, a README, an email), generate it from the tokens with the design system's own tool and regenerate it on update; never hand-edit or freeze it. Pinning to a commit, copying a file or hard-coding a value "for now" breaks the update for that project.
+Take every design decision through a live reference, so one upstream change updates every project:
+
+- `var(--jp-*)` at runtime, never a copied number or a colour computed in JS.
+- Components, icons and graphics imported by name from the packages.
+- `^` ranges in `package.json`, and `npm run update:design` to pull releases.
+- Generated files fetched from the release at build time.
+
+Some values cannot be a live reference: an `<img>`, a PDF, a README, an email. Generate those from the tokens with the design system's own tool and regenerate them on update. Never hand-edit or freeze one. Pinning to a commit, copying a file or hard-coding a value "for now" breaks the update for that project.
 
 ## 1. First, find out where you are
 - `@belikh/jupiter-*` in `package.json`? The project is already on the system: use what it provides (section 3).
