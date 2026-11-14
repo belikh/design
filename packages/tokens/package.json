@@ -1,6 +1,6 @@
 {
   "name": "@belikh/jupiter-tokens",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Jupiter design tokens: one JSON source, generated CSS, email, terminal, kiosk and mobile outputs.",
   "type": "module",
   "license": "UNLICENSED",

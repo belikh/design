@@ -1,6 +1,6 @@
 {
   "name": "@belikh/jupiter-fonts",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "The design system's licensed typefaces (SGI Text and SGI Alt, plus JetBrains Mono). The SGI files are proprietary Bitstream typefaces used with the owner's consent. The woff2 files are committed in apps/admin/public/fonts and packed into this package, which every release attaches as jupiter-fonts.tgz.",
   "type": "module",
   "license": "UNLICENSED",
