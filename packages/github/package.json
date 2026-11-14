@@ -1,6 +1,6 @@
 {
   "name": "@belikh/jupiter-github",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Jupiter for GitHub: light/dark banner, divider, tile, badges and social preview SVGs plus README, profile and org-profile templates, all generated from the design tokens.",
   "type": "module",
   "license": "UNLICENSED",

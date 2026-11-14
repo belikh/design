@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.5.0
 - Terrain in @belikh/jupiter-ui: a contour map of linked items (hills, dotted link trails), placed by links or by meaning, rendered as plain SVG with real links
 
 ## 1.4.0
