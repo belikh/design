@@ -14,7 +14,7 @@
 
 Colour, type and shape for websites, apps, email, terminals, kiosks, mobile, documents and READMEs, generated from one token file.
 
-`Use it in a project <docs/consuming.md>`_ · `Change a token`_ · `Targets`_ · `Releases`_ · `Develop`_
+`Use it in a project <docs/consuming.md>`_ · `Change a token`_ · `Targets`_ · `Releases`_ · `Develop`_ · `CONTRIBUTING <CONTRIBUTING.md>`_ · `CODE_OF_CONDUCT <CODE_OF_CONDUCT.md>`_
 
 |
 
