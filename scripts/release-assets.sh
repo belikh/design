@@ -23,7 +23,14 @@ cp "$tok/jupiter.tokens.json" "$out/jupiter.tokens.json"
 ( cd "$root/packages/ui" && npm pack --pack-destination "$out" >/dev/null 2>&1 )
 ( cd "$root/packages/esphome" && npm pack --pack-destination "$out" >/dev/null 2>&1 )
 ( cd "$root/packages/github" && npm pack --pack-destination "$out" >/dev/null 2>&1 )
-( cd "$root/packages/docs" && npm pack --pack-destination "$out" >/dev/null 2>&1 )  # jupiter-docs.tgz: the documentation generator  # jupiter-github.tgz: SVG kit (banner, tile, badge, social preview), CLI, templates
+# jupiter-github.tgz: SVG kit (banner, tile, badge, social preview), CLI, templates
+
+# 2-fonts. the SGI Text, SGI Alt and JetBrains Mono web fonts (woff2, committed in apps/admin/public/fonts) with a fonts.css: jupiter-fonts.tgz.
+#          belikh/docs builds its site with them. Fails when the tarball has no SGI Text file.
+node "$root/scripts/stage-fonts.mjs"
+( cd "$root/packages/fonts" && npm pack --pack-destination "$out" >/dev/null 2>&1 )
+fonts_list="$(tar tzf "$out/belikh-jupiter-fonts-$version.tgz")"   # a list first: grep -q in a pipe would end tar early and fail under pipefail
+grep -q 'files/sgi-text-.*\.woff2' <<<"$fonts_list" || { echo "belikh-jupiter-fonts-$version.tgz has no SGI Text woff2 file" >&2; exit 1; }
 
 # 2a. line graphics: sprite, stylesheet, manifest, every SVG as one archive, and the npm tarball
 gfx="$root/packages/graphics"
@@ -33,7 +40,7 @@ tar czf "$out/jupiter-graphics-svg.tgz" -C "$gfx/dist" svg
 ( cd "$gfx" && npm pack --pack-destination "$out" >/dev/null 2>&1 )
 
 # unversioned aliases of every package tarball (after all of them are packed)
-for n in tokens graphics ui esphome github docs; do cp "$out/belikh-jupiter-$n-$version.tgz" "$out/jupiter-$n.tgz"; done
+for n in tokens graphics ui esphome github fonts; do cp "$out/belikh-jupiter-$n-$version.tgz" "$out/jupiter-$n.tgz"; done
 
 # 2b. Qt module (drop the Jupiter/ folder on the QML import path) and the Rust crate
 qt="$(mktemp -d)"; mkdir -p "$qt/Jupiter"; cp "$tok/dist/Jupiter.qml" "$tok/dist/qmldir" "$qt/Jupiter/"
@@ -52,12 +59,6 @@ rm -rf "$stage"
 # 3c. LaTeX demo documents rendered by the release workflow: latex-<template>.pdf and latex-<template>.png (first page). Skipped when not rendered locally.
 for f in "$tex"/build/*.pdf; do [ -e "$f" ] || continue; n="$(basename "$f" .pdf)"
   cp "$f" "$out/latex-$n.pdf"; [ -f "$tex/build/$n.png" ] && cp "$tex/build/$n.png" "$out/latex-$n.png"; done
-
-# 3d. docs site (this repo's docs-src, deployable as-is to Cloudflare Pages) and, when rendered by the latex job, the PDF and its first page
-node "$root/packages/docs/bin/jupiter-docs.mjs" build --site --config "$root/docs.config.json"
-tar czf "$out/jupiter-docs-site.tgz" -C "$root/dist/site" .
-[ -f "$root/dist/jupiter-docs.pdf" ] && cp "$root/dist/jupiter-docs.pdf" "$out/jupiter-docs.pdf"
-[ -f "$root/dist/jupiter-docs.png" ] && cp "$root/dist/jupiter-docs.png" "$out/jupiter-docs.png"
 
 # 4. checksums
 ( cd "$out" && sha256sum * > SHA256SUMS )

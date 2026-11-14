@@ -19,15 +19,6 @@ const manifest = JSON.parse(readFileSync(join(root, "packages/ui/src/components.
 for (const n of ["DataTable", "Editable", "useFieldErrors", "useDraft", "useAutosave", "createCollection", "useCollection", "PrefsProvider"]) if (!manifest.includes(n) && !(n === "PrefsProvider" && existsSync(join(root, "packages/ui/src/store.tsx")))) bad.push(`component named in the skill is not in the manifest: ${n}`);
 const outputs = readFileSync(join(root, "packages/tokens/src/generate.ts"), "utf8"); const release = readFileSync(join(root, "scripts/release-assets.sh"), "utf8");
 for (const t of ticks) if (/^jupiter[-_.\w]*\.(css|html|sh|go|slint|yaml|json|tgz|Xresources)$/.test(t) || /^Jupiter(Light|Dark)\.colors$/.test(t)) { if (!(outputs.includes(`"${t}"`) || release.includes(t) || /^jupiter-(qt|latex|theme-rust|graphics-svg|ui|tokens|graphics|esphome|github)\.tgz$/.test(t) && release.includes(t.replace(".tgz", "")))) bad.push(`release file not produced: ${t}`); }
-// The README skill: frontmatter, logo files, templates and the logo header it shows must match the repo (and the root README).
-const rs = readFileSync(join(root, "packages/ui/skill-readme/SKILL.md"), "utf8");
-if (!/^---\nname: github-readme\ndescription: [\s\S]+?\n---\n/.test(rs)) bad.push("github-readme: expected frontmatter name github-readme and a description");
-for (const m of rs.matchAll(/`((?:packages|apps|scripts)\/[\w./{},-]+)`/g)) { const f = m[1]; if (f.includes("{")) { const [pre, alts, post] = f.split(/[{}]/); for (const a of alts.split(",")) if (!existsSync(join(root, pre + a + post))) bad.push(`github-readme: missing ${pre + a + post}`); } else if (!existsSync(join(root, f))) bad.push(`github-readme: missing ${f}`); }
-for (const t of ["README.rst", "profile-README.rst", "org-profile-README.rst"]) if (!rs.includes(t) || !existsSync(join(root, "packages/github/templates", t))) bad.push(`github-readme: template ${t} not mentioned or missing`);
-for (const m of rs.matchAll(/design\/latest\/packages\/github\/graphics\/(icon|rule|spot|scene)\/([\w-]+)-(light|dark)\.svg/g)) if (!existsSync(join(root, "packages/github/graphics", m[1], `${m[2]}-${m[3]}.svg`))) bad.push(`github-readme: no such README graphic ${m[0]}`);
-for (const m of rs.matchAll(/design\/latest\/packages\/graphics\/logo\/jupiter-logo-(light|dark)\.svg/g)) if (!existsSync(join(root, "packages/graphics/logo", `jupiter-logo-${m[1]}.svg`))) bad.push(`github-readme: no such logo ${m[0]}`);
-if (/releases\/latest\/download\/[\w-]+\.svg/.test(rs)) bad.push("github-readme: skill links an SVG release asset (served as octet-stream, cannot be drawn in an img); use the latest tag URL");
-if (/design\/main\//.test(rs.replace(/never link `main`[^.]*\./i, ""))) bad.push("github-readme: skill links belikh/design main; use the latest tag");
 // DESIGN.md: the token facts it states must equal the token file, and the skills must point to it.
 const dz = readFileSync(join(root, "packages/ui/skill/DESIGN.md"), "utf8"); const tk = JSON.parse(readFileSync(join(root, "packages/tokens/jupiter.tokens.json"), "utf8"));
 const facts = /<!-- token-facts\n([\s\S]*?)-->/.exec(dz)?.[1]; if (!facts) bad.push("DESIGN.md: token-facts block missing");
@@ -35,22 +26,10 @@ else for (const line of facts.trim().split("\n")) { const [k, v] = line.split("=
   const got = v.includes(":") ? Object.fromEntries(v.split(",").map((x) => x.split(":").map((y, i) => (i ? Number(y) : y)))) : v.includes(",") ? v.split(",").map(Number) : Number(v);
   const wantCmp = got && !Array.isArray(got) && typeof got === "object" ? Object.fromEntries(Object.keys(got).map((x) => [x, want?.[x]])) : want;
   if (JSON.stringify(wantCmp) !== JSON.stringify(got)) bad.push(`DESIGN.md: ${k} is ${JSON.stringify(want)} in the tokens, DESIGN.md says ${v}`); }
-if (!skill.includes("DESIGN.md")) bad.push("jupiter-design-system skill does not point to DESIGN.md"); if (!rs.includes("DESIGN.md")) bad.push("github-readme skill does not point to DESIGN.md");
-const header = /<p align="right">[\s\S]*?<\/p>/.exec(rs)?.[0]; const rootReadme = existsSync(join(root, "README.rst")) ? readFileSync(join(root, "README.rst"), "utf8") : "";
-if (existsSync(join(root, "README.md"))) bad.push("github-readme: README.md exists next to README.rst (GitHub would show the Markdown one)");
-if (!header || !header.includes("logo-light.svg") || !header.includes('width="260"')) bad.push("github-readme: logo header snippet missing");
-else if (!/width="260"/.test(rootReadme.slice(0, 700)) || !rootReadme.startsWith(".. raw:: html")) bad.push("github-readme: the root README.rst does not open with the logo header the skill describes");
-// The docs skill: frontmatter, DESIGN.md pointer, and every path, command, directive and header key it names must exist in packages/docs.
-const ds = readFileSync(join(root, "packages/ui/skill-docs/SKILL.md"), "utf8"); const docsSpec = await import(join(root, "packages/docs/src/spec.mjs")); const docsCli = readFileSync(join(root, "packages/docs/src/cli.mjs"), "utf8");
-if (!/^---\nname: jupiter-docs\ndescription: [\s\S]+?\n---\n/.test(ds)) bad.push("jupiter-docs: expected frontmatter name jupiter-docs and a description");
-if (!ds.includes("DESIGN.md")) bad.push("jupiter-docs skill does not point to DESIGN.md");
-for (const m of ds.matchAll(/`((?:packages|apps|scripts|docs-src)\/[\w./-]+)`/g)) { const f = m[1].replace(/[.,]+$/, ""); if (!f.includes("<") && !existsSync(join(root, f))) bad.push(`jupiter-docs: missing ${f}`); }
-for (const m of ds.matchAll(/jupiter-docs (check|build|init)\b/g)) if (!docsCli.includes(`"${m[1]}"`)) bad.push(`jupiter-docs: command not in the CLI: ${m[1]}`);
-for (const m of ds.matchAll(/jupiter-docs build (--[a-z]+)/g)) if (!docsCli.includes(`"${m[1].slice(2)}"`) && !docsCli.includes(`flags.has("${m[1].slice(2)}")`) && !docsCli.includes(m[1])) bad.push(`jupiter-docs: flag not in the CLI: ${m[1]}`);
-for (const m of ds.matchAll(/npm run ([\w:.-]+)/g)) if (!(m[1] in rootScripts)) bad.push(`jupiter-docs: npm script not found: ${m[1]}`);
-for (const m of ds.matchAll(/(?:^|[\s`(-])(:{2,4})([a-z][a-z-]*)/gm)) if (!docsSpec.DIRECTIVES.includes(m[2])) bad.push(`jupiter-docs: directive not in spec.mjs: ${m[2]}`);
-for (const d of docsSpec.DIRECTIVES) if (!ds.includes(d)) bad.push(`jupiter-docs: directive not documented in the skill: ${d}`);
-for (const k of Object.keys(docsSpec.FRONT_MATTER)) if (!ds.includes(`\`${k}\``)) bad.push(`jupiter-docs: front matter key not documented in the skill: ${k}`);
-for (const k of Object.keys(docsSpec.CONFIG_KEYS).filter((x) => ["project", "version", "versionFrom", "repo", "siteUrl", "base", "sections", "glossary", "hero"].includes(x))) if (!ds.includes(k)) bad.push(`jupiter-docs: config key not documented in the skill: ${k}`);
+if (!skill.includes("DESIGN.md")) bad.push("jupiter-design-system skill does not point to DESIGN.md");
+// The root README follows the github-readme skill, which lives in belikh/docs (skill-readme/SKILL.md): README.rst only, opening with the logo header.
+const rootReadme = existsSync(join(root, "README.rst")) ? readFileSync(join(root, "README.rst"), "utf8") : "";
+if (existsSync(join(root, "README.md"))) bad.push("README.md exists next to README.rst (GitHub would show the Markdown one)");
+if (!/width="260"/.test(rootReadme.slice(0, 700)) || !rootReadme.startsWith(".. raw:: html")) bad.push("the root README.rst does not open with the logo header (right-aligned, width 260)");
 if (bad.length) { console.error(`SKILL.md drift:\n  ${bad.join("\n  ")}`); process.exit(1); }
 console.log("The agent skill matches the repository.");

@@ -1,0 +1,44 @@
+\documentclass{jupiter-form}
+\formkind{Status report}
+\title{Network migration}
+\subtitle{Week 46, to 12 November 2026}
+\formbadge[warn]{At risk}
+\begin{document}
+\maketitle
+\jprow{Project}{Office network migration}
+\jprow{Prepared by}{Alex Example}
+\jprow{Sponsor}{Jordan Smith}
+\jprow{Period}{\jpmono\small 6 to 12 November 2026}
+\jprowend
+
+\section{Summary}
+The camera VLAN is built and tested. The access point cutover slipped by one week because of a firmware issue, which moves the finish date to 4 December.
+
+\section{Workstreams}
+\jpentry{Network}{Camera and IoT VLANs \jpbadge[ok]{On track}}
+Zones created, rules reviewed, camera traffic isolated.
+
+\jpentry{Wireless}{Access point cutover \jpbadge[warn]{At risk}}
+Firmware 7.1 drops clients on roam. Waiting on a patch from the vendor.
+
+\jpentry{Cabling}{Rack and patching \jpbadge[ok]{Complete}}
+All runs tested and labelled.
+
+\jpentry{Budget}{Spend to date \jpbadge[ok]{On track}}
+\jpmono\small \$18,400 of \$24,000 committed.
+
+\section{Next week}
+\begin{itemize}
+  \item Retest roaming on the patched firmware.
+  \item Move the IoT network behind its own zone.
+  \item Hand over the rack documentation.
+\end{itemize}
+
+\section{Risks}
+\begin{jpcallout}[warn]{Vendor patch}
+If the patch is not released by 22 November the cutover moves into December and overlaps the freeze.
+\end{jpcallout}
+\begin{jpcallout}[info]{Staff availability}
+One engineer is away from 25 November. Cover is arranged.
+\end{jpcallout}
+\end{document}

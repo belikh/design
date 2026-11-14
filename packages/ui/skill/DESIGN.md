@@ -44,12 +44,12 @@ Flat, quiet and precise, with thin flowing line art as the one decorative idea. 
 - Layout is 12 columns with a 16px gutter and breakpoints at 640, 960 and 1280. Prefer an asymmetric grid: a narrow column for labels and numbers beside a wide column for content.
 - Corners are nearly square: radius `sm` 2 or `md` 6, nothing larger, no pills. Borders are 1px in the `border` token. Shadows only from the elevation tokens, and rarely.
 - Controls are 32px high (48px minimum target on kiosks). Density comes from the user's preference, not the page.
-- Put the logo top-right in headers and letterheads, small. It is a mark, not a banner.
+- Put the logo top-right in headers and letterheads, small. It marks the page as jupiter.au and takes no more room than that.
 
 ## Graphics
 
 - Graphics come from `@belikh/jupiter-graphics` and nowhere else: no emoji, no icon fonts, no other icon sets, no stock images, no gradients, no drop shadows.
-- Four tiers with a constant stroke weight inside each tier, so a page of graphics looks drawn by one hand: `icon` (48 canvas, stroke 1.75, shown 20 to 64px), `spot` (240, stroke 2, 120px and up), `scene` (480 x 240, stroke 2, wide hero art), `rule` (480 x 48, stroke 2, dividers stretched to the measure).
+- Four tiers with a constant stroke weight inside each tier, so a page of graphics looks drawn by one hand. `icon`: 48 canvas, stroke 1.75, shown 20 to 64px. `spot`: 240, stroke 2, 120px and up. `scene`: 480 x 240, stroke 2, wide hero art. `rule`: 480 x 48, stroke 2, dividers stretched to the measure.
 - Icons sit beside a label at 20px. They do not decorate headings or fill space.
 - A rule separates major blocks. `end` is the default. One spot or scene per page at most, for an empty state, an intro or a cover.
 - Colour a graphic with `currentColor` (inline, sprite or mask) so it follows the theme. In places that cannot inherit colour (an `<img>`, a README, a PDF), use the baked light/dark files.
@@ -62,7 +62,7 @@ Flat, quiet and precise, with thin flowing line art as the one decorative idea. 
 
 ## Documents and print
 
-LaTeX, PDF and generated docs follow the same rules with room to be bolder: SGI fonts embedded (check with `pdffonts`), a large SGI Alt title, a line-art rule or spot on the cover, generous margins, tables with no vertical rules and mono right-aligned figures. The first page must still read at 170px wide, because that is the README thumbnail.
+LaTeX, PDF and generated docs follow the same rules with room to be bolder. Embed the SGI fonts (check with `pdffonts`). Use a large SGI Alt title, a line-art rule or spot on the cover and generous margins. Tables have no vertical rules, and figures are mono and right-aligned. The first page must still read at 170px wide, because that is the README thumbnail.
 
 ## Writing
 

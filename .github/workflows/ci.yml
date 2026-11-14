@@ -35,8 +35,6 @@ jobs:
         run: git diff --exit-code -- packages/rust/src/generated.rs
       - name: Generated GitHub kit (theme, SVG assets, this repo's banner) must be committed and current
         run: git diff --exit-code -- packages/github/src/theme.json packages/github/assets packages/github/graphics .github/assets/banner-light.svg .github/assets/banner-dark.svg .github/assets/social-preview-light.svg .github/assets/social-preview-dark.svg
-      - run: npm run docs:check   # docs-src is valid and docs/*.md is current (fix: npm run docs:build)
-      - run: node packages/docs/bin/jupiter-docs.mjs build --site   # the docs site builds (dist/site, deployable to Cloudflare Pages)
       - run: scripts/release-assets.sh
       - uses: actions/upload-artifact@v4
         with:
@@ -70,16 +68,11 @@ jobs:
             echo "$fonts" | grep -qi "SGIText" || { echo "::error::$f does not embed SGI Text"; exit 1; }
             if echo "$fonts" | grep -qiE "LMRoman|LMSans|LatinModern|CMR|CMSY|CMMI|Pagella|DejaVu|Fira"; then echo "::error::$f embeds a font that is not SGI Text, SGI Alt or JetBrains Mono"; exit 1; fi
           done
-      - name: Build the documentation PDF (jupiter-docs.cls; fails on missing glyphs)
-        run: |
-          node packages/docs/bin/jupiter-docs.mjs build --pdf
-          pdffonts dist/jupiter-docs.pdf | grep -qiE "sgi" && echo "SGI fonts embedded in the docs PDF"
       - uses: actions/upload-artifact@v4
         with:
           name: latex-samples
           path: |
             packages/latex/build/*.pdf
-            dist/jupiter-docs.pdf
   rust:
     runs-on: ubuntu-latest
     needs: build

@@ -14,13 +14,30 @@
 
 Colour, type and shape for websites, apps, email, terminals, kiosks, mobile, documents and READMEs, generated from one token file.
 
-`Use it in a project <docs/consuming.md>`_ · `Change a token`_ · `Targets`_ · `Releases`_ · `Develop`_
+`Use it in a project <docs/consuming.md>`_ · `Change a token`_ · `Targets`_ · `Releases`_ · `Develop`_ · `CONTRIBUTING <CONTRIBUTING.md>`_ · `CODE_OF_CONDUCT <CODE_OF_CONDUCT.md>`_
 
 |
 
 .. raw:: html
 
    <p align="center"><picture><source media="(prefers-color-scheme: dark)" srcset="packages/github/graphics/rule/end-dark.svg"><img alt="" src="packages/github/graphics/rule/end-light.svg" width="50%"></picture></p>
+
+Is this for you?
+----------------
+
+Probably not, and that's okay.
+
+This is my personal design system — the colours, type and shapes I use across jupiter.au and my own projects. I'm putting it online because working in public helps me learn and keep track of things, not because I'm trying to build something other teams should adopt.
+
+Please don't depend on this for your own project:
+
+- There is no support. I work a full-time job and do this in the hours I have left.
+- Breaking changes happen without notice.
+- If something breaks, you get to keep both pieces.
+
+But if you want to **fork it, copy ideas, borrow a token or two, or even send a pull request**, go right ahead. Yes, you can edit my website. I won't be offended — that's partly why it's public. Take what you find useful and leave the rest.
+
+If you're looking for a design system to use in production, use one that has a team behind it. This one's just mine.
 
 What is in here
 ---------------

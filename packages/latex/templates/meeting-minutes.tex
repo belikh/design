@@ -1,0 +1,46 @@
+\documentclass{jupiter-form}
+\formkind{Minutes}
+\title{Weekly ops meeting}
+\subtitle{MIN-2026-46}
+\formbadge[ok]{Final}
+\begin{document}
+\maketitle
+\jprow{Date}{\jpmono\small 12 November 2026, 09:00 to 09:50}
+\jprow{Location}{Meeting room 2 and video call}
+\jprow{Chair}{Alex Example}
+\jprow{Present}{Alex Example, Jordan Smith, Sam Taylor, Riley Chen}
+\jprow{Apologies}{Morgan Lee}
+\jprowend
+
+\section{Agenda and notes}
+\jpentry{09:00}{Previous actions}
+Two of the three actions from last week are closed. The supplier quote is still open.
+
+\jpentry{09:10}{Network migration}
+The camera VLAN moves first. The IoT network follows once the firewall zone has run for a week.
+
+\jpentry{09:30}{Hiring}
+Two interviews are booked for next week. The offer for the support role goes out on Friday.
+
+\section{Decisions}
+\begin{itemize}
+  \item Move the camera VLAN on 19 November.
+  \item Keep the current supplier until the new quote arrives.
+\end{itemize}
+
+\section{Actions}
+\begin{jpwide}
+\begin{tabular}{@{}p{92mm}p{44mm}r@{}}
+\toprule
+\jplabel{Action} & \jplabel{Owner} & \jplabel{Due}\\
+\midrule
+Create the camera firewall zone & Alex Example & \jpinline{19 Nov}\\
+Chase the supplier quote & Jordan Smith & \jpinline{14 Nov}\\
+Send the support role offer & Sam Taylor & \jpinline{14 Nov}\\
+Book the access point firmware window & Riley Chen & \jpinline{21 Nov}\\
+\bottomrule
+\end{tabular}
+\end{jpwide}
+
+\begin{jpnote}[info]Next meeting: 19 November 2026, 09:00.\end{jpnote}
+\end{document}

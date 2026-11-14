@@ -1,0 +1,27 @@
+\documentclass{jupiter-form}
+\formkind{Budget}
+\title{Monthly budget}
+\subtitle{November 2026}
+\currency{\$}
+\begin{document}
+\maketitle
+\jprow{Owner}{Alex Example}
+\jprow{Period}{\jpmono\small 1 to 30 November 2026}
+\jprow{Note}{Variance is budget minus actual. Red means over budget.}
+\jprowend
+\jpitemlabels{Category}{Budget}{Actual}{Variance}
+\jpitemwidths{30mm}{30mm}{30mm}
+\begin{jpitems}
+  \budgetline{Salaries}{42000}{42000}
+  \budgetline{Rent and utilities}{6200}{6480.50}
+  \budgetline{Software and licences}{2400}{2210}
+  \budgetline{Travel}{1500}{1962.40}
+  \budgetline{Equipment}{3000}{1240}
+  \budgetline{Marketing}{1800}{1500}
+\end{jpitems}
+\par\vspace{6pt}
+\jprow{Total budget}{\jpmono\small\jpsubtotal}
+\jprow{Total actual}{\jpmono\small\jpsumb}
+\jprow{Variance}{\jpmono\small\jpdiffab}
+\jprowend
+\end{document}
