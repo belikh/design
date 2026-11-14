@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+- @belikh/jupiter-graphics: seven logistics icons, `truck`, `trailer`, `forklift`, `pallet`, `dock`, `gate` and `seal`, for dock-scheduling screens
 
 ## 1.4.0
 - The github-readme skill moved to belikh/docs (skill-readme/SKILL.md, shipped in @belikh/jupiter-docs); @belikh/jupiter-ui no longer carries skill-readme
