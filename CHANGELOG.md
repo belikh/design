@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+## 1.5.7
+- The shell's main area contains its absolutely placed children, so hidden screen-reader text in a long page no longer makes the page behind it scroll into blank space on phones
+
 ## 1.5.6
 - Terrain fits a phone: in a container narrower than 40rem it lays the map out again as a tall, narrow one (`narrowWidth`, `narrowHeight`) instead of scrolling sideways
 

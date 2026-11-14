@@ -1,7 +1,8 @@
 /* ---------- shell ---------- */
 .adm-shell { display: grid; grid-template-columns: var(--adm-side) minmax(0, 1fr); grid-template-rows: var(--adm-top) auto minmax(0, 1fr) auto; height: 100%; }
 .adm-shell.is-rail { --adm-side: var(--jp-size-sidebar-rail); }
-.adm-banners, .adm-status { grid-column: 2; } .adm-main { grid-column: 2; overflow: auto; padding: var(--adm-pad); }
+.adm-banners, .adm-status { grid-column: 2; } /* position: relative keeps absolutely placed children (screen-reader text, chart centres) inside the scrolling area, so they cannot stretch the page behind it */
+.adm-main { grid-column: 2; position: relative; overflow: auto; padding: var(--adm-pad); }
 .adm-bell { position: relative; } .adm-bell b { position: absolute; top: -2px; inset-inline-end: -2px; background: var(--jp-danger); color: var(--jp-surface-raised); font: 12px var(--jp-font-mono); padding: 0 4px; border-radius: 8px; }
 .adm-banner { background: var(--jp-warn-bg); color: var(--jp-warn); padding: 6px var(--adm-pad); font-size: var(--jp-fs-xs); display: flex; gap: var(--jp-space-3); align-items: center; border-bottom: 1px solid var(--jp-border); grid-column: 2; }
 @media (max-width: 860px) { .adm-shell { grid-template-columns: 1fr; } .adm-side { display: none; } .adm-top, .adm-main, .adm-banner, .adm-banners, .adm-status { grid-column: 1; } .adm-side { grid-row: auto; } .adm-search { min-width: 0; flex: 1; } }
