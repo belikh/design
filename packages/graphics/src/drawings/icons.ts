@@ -2,6 +2,7 @@ import type { Drawing } from "../tiers.ts";
 import { rot, flip, ring } from "../spline.ts";
 import { networkIcons } from "./network.ts";
 import { packageIcons } from "./packages.ts";
+import { logisticsIcons } from "./logistics.ts";
 
 // 48 x 48 grid. Routes are kept short and open so the glyphs still read at 20px.
 const arrow = "5,24 30,24! 30,13.5! 43,24! 30,34.5! 30,24";
@@ -108,6 +109,8 @@ export const icons: Drawing[] = [
   ["infinity", "loop forever unlimited", "24,24 30,18 38,17 43,24 38,31 30,30 24,24 18,18 10,17 5,24 10,31 18,30 24,24"],
   // networking and infrastructure
   ...networkIcons,
+  // logistics and dock operations
+  ...logisticsIcons,
   // the parts of the design system
   ...packageIcons,
 ];

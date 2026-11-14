@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+- @belikh/jupiter-graphics: seven logistics icons, `truck`, `trailer`, `forklift`, `pallet`, `dock`, `gate` and `seal`, for dock-scheduling screens
 
 ## 1.5.0
 - Terrain in @belikh/jupiter-ui: a contour map of linked items (hills, dotted link trails), placed by links or by meaning, rendered as plain SVG with real links
