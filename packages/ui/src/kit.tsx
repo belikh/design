@@ -52,6 +52,49 @@ export function PageHeader({ title, desc, status, actions, tabs, crumbs, eyebrow
   );
 }
 
+/**
+ * The one thing on a page that needs attention now, shown large: an eyebrow, a big title, a body and an action.
+ * `tone` colours the leading bar and means status only (ok, warn, danger, info); omit it for the accent colour.
+ */
+export function Spotlight({ eyebrow, title, tone, actions, children, label }: { eyebrow?: string; title: ReactNode; tone?: Status; actions?: ReactNode; children?: ReactNode; /** Accessible name for the region. Defaults to the eyebrow. */ label?: string }) {
+  return (
+    <section className="adm-spotlight" data-tone={tone} aria-label={label ?? eyebrow}>
+      <div className="adm-spotlight__lead">
+        {eyebrow && <span className="jp-eyebrow">{eyebrow}</span>}
+        <b className="adm-spotlight__title">{title}</b>
+      </div>
+      {children && <div className="adm-spotlight__body">{children}</div>}
+      {actions && <div className="adm-spotlight__actions">{actions}</div>}
+    </section>
+  );
+}
+
+/**
+ * A settings group: the title and an explanation on the left, the controls on the right (stacked on a phone).
+ * Put several in a column, separated by a rule, instead of one long form. Give each an `id` for SettingsRail.
+ */
+export function SettingsSection({ id, title, desc, children }: { id?: string; title: ReactNode; desc?: ReactNode; children: ReactNode }) {
+  return (
+    <section id={id} className="adm-setsec">
+      <div className="adm-setsec__intro"><h2>{title}</h2>{desc && <p className="jp-muted">{desc}</p>}</div>
+      <div className="adm-setsec__body">{children}</div>
+    </section>
+  );
+}
+
+/** A sticky list of links to the SettingsSection ids on a page. The current section is marked with aria-current. */
+export function SettingsRail({ items, label = "Sections" }: { items: { id: string; label: string }[]; label?: string }) {
+  const [now, setNow] = useState(items[0]?.id);
+  useEffect(() => {
+    if (typeof IntersectionObserver === "undefined") return;
+    const seen = new Map<string, number>();
+    const io = new IntersectionObserver((es) => { for (const e of es) seen.set(e.target.id, e.isIntersecting ? e.boundingClientRect.top : Infinity); const top = [...seen].filter(([, y]) => y !== Infinity).sort((a, b) => a[1] - b[1])[0]; if (top) setNow(top[0]); }, { rootMargin: "0px 0px -60% 0px" });
+    for (const i of items) { const el = document.getElementById(i.id); if (el) io.observe(el); }
+    return () => io.disconnect();
+  }, [items]);
+  return <nav className="adm-setrail" aria-label={label}>{items.map((i) => <a key={i.id} href={`#${i.id}`} aria-current={now === i.id ? "true" : undefined} onClick={() => setNow(i.id)}>{i.label}</a>)}</nav>;
+}
+
 /** A titled block of a page: optional mono kicker above an h2, then the content. */
 export function Section({ id, title, kicker, children }: { id?: string; title: ReactNode; kicker?: string; children: ReactNode }) {
   return (

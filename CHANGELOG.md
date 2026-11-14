@@ -2,6 +2,7 @@
 
 ## Unreleased
 - @belikh/jupiter-graphics: seven logistics icons, `truck`, `trailer`, `forklift`, `pallet`, `dock`, `gate` and `seal`, for dock-scheduling screens
+- Spotlight, SettingsSection and SettingsRail in @belikh/jupiter-ui/kit.tsx; StatTile takes size="lg". A page can lead with its one important item and lay out admin settings as title and explanation beside the controls
 
 ## 1.5.0
 - Terrain in @belikh/jupiter-ui: a contour map of linked items (hills, dotted link trails), placed by links or by meaning, rendered as plain SVG with real links

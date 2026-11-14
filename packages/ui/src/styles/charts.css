@@ -19,3 +19,5 @@
 /* ---------- larger type scale (+2px): keep controls from clipping ---------- */
 .adm-ctools { gap: 2px; padding-inline-end: 6px; flex-wrap: wrap; } .adm-ctools .jp-btn { font-size: var(--jp-fs-xs); padding: 0 8px; }
 .adm-stat__meta { flex-wrap: wrap; gap: 4px 10px; } .adm-stat__meta .jp-stat__meta { white-space: nowrap; }
+
+.adm-stat--lg { gap: var(--jp-space-2); padding: var(--jp-space-5); } .adm-stat--lg .jp-stat__value { font-size: var(--jp-fs-2xl); } .adm-stat--lg .jp-stat__label { font-size: var(--jp-fs-sm); }
