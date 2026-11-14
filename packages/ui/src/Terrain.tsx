@@ -1,7 +1,7 @@
 // A contour map of linked things. Each item is a hill (its height says how developed or how important it is), links are dotted trails,
 // and items can be placed by their links or by meaning (distance follows how alike their vectors are). It renders as plain SVG, so it works on the
 // server and prints; items are real links. Computed once per input, deterministic for the same input.
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { graphic } from "@belikh/jupiter-graphics";
 import "./styles/terrain.css";
 
@@ -21,6 +21,9 @@ export type TerrainNode = {
 export type TerrainProps = {
   nodes: TerrainNode[]; links?: [string, string][];
   layout?: "links" | "meaning"; width?: number; height?: number;
+  /** Size of the map when its container is narrower than 40rem (a phone): the map is laid out again as a tall, narrow one so labels stay readable.
+   *  Defaults to 360 wide and tall enough to keep the same room per item. */
+  narrowWidth?: number; narrowHeight?: number;
   /** Accessible name of the map. */ title?: string;
   /** Text under the map for people who cannot see it. Defaults to a count. */ summary?: string;
 };
@@ -122,7 +125,21 @@ export function buildTerrain(nodes: TerrainNode[], links: [string, string][], W:
   return { P, edges, deg, contours };
 }
 
-export function Terrain({ nodes, links = [], layout = "links", width = 1000, height = 460, title = "Map", summary }: TerrainProps) {
+/** Height of the narrow map: the same area as the wide one, but never less than a 120 by 60 slot for every item. */
+export const narrowSize = (count: number, narrowWidth: number, wideArea: number) =>
+  Math.round(Math.max(wideArea / narrowWidth / 2, (count * 120 * 60) / (narrowWidth * 0.84) + 80));
+
+export function Terrain({ nodes, links = [], layout = "links", width: wideW = 1000, height: wideH = 460, narrowWidth = 360, narrowHeight, title = "Map", summary }: TerrainProps) {
+  // The server and the first paint draw the wide map. Once mounted, a container narrower than 40rem gets the narrow one instead of a sideways scroll.
+  const wrap = useRef<HTMLElement>(null);
+  const [narrow, setNarrow] = useState(false);
+  useEffect(() => {
+    const el = wrap.current; if (!el || typeof ResizeObserver === "undefined") return;
+    const check = () => { const w = el.clientWidth, rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16; if (w > 0) setNarrow(w < 40 * rem); };
+    check(); const ro = new ResizeObserver(check); ro.observe(el); return () => ro.disconnect();
+  }, []);
+  const width = narrow ? narrowWidth : wideW;
+  const height = narrow ? narrowHeight ?? narrowSize(nodes.length, narrowWidth, wideW * wideH) : wideH;
   const t = useMemo(() => buildTerrain(nodes, links, width, height, layout), [nodes, links, width, height, layout]);
   const [hot, setHot] = useState<number | null>(null);
   const near = useMemo(() => { const s = new Set<number>(); if (hot !== null) { s.add(hot); for (const [a, b] of t.edges) { if (a === hot) s.add(b); if (b === hot) s.add(a); } } return s; }, [hot, t.edges]);
@@ -141,8 +158,8 @@ export function Terrain({ nodes, links = [], layout = "links", width = 1000, hei
   }, [nodes, t, hot, near, width, height]);
 
   return (
-    <figure className="adm-terrain-wrap">
-      <svg className="adm-terrain" viewBox={`0 0 ${width} ${height}`} role="group" aria-label={title}>
+    <figure className="adm-terrain-wrap" ref={wrap}>
+      <svg className={narrow ? "adm-terrain adm-terrain--narrow" : "adm-terrain"} viewBox={`0 0 ${width} ${height}`} role="group" aria-label={title}>
         <g className="adm-terrain__contours" aria-hidden="true">
           {t.contours.map((c, i) => <path key={i} d={c.d} className={c.index ? "is-index" : undefined} />)}
         </g>

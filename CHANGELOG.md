@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+## 1.5.6
+- Terrain fits a phone: in a container narrower than 40rem it lays the map out again as a tall, narrow one (`narrowWidth`, `narrowHeight`) instead of scrolling sideways
+
 ## 1.5.5
 - @belikh/jupiter-graphics: seven logistics icons, `truck`, `trailer`, `forklift`, `pallet`, `dock`, `gate` and `seal`, for dock-scheduling screens
 - Spotlight, SettingsSection and SettingsRail in @belikh/jupiter-ui/kit.tsx; StatTile takes size="lg". A page can lead with its one important item and lay out admin settings as title and explanation beside the controls
