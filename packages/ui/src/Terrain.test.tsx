@@ -1,6 +1,6 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
-import { Terrain, buildTerrain, type TerrainNode } from "./Terrain.tsx";
+import { Terrain, buildTerrain, narrowSize, type TerrainNode } from "./Terrain.tsx";
 
 const nodes: TerrainNode[] = [
   { id: "a", label: "Alpha", href: "/a/", height: 1, icon: "icon-evergreen" },
@@ -42,5 +42,29 @@ describe("Terrain", () => {
   it("keeps a fixed position when one is given", () => {
     const t = buildTerrain(nodes.map((n, i) => ({ ...n, x: 0.2 + i * 0.3, y: 0.5 })), links, 1000, 560, "links");
     expect(t.P[1]).toEqual({ x: 0.5, y: 0.5 });
+  });
+  describe("in a narrow container", () => {
+    afterEach(() => { vi.unstubAllGlobals(); vi.restoreAllMocks(); });
+    const narrowContainer = (px: number) => {
+      vi.stubGlobal("ResizeObserver", class { observe() {} disconnect() {} });
+      vi.spyOn(HTMLElement.prototype, "clientWidth", "get").mockReturnValue(px);
+    };
+    it("lays the map out again as a tall one that fits, with every item inside it", () => {
+      narrowContainer(340);
+      const { container } = render(<Terrain nodes={nodes} links={links} />);
+      const svg = container.querySelector("svg.adm-terrain")!;
+      expect(svg).toHaveClass("adm-terrain--narrow");
+      expect(svg.getAttribute("viewBox")).toBe(`0 0 360 ${narrowSize(3, 360, 1000 * 460)}`);
+      for (const c of container.querySelectorAll("circle")) expect(Number(c.getAttribute("cx"))).toBeLessThanOrEqual(360);
+      expect(screen.getAllByRole("link")).toHaveLength(3);
+    });
+    it("keeps the wide map when the container is wide", () => {
+      narrowContainer(900);
+      const { container } = render(<Terrain nodes={nodes} links={links} />);
+      expect(container.querySelector("svg.adm-terrain")!.getAttribute("viewBox")).toBe("0 0 1000 460");
+    });
+    it("gives the narrow map room for every item", () => {
+      expect(narrowSize(45, 360, 440000)).toBeGreaterThan((45 * 120 * 46) / 360);
+    });
   });
 });
