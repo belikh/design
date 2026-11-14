@@ -205,9 +205,9 @@ export function Spark({ data, kind = "line", color = "var(--jp-accent)", w = 96,
 }
 
 /* ---------- stat tile ---------- */
-export function StatTile({ label, value, unit, delta, trend, invert, spark, sub, testId }: { label: string; value: string; /** Small unit after the value, e.g. "ms". */ unit?: string; delta?: number; /** A delta already formatted as text, with its direction (up is good). Use instead of `delta`. */ trend?: { dir: "up" | "down"; text: string }; invert?: boolean; spark?: number[]; sub?: string; testId?: string }) {
+export function StatTile({ label, value, unit, delta, trend, invert, spark, sub, testId, size }: { /** `lg` for the one or two figures a page is about: a larger value and more room. */ size?: "lg"; label: string; value: string; /** Small unit after the value, e.g. "ms". */ unit?: string; delta?: number; /** A delta already formatted as text, with its direction (up is good). Use instead of `delta`. */ trend?: { dir: "up" | "down"; text: string }; invert?: boolean; spark?: number[]; sub?: string; testId?: string }) {
   return (
-    <div className="jp-stat adm-stat" data-testid={testId}>
+    <div className={`jp-stat adm-stat${size === "lg" ? " adm-stat--lg" : ""}`} data-testid={testId}>
       <span className="jp-stat__label">{label}</span>
       <span className="jp-stat__value" data-testid={testId ? `${testId}-value` : undefined}>{value}{unit && <small>{unit}</small>}</span>
       <div className="adm-stat__meta">

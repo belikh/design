@@ -458,6 +458,39 @@
       ]
     },
     {
+      "name": "Spotlight",
+      "file": "kit.tsx",
+      "when": "The one item a page is about right now (next truck, open incident), large, with a status bar and an action",
+      "props": [
+        "eyebrow",
+        "title",
+        "tone",
+        "actions",
+        "children",
+        "label"
+      ]
+    },
+    {
+      "name": "SettingsSection",
+      "file": "kit.tsx",
+      "when": "A group on a settings or admin page: title and explanation on the left, controls on the right",
+      "props": [
+        "id",
+        "title",
+        "desc",
+        "children"
+      ]
+    },
+    {
+      "name": "SettingsRail",
+      "file": "kit.tsx",
+      "when": "Sticky links to the SettingsSection ids of a long settings page, with the current one marked",
+      "props": [
+        "items",
+        "label"
+      ]
+    },
+    {
       "name": "Callout",
       "file": "kit.tsx",
       "when": "A short info, warn or danger note with a text prefix (the generated .jp-callout markup)",
