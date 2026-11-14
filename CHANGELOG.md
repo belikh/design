@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+- Terrain in @belikh/jupiter-ui: a contour map of linked items (hills, dotted link trails), placed by links or by meaning, rendered as plain SVG with real links
 
 ## 1.4.0
 - The github-readme skill moved to belikh/docs (skill-readme/SKILL.md, shipped in @belikh/jupiter-docs); @belikh/jupiter-ui no longer carries skill-readme
