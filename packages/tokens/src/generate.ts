@@ -270,6 +270,9 @@ body {
 .jp-prose > * + * { margin-top: var(--jp-space-4); }
 .jp-prose :where(h2, h3) { margin-top: var(--jp-space-6); }
 .jp-grid { display: grid; grid-template-columns: repeat(var(--jp-columns), minmax(0, 1fr)); gap: var(--jp-space-4); }
+/* Two unequal columns, the wide one first: a main item beside a secondary one. Stacks on a phone. */
+.jp-split { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: var(--jp-space-5); align-items: start; }
+@media (max-width: 40rem) { .jp-split { grid-template-columns: minmax(0, 1fr); } }
 .jp-grid > * { grid-column: 1 / -1; }
 `;
 
