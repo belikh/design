@@ -296,6 +296,7 @@ export interface CssOptions {
 
 const banner = (t: Tokens, what: string) => `/*!
  * ${t.name} ${t.version}: ${what}. Generated from ${t.name}.tokens.json. Do not edit by hand.
+ * Copyright (c) 2026 Jupiter Belic.
  * Light follows the OS; force with <html data-theme="light|dark">. Any element may set data-theme.
  */
 `;

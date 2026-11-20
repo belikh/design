@@ -13,6 +13,7 @@ Skill (in `packages/ui/skill`, linked into projects by `scripts/new-project.mjs`
 5. **Commit mode is a user preference** (Settings → Appearance: on blur, or Save/Cancel). Don't pass `commit` to `Editable` unless the field cannot work in the other mode.
 6. **Accessible by default.** Every control has a visible label or `aria-label`; everything works from the keyboard; respect `prefers-reduced-motion`; use logical CSS properties (`margin-inline-start`) so RTL works.
 7. **Every page has a test** (`*.test.tsx`, Vitest + Testing Library). `npm test` must stay green; `npm run typecheck` must be clean.
+8. **Copyright.** The design system is copyright Jupiter Belic. Keep the `LICENSE` line, the banner line in generated CSS, and each package's `author` field. A new package or generated file gets the notice too.
 
 ## Which component for which need
 | I need to… | Use | Notes |

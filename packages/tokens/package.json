@@ -52,5 +52,6 @@
     "type": "git",
     "url": "git+https://github.com/belikh/design.git",
     "directory": "packages/tokens"
-  }
+  },
+  "author": "Jupiter Belic"
 }
