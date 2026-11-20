@@ -31,5 +31,6 @@
     "type": "git",
     "url": "git+https://github.com/belikh/design.git",
     "directory": "packages/esphome"
-  }
+  },
+  "author": "Jupiter Belic"
 }
