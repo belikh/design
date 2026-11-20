@@ -169,6 +169,14 @@ body {
 .jp-panel__title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--jp-text); font-weight: 500; }
 .jp-panel__body { padding: var(--jp-space-4); }
 .jp-panel__body--flush { padding: 0; }
+/* A featured item in a panel: an optional graphic beside its title, summary and action. Roomier than a plain panel body; stacks on a phone. */
+.jp-feature { display: grid; grid-template-columns: minmax(0, 6.5rem) minmax(0, 1fr); gap: var(--jp-space-5); padding: var(--jp-space-5); align-items: start; }
+.jp-feature__art { max-inline-size: 6.5rem; overflow: hidden; }
+.jp-feature__art .jp-line { inline-size: 100%; }
+.jp-feature h3 { margin-block: 0 var(--jp-space-4); }
+.jp-feature p + p { margin-block-start: var(--jp-space-3); }
+.jp-feature__action { margin-block-start: var(--jp-space-4); }
+@media (max-width: 40rem) { .jp-feature { grid-template-columns: minmax(0, 1fr); } .jp-feature__art { max-inline-size: 8rem; } }
 
 /* ---------- 4. table ---------- */
 .jp-table-wrap { overflow: auto; max-height: var(--jp-table-max, 24rem); border: 1px solid var(--jp-border); border-radius: var(--jp-radius-md); background: var(--jp-surface-raised); }
