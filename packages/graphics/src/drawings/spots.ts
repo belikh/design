@@ -7,6 +7,7 @@ import { projects } from "./projects.ts";
 import { networkSpots } from "./network.ts";
 import { nature } from "./australia.ts";
 import { hardware } from "./hardware.ts";
+import { appliances } from "./appliances.ts";
 
 // 240 x 240 grid. Open bottoms and a ground tail are part of the style: the pen arrives, draws, and leaves.
 const petals = (cx: number, cy: number, n: number, len: number) =>
@@ -30,6 +31,7 @@ const spikes = (cx: number, cy: number, r1: number, r2: number, a0: number, a1: 
   }).join(" ");
 
 export const spots: Drawing[] = [
+  ...appliances,
   // people
   ["profile", "face portrait person avatar side", "24,218 70,214 104,204 112,180 100,173 85,170 80,159 85,151 78,146 83,140 76,134 80,127 62,122 76,98 80,84 84,60 100,38 130,26 164,38 181,74 177,110 160,128 148,114 143,100 151,90 159,100 153,120 140,142 118,160 150,170 160,206 200,214 222,212"],
   ["face", "portrait person avatar calm", "20,218 62,212 62,184 54,144 58,102 70,66 92,40 126,28 162,36 184,62 190,100 186,140 172,178 150,200 124,208 102,200 96,186 104,176 124,185 148,174! 137,168 126,172 124,162 113,152 126,157 138,150 133,130 129,108 130,94 146,83 172,84 183,95 178,106 162,113 145,107 128,111 111,107 94,113 78,106 69,95 82,84 106,85 116,91"],
