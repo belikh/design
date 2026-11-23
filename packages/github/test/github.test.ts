@@ -5,12 +5,12 @@ import { spawnSync } from "node:child_process";
 import { generateGithubTheme } from "../../tokens/src/github.ts";
 import { OUTPUTS } from "../../tokens/src/generate.ts";
 import { DEFAULT_TOKENS } from "../../tokens/src/tokens.ts";
-import { SCHEMES, STATUSES, renderBadge, renderBanner, renderDivider, renderSocial, renderTile, paletteMarkdown } from "../src/render.mjs";
+import { SCHEMES, STATUSES, renderBadge, renderBanner, renderDivider, renderShare, renderSocial, renderTile, paletteMarkdown, wrap } from "../src/render.mjs";
 import { build, builtinAssets } from "../src/make.mjs";
 import type { GithubTheme } from "../src/render.mjs";
 
 const theme = JSON.parse(generateGithubTheme(DEFAULT_TOKENS)) as GithubTheme;
-const all = () => SCHEMES.flatMap((s) => [renderBanner(theme, s, { logo: true }), renderBanner(theme, s), renderDivider(theme, s), renderTile(theme, s), renderSocial(theme, s, { logo: true }), ...STATUSES.map((st) => renderBadge(theme, s, { status: st }))]);
+const all = () => SCHEMES.flatMap((s) => [renderBanner(theme, s, { logo: true }), renderBanner(theme, s), renderDivider(theme, s), renderTile(theme, s), renderSocial(theme, s, { logo: true }), renderShare(theme, s, { title: "A page", subtitle: "What it says", eyebrow: "Note", footer: "example.com" }), ...STATUSES.map((st) => renderBadge(theme, s, { status: st }))]);
 
 function assertValidSvg(svg: string) {
   assert.match(svg, /^<svg [^>]*xmlns="http:\/\/www\.w3\.org\/2000\/svg"/);
@@ -77,6 +77,25 @@ test("CLI: placeholders replaced, badge/tile flags, palette", () => {
   const r = spawnSync("node", [new URL("../src/make.mjs", import.meta.url).pathname, "--palette"], { encoding: "utf8" });
   assert.equal(r.status, 0); assert.ok(r.stdout.includes(`\`${theme.color.light.accent}\``)); assert.equal(r.stdout, paletteMarkdown(theme));
   assert.equal(spawnSync("node", [new URL("../src/make.mjs", import.meta.url).pathname, "--badge", "x|y|bogus", "--out", "/nonexistent-dir-jp"], { encoding: "utf8" }).status, 1);
+});
+
+test("share card: wraps the title, takes one graphic, and stays a still image", () => {
+  assert.deepEqual(wrap("one two three four", 9, 3), ["one two", "three", "four"]);
+  assert.deepEqual(wrap("one two three four five six", 9, 2), ["one two", "three…"]);
+  assert.deepEqual(wrap("abcdefghijkl", 5, 3), ["abcde", "fghij", "kl"]);
+  const long = "A title long enough that it cannot sit on one line of the card at any size the card allows";
+  const svg = renderShare(theme, "light", { title: long, subtitle: "1 < 2", eyebrow: "note", footer: "example.com" });
+  assertValidSvg(svg); assert.match(svg, /width="1200" height="630"/); assert.match(svg, />NOTE</); assert.match(svg, /1 &lt; 2/);
+  assert.equal((svg.match(/class="t h"/g) ?? []).length, 3);
+  assert.doesNotMatch(svg, /animation|@keyframes/);
+  const spot = readFileSync(new URL("../graphics/spot/box-light.svg", import.meta.url), "utf8");
+  const withArt = renderShare(theme, "light", { title: "Box", art: spot });
+  assertValidSvg(withArt); assert.match(withArt, /viewBox="0 0 240 240" color=/);
+  assert.throws(() => renderShare(theme, "light", { title: "x", art: "<svg viewBox=\"0 0 1 1\"><script>1</script></svg>" }));
+  assert.throws(() => renderShare(theme, "light", { title: "x", art: "not svg" }));
+  const files = build(theme, { cards: [{ name: "Notes/one", title: "One" }], scheme: "light" });
+  assert.deepEqual(files.map((f) => f.name), ["notes-one-light.svg"]);
+  assert.throws(() => build(theme, { cards: [{ title: "no name" }] as never }));
 });
 
 test("templates reference only assets the kit can produce", () => {

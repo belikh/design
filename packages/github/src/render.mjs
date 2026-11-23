@@ -169,6 +169,66 @@ ${flow(c, pts, [[1, "ok"], [3, "info"], [5, "warn"], [7, "accent"]], 3)}
   });
 }
 
+/** Break `text` into at most `maxLines` lines of about `maxChars` characters, on spaces; what does not fit ends in an ellipsis. Text is not measured, so `maxChars` comes from an average glyph width. */
+export function wrap(text, maxChars, maxLines) {
+  const words = String(text ?? "").trim().split(/\s+/).filter(Boolean).flatMap((w) => { const parts = []; for (let i = 0; i < [...w].length; i += maxChars) parts.push([...w].slice(i, i + maxChars).join("")); return parts; });
+  const lines = [];
+  for (const w of words) {
+    const last = lines.at(-1);
+    if (last !== undefined && [...last].length + 1 + [...w].length <= maxChars) lines[lines.length - 1] = `${last} ${w}`; else lines.push(w);
+  }
+  if (lines.length <= maxLines) return lines;
+  const kept = lines.slice(0, maxLines);
+  let last = kept[maxLines - 1];
+  if ([...last].length + 1 > maxChars && last.includes(" ")) last = last.slice(0, last.lastIndexOf(" "));
+  kept[maxLines - 1] = `${[...last].slice(0, maxChars - 1).join("").replace(/[\s,;:.]+$/, "")}…`;
+  return kept;
+}
+
+/** A graphic given as an SVG string (from @belikh/jupiter-graphics, or a baked file from ./graphics), nested in a box and drawn in the text colour. */
+function art(source, color, x, y, w, h) {
+  const m = /<svg\b([^>]*)>([\s\S]*)<\/svg>\s*$/.exec(String(source));
+  const viewBox = m && /viewBox="([^"]+)"/.exec(m[1])?.[1];
+  if (!m || !viewBox) throw new Error("art must be an SVG string with a viewBox");
+  if (/<script|<foreignObject|<image|<style|\shref=|url\(/i.test(m[2])) throw new Error("art may only contain shapes: no scripts, images, styles or links");
+  return `<svg x="${x}" y="${y}" width="${w}" height="${h}" viewBox="${esc(viewBox)}" color="${color}">${m[2]}</svg>`;
+}
+
+// Average glyph width in em, for wrapping: SGI Text is narrow, and these leave a margin for lines heavy in capitals and digits.
+const TITLE_EM = 0.48, BODY_EM = 0.42;
+
+/**
+ * Share card for one page of a site, 1200x630: what LinkedIn, Slack, Mastodon and others show when a link is pasted (Open Graph image).
+ * The page title leads, wrapped over up to three lines, with a short description under it. The logo sits top-right, small.
+ * `art` is one graphic from the graphics set for the right-hand side; without it the flowing line runs under the text when there is room.
+ * Still, not animated: a share card is always rasterised (make.mjs --png), because the sites that show it do not accept SVG.
+ */
+export function renderShare(theme, scheme, { title = "Page title", subtitle = "", eyebrow = "", footer = "", art: source } = {}) {
+  const c = colors(theme, scheme), r = rnd(theme);
+  const W = 1200, H = 630, X = 108, textW = source ? 672 : 1012;
+  const ts = [72, 60, 50].find((size) => wrap(title, Math.floor(textW / (size * TITLE_EM)), 4).length <= 3) ?? 50;
+  const tl = wrap(title, Math.floor(textW / (ts * TITLE_EM)), 3);
+  const ss = 28, sl = subtitle ? wrap(subtitle, Math.floor(textW / (ss * BODY_EM)), tl.length === 3 ? 2 : 3) : [];
+  const ty = (i) => n(136 + ts * 0.95 + i * ts * 1.15), sy = (i) => n(ty(tl.length - 1) + ss * 2.1 + i * ss * 1.4);
+  const bottom = sl.length ? sy(sl.length - 1) : ty(tl.length - 1);
+  const L = LOGO[scheme], lw = 220;
+  const pts = [[80, 482], [230, 438], [380, 490], [530, 430], [680, 484], [830, 436], [980, 488], [1120, 446]];
+  return svg(W, H, theme, scheme, {
+    title, desc: subtitle || title, fonts: ["title", "body", "mono"],
+    css: `.e{font-size:20px;letter-spacing:.18em;fill:${c.textMuted}}.h{fill:${c.text}}.s{font-size:${ss}px;fill:${c.textMuted}}.f{font-size:20px;fill:${c.textMuted}}`,
+    body: `<rect width="${W}" height="${H}" fill="${c.bg}"/>
+<rect x="24.5" y="24.5" width="${W - 49}" height="${H - 49}" rx="${r}" fill="none" stroke="${c.border}"/>
+${logo(scheme, W - 80 - lw, 64, lw)}
+<rect x="80" y="${eyebrow ? 90 : 136}" width="6" height="${n(bottom + 12 - (eyebrow ? 90 : 136))}" fill="${c.accent}"/>
+${eyebrow ? `<text class="m e" x="${X}" y="108">${esc(String(eyebrow).toUpperCase())}</text>` : ""}
+${tl.map((line, i) => `<text class="t h" x="${X - 3}" y="${ty(i)}" font-size="${ts}">${esc(line)}</text>`).join("\n")}
+${sl.map((line, i) => `<text class="b s" x="${X}" y="${sy(i)}">${esc(line)}</text>`).join("\n")}
+${source ? art(source, c.text, 820, n(64 + (lw * L.h) / L.w + 48), 300, 300) : bottom < 360 ? flow(c, pts, [[1, "ok"], [3, "info"], [5, "warn"], [7, "accent"]], 3).replace(/ class="halo" style="[^"]*"/g, ' opacity=".18"').replace(/ class="flow"/g, "") : ""}
+<path d="M80 532H1120" stroke="${c.border}" stroke-width="1"/><path d="M80 526v12M1120 526v12" stroke="${c.accent}" stroke-width="2"/>
+<text class="m f" x="80" y="576">${esc(footer)}</text>`,
+  });
+}
+
 /** Markdown table of the palette with GitHub hex colour chips (`#rrggbb` renders a swatch). */
 export function paletteMarkdown(theme) {
   const roles = Object.keys(theme.color.light);

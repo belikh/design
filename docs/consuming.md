@@ -45,6 +45,10 @@ The list of files per target is in `packages/ui/skill/SKILL.md` and `README.md`.
 `--tile "Uptime|99.98%|ok"`, `--png` for the social preview, `--palette` for a hex-chip colour table), then reference them with `<picture>` as the templates do.
 The social preview has no upload API: set it by hand under Settings > Social preview. Regenerate after a token change; nothing is hand-drawn.
 
+A website's own pages get **share cards** from the same kit: the 1200x630 image LinkedIn, Slack and others show when a page is linked. List the pages in a JSON file and run
+`jupiter-github --cards cards.json --scheme light --png --out <dir>` (one card per entry: `name`, `title`, `subtitle`, `eyebrow`, `footer`, and `art` for one graphic), then point each page's
+`og:image` at its PNG. Regenerate them after a design-system update, like every other baked file. See the Share cards section of `packages/github/README.md`.
+
 ## Agents
 `packages/ui/skill/SKILL.md` is the skill development agents use before building anything. New projects get it linked from
 `node_modules/@belikh/jupiter-ui/skill`, so it updates with the dependency. In this repo it is linked at `.claude/skills/jupiter-design-system`.
