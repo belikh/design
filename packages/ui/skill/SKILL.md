@@ -69,6 +69,7 @@ These have no npm mechanism. Download the current release file(s) into a **gitig
 | ESPHome | `jupiter-esphome.yaml`, npm `@belikh/jupiter-esphome` | |
 | LaTeX | `jupiter-latex.tgz` | `packages/latex/templates` |
 | GitHub (README, profile, org profile, social preview) | `jupiter-github.tgz` (light/dark SVG banner, tile, badge, divider, social preview built on the Jupiter logo (SGI Alt 700) from `packages/graphics/logo`, plus templates; `node make.mjs --title ... --out ...`) | `packages/github` |
+| Website share cards (the image shown when a page is linked on LinkedIn, Slack and others) | npm `@belikh/jupiter-github`: `jupiter-github --cards cards.json --scheme light --png --out <dir>` writes one 1200x630 card per page; reference it with `og:image` | `packages/github` README, Share cards |
 | Mobile | `jupiter.mobile.json` | |
 
 These are theme files, not component libraries: use the platform's native widgets and let the theme colour them.

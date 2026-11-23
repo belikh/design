@@ -11,5 +11,9 @@ export function renderDivider(theme: GithubTheme, scheme: Scheme): string;
 export function renderTile(theme: GithubTheme, scheme: Scheme, o?: { label?: string; value?: string; status?: Status }): string;
 export function renderBadge(theme: GithubTheme, scheme: Scheme, o?: { label?: string; value?: string; status?: Status }): string;
 export function renderSocial(theme: GithubTheme, scheme: Scheme, o?: TextOpts): string;
+/** Share card (Open Graph image) for one page of a site, 1200x630. `art` is an SVG string of one graphic for the right-hand side. */
+export interface ShareOpts { title?: string; subtitle?: string; eyebrow?: string; footer?: string; art?: string }
+export function renderShare(theme: GithubTheme, scheme: Scheme, o?: ShareOpts): string;
+export function wrap(text: string, maxChars: number, maxLines: number): string[];
 export function paletteMarkdown(theme: GithubTheme): string;
 export function slug(s: string): string;

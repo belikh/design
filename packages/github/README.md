@@ -10,10 +10,18 @@ node src/make.mjs --title "My project" --subtitle "What it does" --out .github/a
 node src/make.mjs --out .github/assets --only banner,social --logo --footer "owner/repo" --png
 node src/make.mjs --out .github/assets --only badge --badge "build|passing|ok" --badge "coverage|91%|info"
 node src/make.mjs --out .github/assets --only tile --tile "Uptime|99.98%|ok"
+node src/make.mjs --out og --only share --title "Page title" --subtitle "What the page says" --eyebrow Note --footer example.com --art graphics/spot/box-light.svg --png
+node src/make.mjs --out og --cards cards.json --scheme light --png
 node src/make.mjs --palette        # Markdown table with `#hex` chips
 ```
 
-Files come in `-light` / `-dark` pairs (`banner`, `divider`, `social-preview`, `tile-<label>`, `badge-<label>`). Statuses: `ok warn danger info accent neutral`
+## Share cards
+
+`share` is the 1200x630 card that LinkedIn, Slack and others show when a page of a site is linked (the Open Graph image). The page title leads, wrapped over up to three lines, with a short description under it and the logo top-right. `--art` puts one graphic on the right: a baked file from `graphics/`, or any SVG from `@belikh/jupiter-graphics`. Without one, the flowing line runs under the text when there is room.
+
+A site makes one card per page with `--cards`: a JSON array of `{ "name", "title", "subtitle", "eyebrow", "footer", "art" }`, where `art` is a path relative to the JSON file or the SVG itself. Files are named `<name>-<scheme>.svg`, and `--png` rasterises them, which is required: these sites do not accept SVG. Reference the PNG from the page with `<meta property="og:image">`, with `og:image:width` 1200 and `og:image:height` 630. `renderShare` and `wrap` are exported from `./render` for a build that prefers to call them directly.
+
+Files come in `-light` / `-dark` pairs (`banner`, `divider`, `social-preview`, `share`, `tile-<label>`, `badge-<label>`). Statuses: `ok warn danger info accent neutral`
 (badge value text uses the token's status colour on its `*Bg`, which the tokens build already checks for WCAG AA). Reference them with `<picture>`:
 
 The default README header is just the logo, right-aligned, no per-repo banner:

@@ -4,15 +4,19 @@
 //   node make.mjs --out dir --only banner,social --eyebrow "acme" --footer "acme/my-project" --png
 //   node make.mjs --out dir --only badge --badge "build|passing|ok" --badge "coverage|91%|info"
 //   node make.mjs --out dir --only tile --tile "Uptime|99.98%|ok"
+//   node make.mjs --out dir --only share --title "Page title" --subtitle "What the page says" --eyebrow Note --footer example.com --art spot.svg --png
+//   node make.mjs --out dir --cards cards.json --scheme light --png      one share card per entry: [{ "name", "title", "subtitle", "eyebrow", "footer", "art" }]
 //   node make.mjs --palette            print the palette as Markdown with hex colour chips
 //   node make.mjs --assets [--check]   (re)generate the package's own committed assets/ from theme.json (--check: fail if stale)
-// Flags: --scheme light|dark|both (default both)  --only banner,divider,social,tile,badge (default banner,divider,social)
+// Flags: --scheme light|dark|both (default both)  --only banner,divider,social,share,tile,badge (default banner,divider,social)
+//        share is the 1200x630 card a site shows when one of its pages is linked (Open Graph image); --art <file.svg> puts one graphic on it.
+//        In --cards, "art" is a path relative to the JSON file, or the SVG itself. Files are named <name>-<scheme>.svg.
 //        --logo  use the Jupiter logo instead of the title text (banner, social)
-//        --theme <file>  use another theme.json (the generated jupiter-github.json)  --png  also rasterise social-preview (needs playwright-core + Chromium; CHROMIUM=<path> overrides /usr/bin/chromium)
+//        --theme <file>  use another theme.json (the generated jupiter-github.json)  --png  also rasterise the social preview and share cards (needs playwright-core + Chromium; CHROMIUM=<path> overrides /usr/bin/chromium)
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { SCHEMES, STATUSES, paletteMarkdown, renderBadge, renderBanner, renderDivider, renderSocial, renderTile, slug } from "./render.mjs";
+import { SCHEMES, STATUSES, paletteMarkdown, renderBadge, renderBanner, renderDivider, renderShare, renderSocial, renderTile, slug } from "./render.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const MULTI = new Set(["badge", "tile"]), BOOL = new Set(["logo", "png", "palette", "assets", "check", "help"]);
@@ -43,7 +47,7 @@ export function build(theme, o = {}) {
   o = { badge: [], tile: [], ...o };
   const schemes = !o.scheme || o.scheme === "both" ? SCHEMES : [o.scheme];
   for (const s of schemes) if (!SCHEMES.includes(s)) throw new Error(`--scheme must be light, dark or both`);
-  const only = new Set((o.only ?? (o.badge.length ? "banner,divider,social,badge" : o.tile.length ? "banner,divider,social,tile" : "banner,divider,social")).split(","));
+  const only = new Set((o.only ?? (o.cards ? "" : o.badge.length ? "banner,divider,social,badge" : o.tile.length ? "banner,divider,social,tile" : "banner,divider,social")).split(","));
   const text = { title: o.title, subtitle: o.subtitle, eyebrow: o.eyebrow, footer: o.footer, logo: o.logo };
   for (const k of Object.keys(text)) if (text[k] === undefined) delete text[k];
   const files = [];
@@ -51,6 +55,11 @@ export function build(theme, o = {}) {
     if (only.has("banner")) files.push({ name: `banner-${s}.svg`, svg: renderBanner(theme, s, text) });
     if (only.has("divider")) files.push({ name: `divider-${s}.svg`, svg: renderDivider(theme, s) });
     if (only.has("social")) files.push({ name: `social-preview-${s}.svg`, svg: renderSocial(theme, s, text) });
+    if (only.has("share")) files.push({ name: `share-${s}.svg`, svg: renderShare(theme, s, { ...text, art: o.art }) });
+    for (const card of o.cards ?? []) {
+      if (!card?.name || !card.title) throw new Error(`--cards: every card needs "name" and "title"`);
+      files.push({ name: `${slug(card.name)}-${s}.svg`, svg: renderShare(theme, s, card) });
+    }
     if (only.has("tile")) for (const t of o.tile.map((x) => triple(x, "tile"))) files.push({ name: `tile-${slug(t.label)}-${s}.svg`, svg: renderTile(theme, s, t) });
     if (only.has("badge")) for (const b of o.badge.map((x) => triple(x, "badge"))) files.push({ name: `badge-${slug(b.label)}-${s}.svg`, svg: renderBadge(theme, s, b) });
   }
@@ -59,7 +68,7 @@ export function build(theme, o = {}) {
 
 /** The kit's own committed samples: default banner/divider/social plus a tile and badge for ok, warn, danger and info (accent and neutral render on demand). */
 export function builtinAssets(theme) {
-  const files = build(theme, {});
+  const files = [...build(theme, {}), ...build(theme, { only: "share", title: "Page title", subtitle: "What the page says, in a sentence or two, as it appears when the link is shared.", eyebrow: "Note", footer: "example.com" })];
   const label = { ok: "passing", warn: "degraded", danger: "failing", info: "queued", accent: "release", neutral: "draft" };
   for (const s of SCHEMES) for (const st of STATUSES.filter((x) => x !== "accent" && x !== "neutral")) {
     files.push({ name: `tile-${st}-${s}.svg`, svg: renderTile(theme, s, { label: "Status", value: label[st], status: st }) });
@@ -76,7 +85,8 @@ async function png(dir, names) {
   try {
     for (const name of names) {
       const scheme = name.includes("-dark") ? "dark" : "light";
-      const ctx = await browser.newContext({ viewport: { width: 1280, height: 640 }, colorScheme: scheme, reducedMotion: "reduce" });
+      const size = /^<svg [^>]*width="(\d+)" height="(\d+)"/.exec(readFileSync(join(dir, name), "utf8"));
+      const ctx = await browser.newContext({ viewport: { width: Number(size?.[1] ?? 1280), height: Number(size?.[2] ?? 640) }, colorScheme: scheme, reducedMotion: "reduce" });
       const page = await ctx.newPage();
       await page.goto(pathToFileURL(join(dir, name)).href);
       await page.screenshot({ path: join(dir, name.replace(/\.svg$/, ".png")) });
@@ -103,9 +113,13 @@ async function main() {
     console.log(`packages/github/assets: ${files.length} files`); return;
   }
   const out = resolve(o.out ?? "jupiter-github"); mkdirSync(out, { recursive: true });
+  const readArt = (v, base) => (v === undefined || String(v).trimStart().startsWith("<") ? v : readFileSync(resolve(base, v), "utf8"));
+  if (o.art) o.art = readArt(o.art, ".");
+  if (o.cards) { const file = resolve(o.cards); o.cards = JSON.parse(readFileSync(file, "utf8")).map((card) => ({ ...card, art: readArt(card.art, dirname(file)) })); }
   const files = build(theme, o);
   for (const f of files) { writeFileSync(join(out, f.name), f.svg); console.log(f.name); }
-  if (o.png) await png(out, files.filter((f) => f.name.startsWith("social-preview-")).map((f) => f.name));
+  const cardNames = new Set((o.cards ?? []).map((card) => slug(card.name)));
+  if (o.png) await png(out, files.filter((f) => /^(social-preview|share)-/.test(f.name) || cardNames.has(f.name.replace(/-(light|dark)\.svg$/, ""))).map((f) => f.name));
 }
 
 if (import.meta.url === pathToFileURL(process.argv[1] ?? "").href) main().catch((e) => { console.error(process.env.DEBUG ? e : `make: ${e.message}`); process.exit(1); });
