@@ -52,9 +52,8 @@ export function ScalePage() {
 }
 
 /* ===== F018: touch targets, gestures, non-drag alternatives ===== */
-const TKEY = "adm-touch";
-export const applyTouchMode = (on: boolean) => { document.documentElement.dataset.touch = String(on); try { localStorage.setItem(TKEY, String(on)); } catch { /* ignore */ } };
-export const touchModeSaved = () => { try { return localStorage.getItem(TKEY) === "true"; } catch { return false; } };
+export { applyTouchMode, touchModeSaved } from "@belikh/jupiter-ui/touch.ts";
+import { applyTouchMode, touchModeSaved } from "@belikh/jupiter-ui/touch.ts";
 function SwipeRow({ children, onLeft, onRight, leftLabel, rightLabel }: { children: React.ReactNode; onLeft: () => void; onRight: () => void; leftLabel: string; rightLabel: string }) {
   const [dx, setDx] = useState(0); const start = useRef<[number, number] | null>(null); const press = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   return (

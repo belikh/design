@@ -36,6 +36,8 @@ dialog.adm-modal:not([open]), dialog.adm-drawer:not([open]) { display: none; }
 dialog.adm-modal[open], dialog.adm-drawer[open] { display: flex; }
 dialog.adm-modal::backdrop, dialog.adm-drawer::backdrop { background: color-mix(in oklab, var(--jp-bg) 55%, transparent); backdrop-filter: blur(2px); }
 dialog.adm-drawer { margin: 0; }
+/* a side drawer is as tall as the screen: a long body scrolls inside it and the footer stays in reach */
+dialog.adm-drawer--right, dialog.adm-drawer--left { block-size: 100dvh; max-block-size: 100dvh; } .adm-drawer .adm-modal__body { flex: 1 1 auto; min-block-size: 0; }
 dialog.adm-drawer--right { margin-inline-start: auto; } dialog.adm-drawer--left { margin-inline-end: auto; }
 .adm-menu__list.is-popover { position: fixed; inset: auto; margin: 0; padding: 4px; color: var(--jp-text); overflow: auto; max-height: min(60dvh, 420px); overscroll-behavior: contain; }
 .adm-menu__list.is-popover:not(:popover-open) { display: none; }

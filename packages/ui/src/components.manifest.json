@@ -570,6 +570,56 @@
         "title",
         "summary"
       ]
+    },
+    {
+      "name": "Planner",
+      "file": "Planner.tsx",
+      "when": "A plan as a grid: a row per person, lane or resource, a column per day or time slot, one block per cell (staff roster, lane rotation, bookings, availability). Sticky headers, arrow keys, summary rows",
+      "props": [
+        "columns (label, sub, group, now, muted)",
+        "rows (name, label, sub)",
+        "cell(row, col) => PlanBlock",
+        "onSelect",
+        "selected",
+        "summary",
+        "compact",
+        "maxHeight",
+        "ariaLabel"
+      ]
+    },
+    {
+      "name": "PlanChip",
+      "file": "Planner.tsx",
+      "when": "One plan block on its own (a shift, a position) in a list, a drawer or a heading",
+      "props": [
+        "block (code, label, series, tone, note, quiet, pending)",
+        "compact"
+      ]
+    },
+    {
+      "name": "PlanLegend",
+      "file": "Planner.tsx",
+      "when": "The key to the codes and colours of a Planner",
+      "props": [
+        "items",
+        "label"
+      ]
+    },
+    {
+      "name": "TabBar",
+      "file": "TabBar.tsx",
+      "when": "Bottom navigation for a phone app: three to five destinations as icon over label. Last child of .adm-shell; hidden on wide screens",
+      "props": [
+        "items (to, label, icon, end, count)",
+        "label",
+        "always"
+      ]
+    },
+    {
+      "name": "initTouchMode",
+      "file": "touch.ts",
+      "when": "Call once at start so phones and tablets get 44px targets (styles/touch.css); keeps a person's own choice",
+      "props": []
     }
   ]
 }
