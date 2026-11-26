@@ -3,5 +3,6 @@
 import "@belikh/jupiter-ui/styles/shell.css";
 import "@belikh/jupiter-ui/styles/responsive.css";
 import "@belikh/jupiter-ui/styles/a11y.css";
+import "@belikh/jupiter-ui/styles/touch.css";
 import "@belikh/jupiter-ui/styles/docs.css";
 import "../platform.css";

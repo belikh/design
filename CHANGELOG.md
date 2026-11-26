@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 1.6.0
+- Planner in @belikh/jupiter-ui (`Planner.tsx`): a plan as a grid, a row per person or resource against days or time slots with one block per cell, for rosters, lane rotations and bookings. Sticky headers, arrow-key movement, summary rows, a compact mode; `PlanChip` and `PlanLegend` show a block and the key on their own
+- TabBar in @belikh/jupiter-ui (`TabBar.tsx`): bottom navigation for phones, placed last in `.adm-shell`
+- A side Drawer is never taller than the screen: a long body scrolls inside it and the footer buttons stay in reach (they were pushed below the viewport)
+- Touch mode ships in @belikh/jupiter-ui: `styles/touch.css` (44px targets under `data-touch="true"`) and `touch.ts` (`initTouchMode` turns it on for a phone or a tablet unless the person chose otherwise)
+
 ## 1.5.7
 - The shell's main area contains its absolutely placed children, so hidden screen-reader text in a long page no longer makes the page behind it scroll into blank space on phones
 
