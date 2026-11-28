@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
-import { Terrain, buildTerrain, narrowSize, TERRAIN_KIND_ICON, type TerrainNode } from "./Terrain.tsx";
+import { graphic } from "@belikh/jupiter-graphics";
+import { Terrain, buildTerrain, hubSize, narrowSize, TERRAIN_KIND_ICON, type TerrainNode } from "./Terrain.tsx";
 
 const nodes: TerrainNode[] = [
   { id: "a", label: "Alpha", href: "/a/", height: 1, icon: "icon-evergreen" },
@@ -10,13 +11,61 @@ const nodes: TerrainNode[] = [
 const links: [string, string][] = [["a", "b"], ["b", "c"]];
 
 describe("Terrain", () => {
-  it("gives each kind of item its own icon, and lets an item's own icon win", () => {
+  it("draws each node with the icon of its kind, its stage, or its own icon, in that order of precedence", () => {
     const { container } = render(<Terrain nodes={[
       { id: "p", label: "P", height: 1, kind: "project" }, { id: "r", label: "R", height: 1, kind: "repo" },
-      { id: "t", label: "T", height: 1, kind: "thing" }, { id: "n", label: "N", height: 1, kind: "note", icon: "icon-sprout" }, { id: "x", label: "X", height: 1 }, { id: "s", label: "S", stage: "budding" },
+      { id: "t", label: "T", height: 1, kind: "thing" }, { id: "n", label: "N", height: 1, kind: "note", icon: "icon-star" },
+      { id: "s", label: "S", stage: "budding", kind: "note" }, { id: "x", label: "X", height: 1 },
     ]} />);
-    expect(container.querySelectorAll(".adm-terrain__icon")).toHaveLength(5);
+    const drawn = [...container.querySelectorAll(".adm-terrain__icon")].map((e) => e.getAttribute("d"));
+    expect(drawn).toEqual(["icon-folder", "icon-github", "icon-cpu", "icon-star", "icon-bud"].map((id) => graphic(id)!.d));
     expect(TERRAIN_KIND_ICON.repo).toBe("icon-github");
+  });
+  it("takes a note's hill height from its stage when none is given", () => {
+    const t = (stage: "seedling" | "evergreen") => buildTerrain([{ id: "a", label: "A", stage, x: 0.5, y: 0.5 }], [], 1000, 460, "links").contours.length;
+    expect(t("evergreen")).toBeGreaterThan(t("seedling"));
+  });
+  it("does not lay the map out again when the pointer moves and no links were given", () => {
+    const { container } = render(<Terrain nodes={nodes} />);
+    const before = container.querySelector(".adm-terrain__contours")!.innerHTML;
+    fireEvent.mouseEnter(screen.getByRole("link", { name: "Alpha" }));
+    expect(container.querySelector(".adm-terrain__contours")!.innerHTML).toBe(before);
+  });
+  it("keeps a pinned item where it is while the others are placed around it", () => {
+    const t = buildTerrain([{ ...nodes[0], x: 0.3, y: 0.4 }, nodes[1], nodes[2]], links, 1000, 560, "links");
+    expect(t.P[0]).toEqual({ x: 0.3, y: 0.4 });
+    expect(t.P[1]).not.toEqual(t.P[2]);
+  });
+  it("cuts a name that is too long for the map but keeps it whole for assistive technology", () => {
+    const long = "x".repeat(200);
+    const { container } = render(<Terrain nodes={[{ id: "a", label: long, href: "/a/", height: 1, x: 0.5, y: 0.5 }]} />);
+    const text = container.querySelector("text")!;
+    expect(text.textContent!.length).toBeLessThan(long.length); expect(text.textContent).toMatch(/…$/);
+    expect(Number(text.getAttribute("x"))).toBeGreaterThanOrEqual(4);
+    expect(screen.getByRole("link", { name: long })).toBeInTheDocument();
+  });
+  it("never lets a name sit on top of a dot", () => {
+    const close = [{ id: "a", label: "Alpha", height: 1, x: 0.5, y: 0.5 }, { id: "b", label: "Beta", height: 1, x: 0.5, y: 0.5 + 24 / 460 }];
+    const { container } = render(<Terrain nodes={close} />);
+    expect([...container.querySelectorAll("text")].map((e) => e.textContent)).toEqual(["Beta"]); // Alpha's name would sit on Beta's dot
+  });
+  describe("hub layout", () => {
+    const hub = [{ id: "me", label: "Me", height: 1, href: "/me/" }, ...["a", "b", "c", "d"].map((id) => ({ id, label: id, height: 0.5, href: `/${id}/` }))];
+    it("puts the focus item in the middle and the rest around it", () => {
+      const t = buildTerrain(hub, [], 1000, 250, "hub", "me");
+      expect(t.P[0]).toEqual({ x: 0.5, y: 0.48 });
+      for (const p of t.P.slice(1)) expect(Math.hypot(p.x - 0.5, p.y - 0.48)).toBeGreaterThan(0.2);
+    });
+    it("draws the focus item as the current page, not a link, and sizes the map to its items", () => {
+      const { container } = render(<Terrain nodes={hub} layout="hub" focus="me" />);
+      expect(screen.getAllByRole("link")).toHaveLength(4);
+      expect(screen.getByRole("img", { name: "Me" })).toHaveAttribute("aria-current", "page");
+      expect(container.querySelector("svg.adm-terrain")!.getAttribute("viewBox")).toBe(`0 0 1000 ${hubSize(4)[0]}`);
+    });
+    it("keeps one or two connections on a diagonal", () => {
+      const t = buildTerrain(hub.slice(0, 2), [], 1000, 200, "hub", "me");
+      expect(t.P[0].x).toBeLessThan(t.P[1].x); expect(t.P[0].y).toBeLessThan(t.P[1].y);
+    });
   });
   it("draws every item as a link inside a named map", () => {
     render(<Terrain nodes={nodes} links={links} title="Garden map" />);

@@ -1,5 +1,6 @@
 import { Fragment, createContext, useContext, useEffect, useId, useLayoutEffect, useRef, useState, type ReactNode, type ButtonHTMLAttributes } from "react";
 import { Icon, Spot } from "./Icon.tsx";
+import { STAGE_ICON, type NoteStage } from "./stage.ts";
 import "./styles/base.css";
 import "./styles/layout.css";
 import "./styles/tabs.css";
@@ -19,8 +20,8 @@ export const Badge = ({ s, children, pill, testId }: { s?: Status; children: Rea
   <span className={`jp-badge ${s ? `jp-badge--${s}` : ""} ${pill ? "jp-badge--pill" : ""}`} data-testid={testId}>{children}</span>
 );
 /** A note's growth stage (seedling, budding, evergreen) as a badge with the stage's icon. */
-export const StageBadge = ({ stage }: { stage: "seedling" | "budding" | "evergreen" }) => (
-  <span className="jp-badge"><Icon name={{ seedling: "sprout", budding: "bud", evergreen: "evergreen" }[stage]} size={14} /> {stage}</span>
+export const StageBadge = ({ stage }: { stage: NoteStage }) => (
+  <span className="jp-badge"><Icon name={STAGE_ICON[stage].replace(/^icon-/, "")} size={14} /> {stage}</span>
 );
 export const Dot = ({ s = "ok" }: { s?: Status | "off" }) => <span className={`adm-dot adm-dot--${s}`} aria-hidden />;
 
