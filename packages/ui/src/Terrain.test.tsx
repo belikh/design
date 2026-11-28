@@ -63,14 +63,21 @@ describe("Terrain", () => {
   describe("settleTerrain", () => {
     const v = [{ ...nodes[0], vector: [1, 0, 0] }, { ...nodes[1], vector: [0.98, 0.2, 0] }, { ...nodes[2], vector: [0, 0, 1] }];
     it("keeps the positions and drops the vectors, so the map draws the same without them", () => {
-      const settled = settleTerrain(v, links, { layout: "meaning" });
+      const { nodes: settled, layout } = settleTerrain(v, links, { layout: "meaning" });
+      expect(layout).toBe("meaning");
       expect(settled.every((n) => n.vector === undefined && n.x !== undefined && n.narrowX !== undefined)).toBe(true);
       const a = buildTerrain(v, links, 1000, 460, "meaning"), b = buildTerrain(settled, links, 1000, 460, "meaning");
       a.P.forEach((p, i) => { expect(Math.abs(b.P[i].x - p.x)).toBeLessThan(0.001); expect(Math.abs(b.P[i].y - p.y)).toBeLessThan(0.001); });
       expect(b.contours.length).toBe(a.contours.length);
     });
+    it("says it was placed by links when an item has no vector, and then draws the same hills as the unsettled map", () => {
+      const part = [v[0], v[1], { ...v[2], vector: undefined }];
+      const { nodes: settled, layout } = settleTerrain(part, links, { layout: "meaning" });
+      expect(layout).toBe("links");
+      expect(buildTerrain(settled, links, 1000, 460, layout).contours.length).toBe(buildTerrain(part, links, 1000, 460, "meaning").contours.length);
+    });
     it("draws the narrow map from the narrow positions", () => {
-      const settled = settleTerrain(v, links, { layout: "meaning" });
+      const { nodes: settled } = settleTerrain(v, links, { layout: "meaning" });
       Object.defineProperty(HTMLElement.prototype, "clientWidth", { configurable: true, get: () => 340 });
       vi.stubGlobal("ResizeObserver", class { observe() {} disconnect() {} });
       const { container } = render(<Terrain nodes={settled} links={links} layout="meaning" />);

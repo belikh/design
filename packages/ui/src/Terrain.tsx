@@ -167,7 +167,7 @@ export function buildTerrain(nodes: TerrainNode[], links: [string, string][], W:
     }
     if (d) contours.push({ d, index: k % 5 === 0 });
   }
-  return { P, edges, deg, contours };
+  return { P, edges, deg, contours, meaning };
 }
 
 /** Height of the narrow map: the same area as the wide one, but never less than a 120 by 60 slot for every item. */
@@ -188,12 +188,16 @@ export function legendOf(nodes: TerrainNode[]): { icon: string; word: string }[]
 }
 
 /** Lay the map out once, on the server, and keep only the result: every item gets its wide and narrow position and loses its vector, so the page
- *  does not ship embeddings only to repeat a layout. Give the same width, height and narrow size the component will get. */
-export function settleTerrain(nodes: TerrainNode[], links: [string, string][], o: { layout?: "links" | "meaning"; width?: number; height?: number; narrowWidth?: number; narrowHeight?: number } = {}): TerrainNode[] {
+ *  does not ship embeddings only to repeat a layout. Give the same width, height and narrow size the component will get, and pass the `layout` that comes
+ *  back to the component: it is "meaning" only when every item had a vector and the map really was placed by meaning. */
+export function settleTerrain(nodes: TerrainNode[], links: [string, string][], o: { layout?: "links" | "meaning"; width?: number; height?: number; narrowWidth?: number; narrowHeight?: number } = {}): { nodes: TerrainNode[]; layout: "links" | "meaning" } {
   const { layout = "links", width = 1000, height = 460, narrowWidth = 360 } = o, narrowHeight = o.narrowHeight ?? narrowSize(nodes.length, narrowWidth, width * height);
   const wide = buildTerrain(nodes, links, width, height, layout), narrow = buildTerrain(nodes, links, narrowWidth, narrowHeight, layout);
   const r = (n: number) => Math.round(n * 1000) / 1000;
-  return nodes.map(({ vector: _v, ...n }, i) => ({ ...n, x: r(wide.P[i].x), y: r(wide.P[i].y), narrowX: r(narrow.P[i].x), narrowY: r(narrow.P[i].y) }));
+  return {
+    layout: wide.meaning ? "meaning" : "links",
+    nodes: nodes.map(({ vector: _v, ...n }, i) => ({ ...n, x: r(wide.P[i].x), y: r(wide.P[i].y), narrowX: r(narrow.P[i].x), narrowY: r(narrow.P[i].y) })),
+  };
 }
 
 const NO_LINKS: [string, string][] = [];
