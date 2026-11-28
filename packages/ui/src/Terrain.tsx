@@ -96,17 +96,19 @@ function spread(P: P[], W: number, H: number, pin: boolean[]) {
 }
 
 /** How much nearer two linked items sit than their text alone would put them (0.5: half the distance). A link says they belong together even when one of them,
- *  such as a project with a one-line summary, reads very differently from the other. */
-const LINK_PULL = 0.5, MIN_GAP = 0.12;
+ *  such as a project with a one-line summary, reads very differently from the other. LINK_WEIGHT makes that pair count for more than the many unlinked
+ *  ones that push an outlier away, or the pull is lost in the crowd. */
+const LINK_PULL = 0.4, LINK_WEIGHT = 8, MIN_GAP = 0.12;
 
 /** Arrange by meaning: distance on the map follows 1 - cosine similarity, linked items are drawn nearer, then the cloud is scaled to fill the map. */
 function layoutMeaning(P: P[], vecs: number[][], aspect: number, W: number, H: number, edges: [number, number][]) {
   const n = P.length, T = vecs.map((a, i) => vecs.map((b, j) => (i === j ? 0 : Math.max(MIN_GAP, 1 - cos(a, b)))));
-  for (const [a, b] of edges) T[a][b] = T[b][a] = Math.max(MIN_GAP, T[a][b] * LINK_PULL);
+  const W8 = vecs.map(() => vecs.map(() => 1));
+  for (const [a, b] of edges) { T[a][b] = T[b][a] = Math.max(MIN_GAP, T[a][b] * LINK_PULL); W8[a][b] = W8[b][a] = LINK_WEIGHT; }
   for (let s = 0; s < 600; s++) {
     const cool = 1 - s / 600, V = P.map(() => [0, 0]);
     for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) {
-      const dx = (P[i].x - P[j].x) * aspect, dy = P[i].y - P[j].y, d = Math.hypot(dx, dy) + 1e-6, k = ((d - T[i][j]) * 0.9) / n;
+      const dx = (P[i].x - P[j].x) * aspect, dy = P[i].y - P[j].y, d = Math.hypot(dx, dy) + 1e-6, k = (d - T[i][j]) * Math.min(0.45, (0.9 * W8[i][j]) / n); // capped: a heavy link on a small map would overshoot
       V[i][0] -= ((k * dx) / d) / aspect; V[j][0] += ((k * dx) / d) / aspect; V[i][1] -= (k * dy) / d; V[j][1] += (k * dy) / d;
     }
     P.forEach((p, i) => { p.x += V[i][0] * cool; p.y += V[i][1] * cool; });
