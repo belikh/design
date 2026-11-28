@@ -26,6 +26,8 @@ export type TerrainNode = {
   icon?: string;
   /** Fixed position as a fraction of the map (0 to 1). Leave out to let the layout place it. */
   x?: number; y?: number;
+  /** Position on the narrow (phone) map, when it differs from x and y. Set by settleTerrain. */
+  narrowX?: number; narrowY?: number;
   /** Show the label only while the item, or one linked to it, is hovered or focused. For maps with many items or long names. */
   quiet?: boolean;
   /** An embedding. When every item has one and layout is "meaning", distance on the map follows how unlike the vectors are. */
@@ -43,6 +45,8 @@ export type TerrainProps = {
   /** Size of the map when its container is narrower than 40rem (a phone): the map is laid out again as a tall, narrow one so labels stay readable.
    *  Defaults to 360 wide and tall enough to keep the same room per item. */
   narrowWidth?: number; narrowHeight?: number;
+  /** Name each kind of icon on the map under it. Only the icons that are drawn are listed. */
+  legend?: boolean;
   /** Accessible name of the map. */ title?: string;
   /** Text under the map for people who cannot see it. Defaults to a count. */ summary?: string;
 };
@@ -137,7 +141,8 @@ export function buildTerrain(nodes: TerrainNode[], links: [string, string][], W:
     const f = idx.get(focus!)!, around = nodes.length - 1; let k = 0;
     nodes.forEach((n, i) => { if (pin[i]) return; Object.assign(P[i], i === f ? HUB_CENTER(around) : hubPlace(k++, around)); });
   } else if (!fixed) { if (meaning) layoutMeaning(P, nodes.map((n) => n.vector!), aspect, W, H); else { layoutLinks(P, edges, aspect, pin); spread(P, W, H, pin); } }
-  const U = Math.min(W, H), sigK = meaning ? 0.5 : 1;
+  // a map settled by meaning keeps its broad hills even though its vectors are gone
+  const U = Math.min(W, H), sigK = meaning || (fixed && layout === "meaning") ? 0.5 : 1;
   const cols = Math.ceil(W / CELL) + 2, rows = Math.ceil(H / CELL) + 2, g = new Float32Array(cols * rows);
   nodes.forEach((n, k) => {
     const sx = P[k].x * W, sy = P[k].y * H, sig = U * (0.07 + 0.009 * Math.min(deg[k], 8)) * sigK, R = sig * 3, A = hillOf(n) * (1 + 0.05 * Math.min(deg[k], 8));
@@ -169,9 +174,31 @@ export function buildTerrain(nodes: TerrainNode[], links: [string, string][], W:
 export const narrowSize = (count: number, narrowWidth: number, wideArea: number) =>
   Math.round(Math.max(wideArea / narrowWidth / 2, (count * 120 * 60) / (narrowWidth * 0.84) + 80));
 
+const KIND_ORDER: TerrainKind[] = ["note", "project", "repo", "thing"], STAGE_ORDER: NoteStage[] = ["seedling", "budding", "evergreen"];
+const KIND_WORD: Record<TerrainKind, string> = { note: "Note", project: "Project", repo: "Repository", thing: "Thing" };
+/** The icons a map draws, with the word for each, in a stable order. */
+export function legendOf(nodes: TerrainNode[]): { icon: string; word: string }[] {
+  const out = new Map<string, { rank: number; word: string }>();
+  nodes.forEach((n) => {
+    if (n.icon) return;
+    if (n.stage) out.set(STAGE_ICON[n.stage], { rank: 10 + STAGE_ORDER.indexOf(n.stage), word: n.stage[0].toUpperCase() + n.stage.slice(1) });
+    else if (n.kind) out.set(TERRAIN_KIND_ICON[n.kind], { rank: KIND_ORDER.indexOf(n.kind), word: KIND_WORD[n.kind] });
+  });
+  return [...out].sort((a, b) => a[1].rank - b[1].rank).map(([icon, v]) => ({ icon, word: v.word }));
+}
+
+/** Lay the map out once, on the server, and keep only the result: every item gets its wide and narrow position and loses its vector, so the page
+ *  does not ship embeddings only to repeat a layout. Give the same width, height and narrow size the component will get. */
+export function settleTerrain(nodes: TerrainNode[], links: [string, string][], o: { layout?: "links" | "meaning"; width?: number; height?: number; narrowWidth?: number; narrowHeight?: number } = {}): TerrainNode[] {
+  const { layout = "links", width = 1000, height = 460, narrowWidth = 360 } = o, narrowHeight = o.narrowHeight ?? narrowSize(nodes.length, narrowWidth, width * height);
+  const wide = buildTerrain(nodes, links, width, height, layout), narrow = buildTerrain(nodes, links, narrowWidth, narrowHeight, layout);
+  const r = (n: number) => Math.round(n * 1000) / 1000;
+  return nodes.map(({ vector: _v, ...n }, i) => ({ ...n, x: r(wide.P[i].x), y: r(wide.P[i].y), narrowX: r(narrow.P[i].x), narrowY: r(narrow.P[i].y) }));
+}
+
 const NO_LINKS: [string, string][] = [];
 
-export function Terrain({ nodes, links = NO_LINKS, layout = "links", focus, width: wideW = 1000, height: heightProp, narrowWidth = 360, narrowHeight, title = "Map", summary }: TerrainProps) {
+export function Terrain({ nodes, links = NO_LINKS, layout = "links", focus, width: wideW = 1000, height: heightProp, narrowWidth = 360, narrowHeight, legend, title = "Map", summary }: TerrainProps) {
   const [hubWide, hubNarrow] = hubSize(nodes.length - 1), isHub = layout === "hub" && focus !== undefined;
   const wideH = heightProp ?? (isHub ? hubWide : 460);
   // The server and the first paint draw the wide map. Once mounted, a container narrower than 40rem gets the narrow one instead of a sideways scroll.
@@ -184,7 +211,8 @@ export function Terrain({ nodes, links = NO_LINKS, layout = "links", focus, widt
   }, []);
   const width = narrow ? narrowWidth : wideW;
   const height = narrow ? narrowHeight ?? (isHub ? hubNarrow : narrowSize(nodes.length, narrowWidth, wideW * wideH)) : wideH;
-  const t = useMemo(() => buildTerrain(nodes, links, width, height, layout, focus), [nodes, links, width, height, layout, focus]);
+  const placed = useMemo(() => (narrow ? nodes.map((n) => (n.narrowX !== undefined && n.narrowY !== undefined ? { ...n, x: n.narrowX, y: n.narrowY } : n)) : nodes), [nodes, narrow]);
+  const t = useMemo(() => buildTerrain(placed, links, width, height, layout, focus), [placed, links, width, height, layout, focus]);
   const [hot, setHot] = useState<number | null>(null);
   const near = useMemo(() => { const s = new Set<number>(); if (hot !== null) { s.add(hot); for (const [a, b] of t.edges) { if (a === hot) s.add(b); if (b === hot) s.add(a); } } return s; }, [hot, t.edges]);
   // The drawn name and its box, from one place so the collision test and the drawing agree. A name too long for the map is cut with an ellipsis; aria-label keeps it whole.
@@ -236,6 +264,11 @@ export function Terrain({ nodes, links = NO_LINKS, layout = "links", focus, widt
           })}
         </g>
       </svg>
+      {legend && (
+        <ul className="adm-terrain__legend">
+          {legendOf(nodes).map((l) => <li key={l.icon}><svg width={16} height={16} viewBox="0 0 48 48" aria-hidden="true"><path d={graphic(l.icon)!.d} className="adm-terrain__icon" /></svg>{l.word}</li>)}
+        </ul>
+      )}
       <figcaption className="adm-sr">{summary ?? `${title}: ${nodes.length} items, ${t.edges.length} links.`}</figcaption>
     </figure>
   );

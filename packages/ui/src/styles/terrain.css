@@ -17,4 +17,8 @@ a.adm-terrain__node { cursor: pointer; }
 .adm-terrain__node.is-hot .adm-terrain__icon { stroke: var(--jp-accent); }
 .adm-terrain__label { fill: var(--jp-text); font-family: var(--jp-font-mono); paint-order: stroke; stroke: var(--jp-bg); stroke-width: 3px; stroke-linejoin: round; }
 .adm-terrain__node:focus-visible { outline: none; }
+/* the key under the map: one entry for each kind of icon drawn */
+.adm-terrain__legend { display: flex; flex-wrap: wrap; gap: var(--jp-space-2) var(--jp-space-4); margin: var(--jp-space-3) 0 0; padding: 0; list-style: none; color: var(--jp-text-muted); font-size: var(--jp-fs-sm); }
+.adm-terrain__legend li { display: inline-flex; align-items: center; gap: var(--jp-space-2); }
+.adm-terrain__legend .adm-terrain__icon { stroke: currentColor; }
 @media (prefers-reduced-motion: reduce) { .adm-terrain__trails line, .adm-terrain__node { transition: none; } }

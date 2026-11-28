@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { graphic } from "@belikh/jupiter-graphics";
-import { Terrain, buildTerrain, hubSize, narrowSize, TERRAIN_KIND_ICON, type TerrainNode } from "./Terrain.tsx";
+import { Terrain, buildTerrain, hubSize, legendOf, settleTerrain, narrowSize, TERRAIN_KIND_ICON, type TerrainNode } from "./Terrain.tsx";
 
 const nodes: TerrainNode[] = [
   { id: "a", label: "Alpha", href: "/a/", height: 1, icon: "icon-evergreen" },
@@ -52,6 +52,32 @@ describe("Terrain", () => {
     const close = [{ id: "a", label: "Alpha", height: 1, x: 0.5, y: 0.5 }, { id: "b", label: "Beta", height: 1, x: 0.5, y: 0.5 + 24 / 460 }];
     const { container } = render(<Terrain nodes={close} />);
     expect([...container.querySelectorAll("text")].map((e) => e.textContent)).toEqual(["Beta"]); // Alpha's name would sit on Beta's dot
+  });
+  it("names each kind of icon it draws, once, in a stable order", () => {
+    const n = [{ id: "a", label: "A", kind: "repo" }, { id: "b", label: "B", stage: "evergreen" }, { id: "c", label: "C", kind: "repo" }, { id: "d", label: "D", kind: "project" }, { id: "e", label: "E", icon: "icon-star" }] as TerrainNode[];
+    expect(legendOf(n).map((l) => l.word)).toEqual(["Project", "Repository", "Evergreen"]);
+    const { container } = render(<Terrain nodes={n} legend />);
+    expect([...container.querySelectorAll(".adm-terrain__legend li")].map((e) => e.textContent)).toEqual(["Project", "Repository", "Evergreen"]);
+    expect(render(<Terrain nodes={n} />).container.querySelector(".adm-terrain__legend")).toBeNull();
+  });
+  describe("settleTerrain", () => {
+    const v = [{ ...nodes[0], vector: [1, 0, 0] }, { ...nodes[1], vector: [0.98, 0.2, 0] }, { ...nodes[2], vector: [0, 0, 1] }];
+    it("keeps the positions and drops the vectors, so the map draws the same without them", () => {
+      const settled = settleTerrain(v, links, { layout: "meaning" });
+      expect(settled.every((n) => n.vector === undefined && n.x !== undefined && n.narrowX !== undefined)).toBe(true);
+      const a = buildTerrain(v, links, 1000, 460, "meaning"), b = buildTerrain(settled, links, 1000, 460, "meaning");
+      a.P.forEach((p, i) => { expect(Math.abs(b.P[i].x - p.x)).toBeLessThan(0.001); expect(Math.abs(b.P[i].y - p.y)).toBeLessThan(0.001); });
+      expect(b.contours.length).toBe(a.contours.length);
+    });
+    it("draws the narrow map from the narrow positions", () => {
+      const settled = settleTerrain(v, links, { layout: "meaning" });
+      Object.defineProperty(HTMLElement.prototype, "clientWidth", { configurable: true, get: () => 340 });
+      vi.stubGlobal("ResizeObserver", class { observe() {} disconnect() {} });
+      const { container } = render(<Terrain nodes={settled} links={links} layout="meaning" />);
+      const cx = [...container.querySelectorAll("circle")].map((c) => Number(c.getAttribute("cx")));
+      settled.forEach((n, i) => expect(Math.abs(cx[i] - n.narrowX! * 360)).toBeLessThan(0.01));
+      vi.unstubAllGlobals(); delete (HTMLElement.prototype as { clientWidth?: number }).clientWidth;
+    });
   });
   describe("hub layout", () => {
     const hub = [{ id: "me", label: "Me", height: 1, href: "/me/" }, ...["a", "b", "c", "d"].map((id) => ({ id, label: id, height: 0.5, href: `/${id}/` }))];
