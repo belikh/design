@@ -95,9 +95,14 @@ function spread(P: P[], W: number, H: number, pin: boolean[]) {
   }
 }
 
-/** Arrange by meaning: distance on the map follows 1 - cosine similarity, then the cloud is scaled to fill the map. */
-function layoutMeaning(P: P[], vecs: number[][], aspect: number, W: number, H: number) {
-  const n = P.length, T = vecs.map((a, i) => vecs.map((b, j) => (i === j ? 0 : Math.max(0.12, 1 - cos(a, b)))));
+/** How much nearer two linked items sit than their text alone would put them (0.5: half the distance). A link says they belong together even when one of them,
+ *  such as a project with a one-line summary, reads very differently from the other. */
+const LINK_PULL = 0.5, MIN_GAP = 0.12;
+
+/** Arrange by meaning: distance on the map follows 1 - cosine similarity, linked items are drawn nearer, then the cloud is scaled to fill the map. */
+function layoutMeaning(P: P[], vecs: number[][], aspect: number, W: number, H: number, edges: [number, number][]) {
+  const n = P.length, T = vecs.map((a, i) => vecs.map((b, j) => (i === j ? 0 : Math.max(MIN_GAP, 1 - cos(a, b)))));
+  for (const [a, b] of edges) T[a][b] = T[b][a] = Math.max(MIN_GAP, T[a][b] * LINK_PULL);
   for (let s = 0; s < 600; s++) {
     const cool = 1 - s / 600, V = P.map(() => [0, 0]);
     for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) {
@@ -140,7 +145,7 @@ export function buildTerrain(nodes: TerrainNode[], links: [string, string][], W:
   if (hub) {
     const f = idx.get(focus!)!, around = nodes.length - 1; let k = 0;
     nodes.forEach((n, i) => { if (pin[i]) return; Object.assign(P[i], i === f ? HUB_CENTER(around) : hubPlace(k++, around)); });
-  } else if (!fixed) { if (meaning) layoutMeaning(P, nodes.map((n) => n.vector!), aspect, W, H); else { layoutLinks(P, edges, aspect, pin); spread(P, W, H, pin); } }
+  } else if (!fixed) { if (meaning) layoutMeaning(P, nodes.map((n) => n.vector!), aspect, W, H, edges); else { layoutLinks(P, edges, aspect, pin); spread(P, W, H, pin); } }
   // a map settled by meaning keeps its broad hills even though its vectors are gone
   const U = Math.min(W, H), sigK = meaning || (fixed && layout === "meaning") ? 0.5 : 1;
   const cols = Math.ceil(W / CELL) + 2, rows = Math.ceil(H / CELL) + 2, g = new Float32Array(cols * rows);
