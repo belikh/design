@@ -572,7 +572,9 @@
       "props": [
         "nodes (id, label, href, height, kind: note|project|repo|thing, stage: seedling|budding|evergreen, icon, quiet, x, y, vector)",
         "links",
-        "layout: links|meaning",
+        "layout: links|meaning|hub",
+        "focus",
+        "legend",
         "width",
         "height",
         "title",
