@@ -8,7 +8,8 @@
 .adm-terrain__trails line { stroke: var(--jp-text-muted); stroke-width: 1; stroke-dasharray: 2 5; stroke-linecap: round; opacity: 0.7; vector-effect: non-scaling-stroke; transition: opacity var(--jp-dur-base) var(--jp-ease); }
 .adm-terrain__trails line.is-dim { opacity: 0.15; }
 .adm-terrain__trails line.is-hot { stroke: var(--jp-accent); stroke-width: 2; opacity: 1; }
-.adm-terrain__node { cursor: pointer; color: var(--jp-text); text-decoration: none; transition: opacity var(--jp-dur-base) var(--jp-ease); }
+.adm-terrain__node { color: var(--jp-text); text-decoration: none; transition: opacity var(--jp-dur-base) var(--jp-ease); }
+a.adm-terrain__node { cursor: pointer; }
 .adm-terrain__node.is-dim { opacity: 0.3; }
 .adm-terrain__dot { fill: var(--jp-bg); stroke: var(--jp-text); stroke-width: 1; }
 .adm-terrain__node.is-hot .adm-terrain__dot, .adm-terrain__node:focus-visible .adm-terrain__dot { stroke: var(--jp-accent); stroke-width: 2; }
