@@ -133,6 +133,12 @@ describe("Terrain", () => {
     const t = buildTerrain(v, [], 1000, 560, "meaning"), d = (i: number, j: number) => Math.hypot((t.P[i].x - t.P[j].x) * 1000, (t.P[i].y - t.P[j].y) * 560);
     expect(d(0, 1)).toBeLessThan(d(0, 2));
   });
+  it("draws linked items nearer than unlinked ones that read just as differently", () => {
+    const v = [{ id: "a", label: "A", height: 0.5, vector: [1, 0, 0] }, { id: "b", label: "B", height: 0.5, vector: [0, 1, 0] }, { id: "c", label: "C", height: 0.5, vector: [0, 0, 1] }, { id: "d", label: "D", height: 0.5, vector: [0.6, 0.6, 0.5] }];
+    const d = (t: ReturnType<typeof buildTerrain>, i: number, j: number) => Math.hypot((t.P[i].x - t.P[j].x) * 1000, (t.P[i].y - t.P[j].y) * 560);
+    const plain = buildTerrain(v, [], 1000, 560, "meaning"), linked = buildTerrain(v, [["a", "b"]], 1000, 560, "meaning");
+    expect(d(linked, 0, 1) / d(linked, 0, 2)).toBeLessThan(d(plain, 0, 1) / d(plain, 0, 2));
+  });
   it("keeps a fixed position when one is given", () => {
     const t = buildTerrain(nodes.map((n, i) => ({ ...n, x: 0.2 + i * 0.3, y: 0.5 })), links, 1000, 560, "links");
     expect(t.P[1]).toEqual({ x: 0.5, y: 0.5 });

@@ -1,7 +1,7 @@
-// Code generated from jupiter.tokens.json (jupiter 1.8.1). DO NOT EDIT.
+// Code generated from jupiter.tokens.json (jupiter 1.9.0). DO NOT EDIT.
 
 /// Token set version this file was generated from.
-pub const VERSION: &str = "1.8.1";
+pub const VERSION: &str = "1.9.0";
 
 /// Fixed sizes of application chrome and overlays (logical px), from the chrome tokens.
 pub mod chrome {
