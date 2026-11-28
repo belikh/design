@@ -25,6 +25,10 @@ describe("Terrain", () => {
     const t = (stage: "seedling" | "evergreen") => buildTerrain([{ id: "a", label: "A", stage, x: 0.5, y: 0.5 }], [], 1000, 460, "links").contours.length;
     expect(t("evergreen")).toBeGreaterThan(t("seedling"));
   });
+  it("takes a hill height from the kind when there is no stage or height", () => {
+    const h = (kind: "project" | "thing") => buildTerrain([{ id: "a", label: "A", kind, x: 0.5, y: 0.5 }], [], 1000, 460, "links").contours.length;
+    expect(h("project")).toBeGreaterThan(h("thing"));
+  });
   it("does not lay the map out again when the pointer moves and no links were given", () => {
     const { container } = render(<Terrain nodes={nodes} />);
     const before = container.querySelector(".adm-terrain__contours")!.innerHTML;

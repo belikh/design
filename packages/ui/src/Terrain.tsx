@@ -10,11 +10,13 @@ export type TerrainKind = "note" | "project" | "repo" | "thing";
 /** The icon each kind of item gets on the map unless the item names its own. */
 export const TERRAIN_KIND_ICON: Record<TerrainKind, string> = { note: "icon-file", project: "icon-folder", repo: "icon-github", thing: "icon-cpu" };
 
-const hillOf = (n: { height?: number; stage?: NoteStage }) => n.height ?? (n.stage ? STAGE_HEIGHT[n.stage] : 0.5);
+/** How tall an item's hill is when it gives no height of its own and has no stage. */
+export const TERRAIN_KIND_HEIGHT: Record<TerrainKind, number> = { note: 0.5, project: 0.75, repo: 0.5, thing: 0.4 };
+const hillOf = (n: { height?: number; stage?: NoteStage; kind?: TerrainKind }) => n.height ?? (n.stage ? STAGE_HEIGHT[n.stage] : n.kind ? TERRAIN_KIND_HEIGHT[n.kind] : 0.5);
 
 export type TerrainNode = {
   id: string; label: string; href?: string;
-  /** 0 to 1: how tall the hill is (a note's stage, a project's activity). */
+  /** 0 to 1: how tall the hill is (a project's activity). Leave out to take the height of the stage or the kind (TERRAIN_KIND_HEIGHT). */
   height?: number;
   /** What the item is. Each kind has one icon (TERRAIN_KIND_ICON) so a map reads the same in every project. */
   kind?: TerrainKind;
