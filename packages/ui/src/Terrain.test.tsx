@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
-import { Terrain, buildTerrain, narrowSize, type TerrainNode } from "./Terrain.tsx";
+import { Terrain, buildTerrain, narrowSize, TERRAIN_KIND_ICON, type TerrainNode } from "./Terrain.tsx";
 
 const nodes: TerrainNode[] = [
   { id: "a", label: "Alpha", href: "/a/", height: 1, icon: "icon-evergreen" },
@@ -10,6 +10,14 @@ const nodes: TerrainNode[] = [
 const links: [string, string][] = [["a", "b"], ["b", "c"]];
 
 describe("Terrain", () => {
+  it("gives each kind of item its own icon, and lets an item's own icon win", () => {
+    const { container } = render(<Terrain nodes={[
+      { id: "p", label: "P", height: 1, kind: "project" }, { id: "r", label: "R", height: 1, kind: "repo" },
+      { id: "t", label: "T", height: 1, kind: "thing" }, { id: "n", label: "N", height: 1, kind: "note", icon: "icon-sprout" }, { id: "x", label: "X", height: 1 }, { id: "s", label: "S", stage: "budding" },
+    ]} />);
+    expect(container.querySelectorAll(".adm-terrain__icon")).toHaveLength(5);
+    expect(TERRAIN_KIND_ICON.repo).toBe("icon-github");
+  });
   it("draws every item as a link inside a named map", () => {
     render(<Terrain nodes={nodes} links={links} title="Garden map" />);
     expect(screen.getByRole("group", { name: "Garden map" })).toBeInTheDocument();

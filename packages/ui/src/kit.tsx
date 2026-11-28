@@ -18,6 +18,10 @@ export function Btn({ variant = "secondary", sm, icon, children, ...rest }: { va
 export const Badge = ({ s, children, pill, testId }: { s?: Status; children: ReactNode; pill?: boolean; testId?: string }) => (
   <span className={`jp-badge ${s ? `jp-badge--${s}` : ""} ${pill ? "jp-badge--pill" : ""}`} data-testid={testId}>{children}</span>
 );
+/** A note's growth stage (seedling, budding, evergreen) as a badge with the stage's icon. */
+export const StageBadge = ({ stage }: { stage: "seedling" | "budding" | "evergreen" }) => (
+  <span className="jp-badge"><Icon name={{ seedling: "sprout", budding: "bud", evergreen: "evergreen" }[stage]} size={14} /> {stage}</span>
+);
 export const Dot = ({ s = "ok" }: { s?: Status | "off" }) => <span className={`adm-dot adm-dot--${s}`} aria-hidden />;
 
 export function Panel({ title, actions, children, flush, className = "", id, testId }: { title?: ReactNode; actions?: ReactNode; children: ReactNode; flush?: boolean; className?: string; id?: string; testId?: string }) {

@@ -5,11 +5,26 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { graphic } from "@belikh/jupiter-graphics";
 import "./styles/terrain.css";
 
+export type TerrainKind = "note" | "project" | "repo" | "thing";
+/** The icon each kind of item gets on the map unless the item names its own. */
+export const TERRAIN_KIND_ICON: Record<TerrainKind, string> = { note: "icon-file", project: "icon-folder", repo: "icon-github", thing: "icon-cpu" };
+
+export type Stage = "seedling" | "budding" | "evergreen";
+/** How far along a note is: the icon it shows and how tall its hill is. */
+export const STAGE_ICON: Record<Stage, string> = { seedling: "icon-sprout", budding: "icon-bud", evergreen: "icon-evergreen" };
+export const STAGE_HEIGHT: Record<Stage, number> = { seedling: 0.38, budding: 0.68, evergreen: 1 };
+
+const hillOf = (n: { height?: number; stage?: Stage }) => n.height ?? (n.stage ? STAGE_HEIGHT[n.stage] : 0.5);
+
 export type TerrainNode = {
   id: string; label: string; href?: string;
   /** 0 to 1: how tall the hill is (a note's stage, a project's activity). */
-  height: number;
-  /** An icon id from @belikh/jupiter-graphics, such as "icon-sprout", drawn on the hill. */
+  height?: number;
+  /** What the item is. Each kind has one icon (TERRAIN_KIND_ICON) so a map reads the same in every project. */
+  kind?: TerrainKind;
+  /** A note's growth stage: its icon is the stage's, and the hill is the stage's height when `height` is left out. */
+  stage?: Stage;
+  /** An icon id from @belikh/jupiter-graphics, such as "icon-sprout", drawn on the hill. Overrides the icon of the stage and of the kind. */
   icon?: string;
   /** Fixed position as a fraction of the map (0 to 1). Leave out to let the layout place it. */
   x?: number; y?: number;
@@ -100,7 +115,7 @@ export function buildTerrain(nodes: TerrainNode[], links: [string, string][], W:
   const U = Math.min(W, H), sigK = meaning ? 0.5 : 1;
   const cols = Math.ceil(W / CELL) + 2, rows = Math.ceil(H / CELL) + 2, g = new Float32Array(cols * rows);
   nodes.forEach((n, k) => {
-    const sx = P[k].x * W, sy = P[k].y * H, sig = U * (0.07 + 0.009 * Math.min(deg[k], 8)) * sigK, R = sig * 3, A = n.height * (1 + 0.05 * Math.min(deg[k], 8));
+    const sx = P[k].x * W, sy = P[k].y * H, sig = U * (0.07 + 0.009 * Math.min(deg[k], 8)) * sigK, R = sig * 3, A = hillOf(n) * (1 + 0.05 * Math.min(deg[k], 8));
     if (A < 0.002) return;
     for (let j = Math.max(0, Math.floor((sy - R) / CELL)); j <= Math.min(rows - 1, Math.ceil((sy + R) / CELL)); j++)
       for (let i = Math.max(0, Math.floor((sx - R) / CELL)); i <= Math.min(cols - 1, Math.ceil((sx + R) / CELL)); i++) {
@@ -145,7 +160,7 @@ export function Terrain({ nodes, links = [], layout = "links", width: wideW = 10
   const near = useMemo(() => { const s = new Set<number>(); if (hot !== null) { s.add(hot); for (const [a, b] of t.edges) { if (a === hot) s.add(b); if (b === hot) s.add(a); } } return s; }, [hot, t.edges]);
   // labels: most prominent first, skipping any that would overlap one already placed (the hovered item always shows)
   const labels = useMemo(() => {
-    const order = nodes.map((n, i) => ({ i, pri: n.height * 5 + t.deg[i] * 0.2 + (i === hot ? 100 : 0) + (near.has(i) ? 50 : 0) })).sort((a, b) => b.pri - a.pri);
+    const order = nodes.map((n, i) => ({ i, pri: hillOf(n) * 5 + t.deg[i] * 0.2 + (i === hot ? 100 : 0) + (near.has(i) ? 50 : 0) })).sort((a, b) => b.pri - a.pri);
     const placed: number[][] = [], out = new Set<number>();
     for (const { i } of order) {
       if (nodes[i].quiet && i !== hot && !near.has(i)) continue;
@@ -171,7 +186,7 @@ export function Terrain({ nodes, links = [], layout = "links", width: wideW = 10
         </g>
         <g className="adm-terrain__nodes">
           {nodes.map((n, i) => {
-            const x = t.P[i].x * width, y = t.P[i].y * height, g = n.icon ? graphic(n.icon) : undefined;
+            const x = t.P[i].x * width, y = t.P[i].y * height, id = n.icon ?? (n.stage ? STAGE_ICON[n.stage] : n.kind ? TERRAIN_KIND_ICON[n.kind] : undefined), g = id ? graphic(id) : undefined;
             const body = (
               <>
                 <circle cx={x} cy={y} r={11} className="adm-terrain__dot" />
